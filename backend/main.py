@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, APIRouter
 from routers.events import router as events_router
-# from routers.automations import router as automations_router
+from routers.speakers import router as speakers_router
 from routers.limiter import limiter
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
@@ -11,22 +11,14 @@ from slowapi.errors import RateLimitExceeded
 # async def lifespan(_: FastAPI):
 #     yield
 
-test_router = APIRouter()
-
 
 app = FastAPI()  # FastAPI(lifespan=lifespan)
 
 
-@test_router.get("/posts")
-async def posts():
-    return {"posts": "test"}
-
-
 app.include_router(events_router)
-# app.include_router(automations_router)
-# app.include_router(test_router)
+app.include_router(speakers_router)
 
-# app.state.limiter = limiter
+app.state.limiter = limiter
 
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 

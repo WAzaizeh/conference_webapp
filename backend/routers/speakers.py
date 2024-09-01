@@ -1,16 +1,20 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.params import Depends
 from sqlalchemy.orm import Session
-from db.core import get_db, NotFoundError
-from db.models import (
+from db.core import NotFoundError, get_db
+from routers.limiter import limiter
+from db.schemas import (
     SpeakerOut,
     SpeakerCreate,
     SpeakerUpdate,
+    EventOut,
+)
+from crud.common import get_db_speaker
+from crud.speakers import (
     create_db_speaker,
-    delete_db_speaker,
-    read_db_speaker,
     update_db_speaker,
-    read_db_events_for_speaker
+    delete_db_speaker,
+    read_db_speaker_events,
 )
 
 
@@ -19,48 +23,48 @@ router = APIRouter(
 )
 
 
-@router.post('')
-def create_speaker(
-    speaker: SpeakerCreate, db: Session = Depends(get_db)
-) -> SpeakerOut:
+@router.post('/')
+@limiter.limit('1/second')
+def create_speaker(request: Request, speaker: SpeakerCreate, db: Session = Depends(get_db)) -> SpeakerOut:
     db_speaker = create_db_speaker(speaker, db)
-    return SpeakerOut(**db_speaker.__dict__)
+    return db_speaker
 
 
 @router.get('/{speaker_id}')
-def read_speaker(speaker_id: int, db: Session = Depends(get_db)) -> SpeakerOut:
+@limiter.limit('10/second')
+def read_speaker(request: Request, speaker_id: int, db: Session = Depends(get_db)) -> SpeakerOut:
     try:
-        db_speaker = read_db_speaker(speaker_id, db)
+        db_speaker = get_db_speaker(speaker_id, db)
     except NotFoundError as e:
         raise HTTPException(status_code=404) from e
-    return SpeakerOut(**db_speaker.__dict__)
+    return db_speaker
+
+
+@router.get('/{speaker_id}/speakers')
+@limiter.limit('10/second')
+def read_speaker_events(request: Request, speaker_id: int, db: Session = Depends(get_db)) -> list[EventOut]:
+    try:
+        events = read_db_speaker_events(speaker_id, db)
+    except NotFoundError as e:
+        raise HTTPException(status_code=404) from e
+    return events
 
 
 @router.put('/{speaker_id}')
-def update_speaker(
-    speaker_id: int,
-    speaker: SpeakerUpdate,
-    db: Session = Depends(get_db),
-) -> SpeakerOut:
+@limiter.limit('1/second')
+def update_speaker(request: Request, speaker_id: int, speaker: SpeakerUpdate, db: Session = Depends(get_db)) -> SpeakerOut:
     try:
         db_speaker = update_db_speaker(speaker_id, speaker, db)
     except NotFoundError as e:
         raise HTTPException(status_code=404) from e
-    return SpeakerOut(**db_speaker.__dict__)
+    return db_speaker
 
 
 @router.delete('/{speaker_id}')
-def delete_speaker(speaker_id: int, db: Session = Depends(get_db)) -> SpeakerOut:
+@limiter.limit('1/second')
+def delete_speaker(request: Request, speaker_id: int, db: Session = Depends(get_db)) -> SpeakerOut:
     try:
         db_speaker = delete_db_speaker(speaker_id, db)
     except NotFoundError as e:
         raise HTTPException(status_code=404) from e
-    return SpeakerOut(**db_speaker.__dict__)
-
-@router.get('/{speaker_id}/events')
-def read_events_for_speaker(speaker_id: int, db: Session = Depends(get_db)):
-    try:
-        db_events = read_db_events_for_speaker(speaker_id, db)
-    except NotFoundError as e:
-        raise HTTPException(status_code=404) from e
-    return db_events
+    return db_speaker
