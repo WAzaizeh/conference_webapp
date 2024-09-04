@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from db.models import DBEvent
-from .common import get_db_event, get_db_speaker
+from .common import get_db_event, get_db_speaker, _get_db_event
 from db.schemas import (
     EventOut,
     EventCreate,
@@ -18,7 +18,7 @@ def create_db_event(event: EventCreate, db: Session) -> EventOut:
     return EventOut(**db_event.__dict__)
 
 def update_db_event(event_id: int, event: EventUpdate, db: Session) -> EventOut:
-    db_event = get_db_event(event_id, db)
+    db_event = _get_db_event(event_id, db)
     if not db_event:
         return None
     update_data = event.model_dump(exclude_unset=True)
@@ -31,7 +31,7 @@ def update_db_event(event_id: int, event: EventUpdate, db: Session) -> EventOut:
     return EventOut(**db_event.__dict__)
 
 def delete_db_event(event_id: int, db: Session) -> EventOut:
-    db_event = get_db_event(event_id, db)
+    db_event = _get_db_event(event_id, db)
     if db_event:
         db.delete(db_event)
         db.commit()

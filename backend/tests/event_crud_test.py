@@ -4,7 +4,11 @@ from typing import Generator
 from datetime import datetime
 from db.models import DBEvent
 from db.core import Base, get_db
-from db.schemas import EventCreate, EventUpdate
+from db.schemas import (
+    EventCreate,
+    EventUpdate,
+    SpeakerCreate
+    )
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy import create_engine, StaticPool
 from crud.common import get_db_event
@@ -13,8 +17,8 @@ from crud.events import (
     update_db_event,
     delete_db_event,
     read_db_event_speakers,
-)
-
+    )
+from crud.speakers import create_db_speaker
 
 # Setup the in-memory SQLite database for testing
 DATABASE_URL = 'sqlite:///:memory:'
@@ -115,14 +119,40 @@ def test_db_update_event(session: Session) -> None:
 
 
 def test_db_delete_event(session: Session) -> None:
-    event_id = 100
+    event = create_db_event( EventCreate(title='Test Event'), session )
+    event_id = event.id
+    
     event = delete_db_event(event_id, session)
     assert event.id == event_id
     # Try to get the deleted event
     try:
         event = get_db_event(event_id, session)
     except Exception as e:
-        assert str(e) == 'Event not found'
+        assert str(e) == f'Event with id {event_id} not found'
+
+def test_db_create_speaker(session: Session) -> None:
+    speaker = create_db_speaker(SpeakerCreate(
+                                            id=1,
+                                            name='Speaker',
+                                            image_url='https://speaker.com/image.jpg',
+                                            bio='This is the speaker bio'
+                                            ),
+                                session)
+    assert speaker.id == 1
+    assert speaker.name == 'Speaker'
+    assert speaker.image_url == 'https://speaker.com/image.jpg'
+    assert speaker.bio == 'This is the speaker bio'
+
+def test_improper_db_create_event_with_speakers(session: Session) -> None:
+    speaker_ids = [1,2]
+    try:
+        event = create_db_event(
+                            EventCreate(title='Test Event 4', speaker_ids=speaker_ids),
+                            session
+                            )
+    except Exception as e:
+        assert str(e) == f"Speaker with id {speaker_ids[0]} not found"
+
 
 
 

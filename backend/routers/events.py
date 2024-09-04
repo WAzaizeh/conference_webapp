@@ -9,7 +9,7 @@ from db.schemas import (
     EventUpdate,
     SpeakerOut,
 )
-from crud.common import get_db_event
+from crud.common import get_db_event, get_all_db_events
 from crud.events import (
     create_db_event,
     update_db_event,
@@ -21,6 +21,13 @@ from crud.events import (
 router = APIRouter(
     prefix='/events',
 )
+
+
+@router.get('/')
+@limiter.limit('10/second')
+def read_events(request: Request, db: Session = Depends(get_db)) -> list[EventOut]:
+    db_events = get_all_db_events(db)
+    return db_events
 
 
 @router.post('/')

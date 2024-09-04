@@ -9,7 +9,7 @@ from db.schemas import (
     SpeakerUpdate,
     EventOut,
 )
-from crud.common import get_db_speaker
+from crud.common import get_db_speaker, get_all_db_speakers
 from crud.speakers import (
     create_db_speaker,
     update_db_speaker,
@@ -21,6 +21,13 @@ from crud.speakers import (
 router = APIRouter(
     prefix='/speakers',
 )
+
+
+@router.get('/')
+@limiter.limit('10/second')
+def read_speakers(request: Request, db: Session = Depends(get_db)) -> list[SpeakerOut]:
+    db_speakers = get_all_db_speakers(db)
+    return db_speakers
 
 
 @router.post('/')
@@ -40,7 +47,7 @@ def read_speaker(request: Request, speaker_id: int, db: Session = Depends(get_db
     return db_speaker
 
 
-@router.get('/{speaker_id}/speakers')
+@router.get('/{speaker_id}/events')
 @limiter.limit('10/second')
 def read_speaker_events(request: Request, speaker_id: int, db: Session = Depends(get_db)) -> list[EventOut]:
     try:
