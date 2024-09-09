@@ -34,9 +34,10 @@ class EventUpdate(EventBase):
     description: Optional[str] = None
     speaker_ids: Optional[List[int]] = None
 
-class Event(EventBase):
+class EventOut(EventBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    speakers: Optional[List[int]] = []
 
 class SpeakerBase(BaseModel):
     id: Optional[int] = None
@@ -50,12 +51,18 @@ class SpeakerCreate(SpeakerBase):
 class SpeakerUpdate(SpeakerBase):
     event_ids: Optional[List[int]] = None
 
-class Speaker(SpeakerBase):
+class SpeakerOut(SpeakerBase):
     model_config = ConfigDict(from_attributes=True)
     id: int
+    events: Optional[List[int]] = []
 
-class EventOut(Event):
-    speakers: Optional[List[Speaker]] = []
-
-class SpeakerOut(Speaker):
-    events: Optional[List[Event]] = []
+class PRAYER_NAME(str, Enum):
+    FAJR = 'Fajr'
+    DHUHR = 'Dhuhr'
+    ASR = 'Asr'
+    MAGHRIB = 'Maghrib'
+    ISHA = 'Isha'
+class PrayerTime(BaseModel):
+    id: Optional[int] = None
+    name: PRAYER_NAME
+    time: datetime

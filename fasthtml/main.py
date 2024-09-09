@@ -1,204 +1,155 @@
 from fasthtml.common import *
 from datetime import datetime
-from typing import List, Optional
-from pydantic import BaseModel
+from components.icons import Icon
+from db.data import SESSIONS, SPEAKERS
+from components.titled import CustomTitled
+from crud.core import get_session, get_speaker
+from components.timeline import agenda_timeline
+from db.schemas import EventOut, EVENT_CATEGORY, SpeakerOut
+from components.cards import speaker_card, brief_speaker_card, speaker_page, homepage_card
 
-app, rt = fast_app()
 
-# Models
-class Session(BaseModel):
-    id: Optional[int] = None
-    title: str
-    description: str
-    date: datetime
-    start_time: str
-    end_time: str
-    speaker: Optional[ List[int] ]
+plink = Link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css')
+tlink = (Script(src='https://unpkg.com/tailwindcss-cdn@3.4.3/tailwindcss.js'),)
+dlink = [Link(
+    rel='stylesheet',
+    href='https://cdn.jsdelivr.net/npm/daisyui@4.11.1/dist/full.min.css',),
+    Script(src='https://cdn.tailwindcss.com'),
+]
+falink = Link(
+    rel="stylesheet",
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css", 
+    integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==", 
+    crossorigin="anonymous",
+    referrerpolicy="no-referrer"
+)
+mlink = Link(
+    rel='stylesheet',
+    href='main.css',
+    type='text/css',
+)
 
-class Speaker(BaseModel):
-    id: Optional[int] = None
-    name: str
-    bio: str
-    image_url: str
-    sessions: Optional[ List[int] ]
+app = FastHTML(hdrs=[tlink, dlink, falink, mlink])
+rt = app.route
 
-# In-memory storage
-sessions = []
-speakers = []
+# CUSTOM COMPONENTS
+############
+def BottomNav():
+    return Div(
+        Button(Icon('home'), 'Home', cls='nav-item', hx_get='/' ,hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Icon('calendar'), 'Agenda', cls='nav-item', hx_get='/agenda', hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Icon('users'), 'Speakers', cls='nav-item', hx_get='/speakers', hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Icon('gear'), 'Settings', cls='nav-item', hx_get='/settings', hx_target='#page-content', hx_swap='outerHTML'),
+        cls='btm-nav'
+    )
 
-# Helper functions
-def get_session(session_id: int):
-    return next((session for session in sessions if session.id == session_id), None)
+#############
 
-def get_speaker(speaker_id: int):
-    return next((speaker for speaker in speakers if speaker.id == speaker_id), None)
+
+
+# stylesheet link routing
+@app.route('/{fname:path}.{ext:static}')
+def get(fname:str, ext:str): 
+    return FileResponse(f'./assets/{fname}.{ext}')
 
 # Routes
-@rt("/")
+@rt('/')
 def get():
-    return Titled("MAS CYP Conference 2024",
-        Div(
-            Img(src="/assets/banner.png", alt="Conference Banner"),
-            H1("MAS CYP Conference 2024"),
-            P("1818 Blake Dr, Richardson", cls="location"),
-            P("Oct 10, 2024", cls="date"),
-            Grid(
-                Card(Icon("info"), "About", href="/about", cls="menu-item"),
-                Card(Icon("clock"), "Prayer Times", href="/prayer-times", cls="menu-item"),
-                Card(Icon("question"), "FAQ", href="/faq", cls="menu-item"),
-                Card(Icon("message"), "Q&A", href="/qa", cls="menu-item"),
-                Card(Icon("clipboard"), "Feedback Survey", href="/survey", cls="menu-item"),
-                Card(Icon("heart"), "Sponsors", href="/sponsors", cls="menu-item"),
-            ),
-            BottomNav(),
-            cls="container"
-        ),
-        Style("""
-            body { font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            h1 { text-align: center; margin-bottom: 10px; }
-            .location, .date { text-align: center; margin: 5px 0; color: #666; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-            .menu-item { background-color: #fff; padding: 20px; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-            .menu-item i { font-size: 24px; margin-bottom: 10px; }
-        """)
-    )
+    return CustomTitled('MAS CYP Conference 2024',
+                Div(
+                    Div(
+                        Html(data_theme="cupcake", cls="blue-background"),
+                        Div(
+                            Img(src='banner.png', alt='Conference Banner'),
+                            H1('MAS CYP Conference 2024'),
+                            P('1818 Blake Dr, Richardson', cls='location'),
+                            P('Oct 10, 2024', cls='date'),
+                            Grid(
+                                homepage_card(icon_name='info', title='About', hx_get='/about', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='clock', title='Prayer Times', hx_get='/prayer-times', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='question', title='FAQ', hx_get='/faq', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='message', title='Q&A', hx_get='/qa', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='clipboard', title='Feedback Survey', hx_get='/feedback', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='heart', title='Sponsors', hx_get='/sponsors', hx_target='#page-content', hx_swap='outerHTML'),
+                            cls='grid card-grid'),
+                            ),
+                        cls='container mx-auto px-4',
+                        id='page-content',
+                    ),
+                    BottomNav(),
+                    cls="flex-container"
+                )
+            )
 
-@rt("/agenda")
+@rt('/agenda')
 def get():
-    return Titled("Agenda",
-        Div(
-            H1("Agenda"),
-            Div(
-                Button("9 Oct", cls="date-btn"),
-                Button("10 Oct", cls="date-btn active"),
-                Button("11 Oct", cls="date-btn"),
-                cls="date-selector"
-            ),
-            Ul(*[Li(
-                Div(f"{session.start_time} - {session.end_time}", cls="time"),
-                H3(session.title),
-                Div(f"By {session.speaker}", cls="speaker"),
-                A("View Details", href=f"/sessions/{session.id}", cls="details-link"),
-                cls="session-item"
-            ) for session in sessions], cls="session-list"),
-            BottomNav(),
-            cls="container"
-        ),
-        Style("""
-            .date-selector { display: flex; justify-content: space-between; margin-bottom: 20px; }
-            .date-btn { padding: 10px; border: none; background-color: #f0f0f0; border-radius: 5px; }
-            .date-btn.active { background-color: #007bff; color: white; }
-            .session-list { list-style-type: none; padding: 0; }
-            .session-item { background-color: white; margin-bottom: 15px; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-            .time { color: #007bff; font-weight: bold; }
-            .speaker { color: #666; margin-top: 5px; }
-            .details-link { display: inline-block; margin-top: 10px; color: #007bff; text-decoration: none; }
-        """)
-    )
+    return Div(
+                H1('Agenda', cls="text-2xl font-bold mb-6 text-center"),
+                Div(
+                    A('9 Oct', cls='tab', role="tab"),
+                    A('10 Oct', cls='tab tab-active', role="tab"),
+                    A('11 Oct', cls='tab', role="tab"),
+                    cls='tabs tabs-bordered',
+                    role="tablist"
+                ),
+                agenda_timeline(SESSIONS),
+                id='page-content',
+            )
 
-@rt("/sessions/{session_id}")
+@rt('/sessions/{session_id}')
 def get(session_id: int):
     session = get_session(session_id)
     if session:
-        speaker = get_speaker(session.speaker)
-        return Titled(session.title,
-            Div(
-                Div(
-                    Img(src=speaker.image_url, alt=speaker.name, cls="speaker-img"),
-                    H2(session.title),
-                    P(f"By {speaker.name}", cls="speaker-name"),
-                    cls="session-header"
-                ),
-                Div(
-                    Div(Icon("clock"), f"{session.start_time} - {session.end_time}", cls="session-detail"),
-                    Div(Icon("calendar"), session.date.strftime("%b %d, %Y"), cls="session-detail"),
-                    Div(Icon("map-pin"), "Room 101", cls="session-detail"),
-                    cls="session-info"
-                ),
-                H3("Description"),
-                P(session.description),
-                H3("Speaker"),
-                Div(
-                    Img(src=speaker.image_url, alt=speaker.name, cls="speaker-img-small"),
+        session_speakers = [get_speaker(speaker_id) for speaker_id in session.speakers]
+        return Div(
+                    *[speaker_card(session, speaker) for speaker in session_speakers],
                     Div(
-                        H4(speaker.name),
-                        P(speaker.bio),
-                        cls="speaker-info"
+                        Span(Icon('clock'), f'{session.start_time.strftime('%H %M')} - {session.end_time.strftime('%H %M')}', cls='session-detail'),
+                        Span(Icon('calendar'), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
+                        Span(Icon('map-pin'), 'Room 101', cls='session-detail'),
+                        cls='session-info'
                     ),
-                    cls="speaker-container"
-                ),
-                BottomNav(),
-                cls="container"
-            ),
-            Style("""
-                .session-header { text-align: center; margin-bottom: 20px; }
-                .speaker-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; }
-                .speaker-name { color: #666; }
-                .session-info { background-color: #f0f0f0; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
-                .session-detail { display: flex; align-items: center; margin-bottom: 10px; }
-                .session-detail i { margin-right: 10px; color: #007bff; }
-                .speaker-container { display: flex; align-items: start; }
-                .speaker-img-small { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
-                .speaker-info { flex: 1; }
-            """)
-        )
-    return RedirectResponse("/agenda", status_code=303)
+                    H3('Description'),
+                    P(session.description),
+                id='page-content',
+            )
+    return RedirectResponse('/agenda', status_code=303)
 
-@rt("/speakers")
+@rt('/speakers')
 def get():
-    return Titled("Speakers",
-        Div(
-            H1("Speakers"),
-            Ul(*[Li(
-                Img(src=speaker.image_url, alt=speaker.name, cls="speaker-img"),
-                Div(
-                    H3(speaker.name),
-                    A("View Profile", href=f"/speakers/{speaker.id}", cls="profile-link"),
-                    cls="speaker-info"
-                ),
-                cls="speaker-item"
-            ) for speaker in speakers], cls="speaker-list"),
-            BottomNav(),
-            cls="container"
-        ),
-        Style("""
-            .speaker-list { list-style-type: none; padding: 0; }
-            .speaker-item { display: flex; align-items: center; background-color: white; margin-bottom: 15px; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-            .speaker-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin-right: 15px; }
-            .speaker-info { flex: 1; }
-            .profile-link { color: #007bff; text-decoration: none; }
-        """)
+    return Div(
+        *[brief_speaker_card(speaker) for speaker in SPEAKERS],
+        id='page-content',
     )
 
-@rt("/speakers/{speaker_id}")
+@rt('/speakers/{speaker_id}')
 def get(speaker_id: int):
     speaker = get_speaker(speaker_id)
     if speaker:
-        return Titled(f"{speaker.name} - Profile",
-            Div(
-                Img(src=speaker.image_url, alt=speaker.name, cls="speaker-img-large"),
-                H2(speaker.name),
-                P(speaker.bio),
-                BottomNav(),
-                cls="container"
-            ),
-            Style("""
-                .speaker-img-large { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; display: block; }
-            """)
+        return Div(
+            speaker_page(speaker),
+            id='page-content',
         )
-    return RedirectResponse("/speakers", status_code=303)
+    return RedirectResponse('/speakers', status_code=303)
 
-def BottomNav():
+@rt('/about')
+def get():
     return Div(
-        A(Icon("home"), "Home", href="/", cls="nav-item"),
-        A(Icon("calendar"), "Agenda", href="/agenda", cls="nav-item"),
-        A(Icon("users"), "Speakers", href="/speakers", cls="nav-item"),
-        A(Icon("settings"), "Settings", href="/settings", cls="nav-item"),
-        cls="bottom-nav"
+        H1('About Us'),
+        P('Join us on a journey to uncover the driving forces behind the movers and shakers of our time, and discover how their transformative traits are reshaping our collective future.'),
+        P('We delve into the defining characteristics of a generation at the forefront of change.'),
+        P('GAZA Teaching Us: Change is the product of sustained efforts of movers and shakers.'),
+        P('Showcasing how young movers and shakers navigate challenges, challenge  norms, and champion progress.'),
+        P('A testament to the continuous legacy of youth-driven change and the transformative power of visionary young leadership within the Islamic tradition.'),
+        id='page-content',
     )
 
-def Icon(name):
-    return I(cls=f"fas fa-{name}")
+@rt('/prayer-times')
+def get():
+    return Div(
+        H1('Prayer Times'),
+        P('This is a conference'),
+        id='page-content',
+    )
 
 serve()
