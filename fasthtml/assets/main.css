@@ -1,15 +1,37 @@
+@import url('https://fonts.cdnfonts.com/css/inter');
+
+.material-symbols-rounded {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 300,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+body {
+    font-family: 'Inter', sans-serif !important;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    color: #012B59;
+
+}
+
 .card-grid {
     grid-template-columns: repeat(2, 1fr) !important;
     grid-template-rows: repeat(3, 1fr);
-    grid-column-gap: 2rem;
-    grid-row-gap: 1rem;
-    padding: 0 2rem;
+    grid-column-gap: 24px;
+    grid-row-gap: 24px;
+    padding: 0 24px;
+    margin-top: 30px;
 }
-.bottom-nav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    margin-top: 1rem;
+.btm-nav {
+    border-top: 0.4px rgba(0, 0, 0, 0.3);
+}
+
+.btm-nav .nav-item {
+    font-size: 10px;
+    color: #8395b5;
 }
 .teal {
     background-color: #009688;
@@ -34,7 +56,7 @@
 }
 .flex-container > *:first-child {
     flex: 1;
-    margin-bottom: 100px;
+    margin-bottom: 64px;
 }
 .flex-container> *:last-child {
     flex: 0;
@@ -51,4 +73,59 @@
 }
 .card-side {
     align-items: center;
+}
+.hero-icon {
+    margin-right: 6px;
+}
+
+.conference-info {
+    padding: 8px 42px;
+}
+
+.location-date {
+    font-size: 12px;
+    font-weight: 500;
+    color: #012B59;
+    padding: 10px;
+}
+
+.h3 {
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.logo-text {
+    font-size: 14px;
+    margin: 0;
+}
+
+.logo-text-text {
+    padding: 6px;
+}
+
+.custom-card {
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.custom-card.blue {
+    background: linear-gradient(120deg, rgba(223,244,243,1) 0%, rgba(219,236,248,1) 71%, rgba(211,227,252,1) 100%);
+}
+
+.custom-card.pink {
+    background: linear-gradient(128deg, rgba(252,231,227,1) 0%, rgba(239,229,235,1) 71%, rgba(223,223,241,1) 100%);
+
+}
+
+.custom-card.green {
+    background: linear-gradient(128deg, rgba(232,246,231,1) 0%, rgba(229,242,233,1) 71%, rgba(223,237,241,1) 100%);
+}
+
+.custom-card p {
+    font-size: 12px;
+    color: #012B59;
 }

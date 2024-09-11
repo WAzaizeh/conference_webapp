@@ -1,4 +1,4 @@
 from fasthtml.components import I
 
-def Icon(name):
-    return I(cls=f'fas fa-{name}')
+def Icon(name : str, cls : str = '', **kwargs) -> I:
+    return I(cls=f'fas fa-{name}' + (' '  + cls if cls else ''), **kwargs)

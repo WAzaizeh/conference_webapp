@@ -28,18 +28,27 @@ mlink = Link(
     href='main.css',
     type='text/css',
 )
+fontLink = Link(
+    rel='stylesheet',
+    href='https://fonts.cdnfonts.com/css/inter',
+)
+materialLink = Link(
+    rel='stylesheet',
+    href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200',
+)
 
-app = FastHTML(hdrs=[tlink, dlink, falink, mlink])
+app = FastHTML(hdrs=[tlink, dlink, falink, mlink, fontLink, materialLink])
 rt = app.route
 
 # CUSTOM COMPONENTS
 ############
 def BottomNav():
     return Div(
-        Button(Icon('home'), 'Home', cls='nav-item', hx_get='/' ,hx_target='#page-content', hx_swap='outerHTML'),
-        Button(Icon('calendar'), 'Agenda', cls='nav-item', hx_get='/agenda', hx_target='#page-content', hx_swap='outerHTML'),
-        Button(Icon('users'), 'Speakers', cls='nav-item', hx_get='/speakers', hx_target='#page-content', hx_swap='outerHTML'),
-        Button(Icon('gear'), 'Settings', cls='nav-item', hx_get='/settings', hx_target='#page-content', hx_swap='outerHTML'),
+        # <span class=>
+        Button(Span("home", cls="material-symbols-rounded"), 'Home', cls='nav-item', hx_get='/' ,hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Span("calendar_today", cls="material-symbols-rounded"), 'Agenda', cls='nav-item', hx_get='/agenda', hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Span("mic", cls="material-symbols-rounded"), 'Speakers', cls='nav-item', hx_get='/speakers', hx_target='#page-content', hx_swap='outerHTML'),
+        Button(Span("handshake", cls="material-symbols-rounded"), 'Settings', cls='nav-item', hx_get='/settings', hx_target='#page-content', hx_swap='outerHTML'),
         cls='btm-nav'
     )
 
@@ -58,22 +67,43 @@ def get():
     return CustomTitled('MAS CYP Conference 2024',
                 Div(
                     Div(
-                        Html(data_theme="cupcake", cls="blue-background"),
-                        Div(
+                        Html(data_theme="cupcake"),
+                        Div (
                             Img(src='banner.png', alt='Conference Banner'),
-                            H1('MAS CYP Conference 2024'),
-                            P('1818 Blake Dr, Richardson', cls='location'),
-                            P('Oct 10, 2024', cls='date'),
+                            Div(
+                                Div(
+                                    Img(src='mas-logo-square.png', alt='MAS Logo', cls='logo'),
+                                    Div( 
+                                        H1('2nd Annual CYP Conference', cls="h3"),
+                                        P('Mover and Shakers in Islam: Transformative Traits'),
+                                        cls="logo-text-text"  
+                                    ),
+                                    cls="card card-side logo-text"
+                                ),
+                                Div(
+                                    Span(
+                                        Img(src='location.png', alt='location icon', cls='hero-icon'),
+                                        P('1515 Blake Dr, Richardson'),
+                                        cls='flex items-center justify-between',
+                                    ),
+                                    Span(
+                                        Img(src='calendar.png', alt='calendar icon', cls='hero-icon'),
+                                        P('Oct 12, 2024'),
+                                        cls='flex items-center justify-between',
+                                    ),
+                                    cls="flex items-center justify-between location-date"
+                                ),
+                                cls="conference-info"
+                            ),
                             Grid(
-                                homepage_card(icon_name='info', title='About', hx_get='/about', hx_target='#page-content', hx_swap='outerHTML'),
-                                homepage_card(icon_name='clock', title='Prayer Times', hx_get='/prayer-times', hx_target='#page-content', hx_swap='outerHTML'),
-                                homepage_card(icon_name='question', title='FAQ', hx_get='/faq', hx_target='#page-content', hx_swap='outerHTML'),
-                                homepage_card(icon_name='message', title='Q&A', hx_get='/qa', hx_target='#page-content', hx_swap='outerHTML'),
-                                homepage_card(icon_name='clipboard', title='Feedback Survey', hx_get='/feedback', hx_target='#page-content', hx_swap='outerHTML'),
-                                homepage_card(icon_name='heart', title='Sponsors', hx_get='/sponsors', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='about.svg', title='About', card_color="blue", hx_get='/about', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='prayer.svg', title='Prayer Times', card_color="green", hx_get='/prayer-times', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='chat.svg', title='Q&A', card_color="pink", hx_get='/qa', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='survey.svg', title='Feedback Survey', card_color="pink", hx_get='/feedback', hx_target='#page-content', hx_swap='outerHTML'),
+                                homepage_card(icon_name='registration.svg', title='Registration', card_color="blue", hx_get='/', hx_target='#page-content', hx_swap='outerHTML'),
                             cls='grid card-grid'),
                             ),
-                        cls='container mx-auto px-4',
+                        cls='container mx-auto px-0',
                         id='page-content',
                     ),
                     BottomNav(),
@@ -94,6 +124,7 @@ def get():
                 ),
                 agenda_timeline(SESSIONS),
                 id='page-content',
+                cls="blue-background"
             )
 
 @rt('/sessions/{session_id}')
@@ -151,5 +182,35 @@ def get():
         P('This is a conference'),
         id='page-content',
     )
+
+@rt('/admin_login') 
+def get():
+    return Div(
+                H1('Admin Login'),
+                Form(
+                    Label(
+                        Icon('user', cls='h-4 w-4 opacity-70'),
+                        Input(placeholder='Username', type='text', cls='grow'),
+                        cls='input input-bordered flex items-center gap-2',
+                        ),
+                    Label(
+                        Icon('key', cls='h-4 w-4 opacity-70'),
+                        Input(placeholder='Password', type='password', cls='grow'),
+                        cls='input input-bordered flex items-center gap-2',
+                        ),
+                    Button('Login', cls='btn btn-primary'),
+                    
+                    cls='form-control',
+                    hx_get='/admin_dashboard',
+                    hx_target='#page-content',
+                    hx_swap='outerHTML',
+                ),
+                id='page-content',
+                # title='MAS CYP Conference 2024'
+            )
+
+@rt('/admin_dashboard')
+def get():
+    return Div('Admin Dashboard Functionalities to go here', id='page-content')
 
 serve()

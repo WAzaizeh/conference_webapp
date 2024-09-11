@@ -3,53 +3,50 @@ from db.schemas import SpeakerOut, EventOut
 from fasthtml.components import Div, Span, Figure, Img, H2, P, Button
 
 
-def homepage_card(icon_name : str, title: str, **kwargs):
+def homepage_card(icon_name : str, title: str, card_color: str, **kwargs):
     return Div(
-                Span(
-                    Icon(icon_name),
-                    title,
-                    cls='white-text'
-                    ),
-                cls='card-panel teal full-card',
+                P(title),
+                Img(src=icon_name),
+                cls='card-panel full-card gray custom-card ' + card_color,
                 **kwargs
             )
 
 def speaker_card(event: EventOut, speaker : SpeakerOut):
     return Div(
-       Figure(Img(src=speaker.image_url, alt=speaker.name)),
-       Div(
-            H2(event.title),
-            P(f'By {speaker.name}'),
-            P(speaker.bio),
-       ),
-       hx_target='#page-content',
-       hx_get=f'/speakers/{speaker.id}',
-       hx_swap='outerHTML',
-       cls='card card-side bg-base-100 shadow-xl',
-    )
+                Figure(Img(src=speaker.image_url, alt=speaker.name)),
+                Div(
+                    H2(event.title),
+                    P(f'By {speaker.name}'),
+                    P(speaker.bio),
+                ),
+                hx_target='#page-content',
+                hx_get=f'/speakers/{speaker.id}',
+                hx_swap='outerHTML',
+                cls='card card-side bg-base-100 shadow-xl',
+            )
 
 
 def brief_speaker_card(speaker: SpeakerOut):
     return Div(
-        Figure(
-                Img(src=speaker.image_url, alt=speaker.name),
-                style={'width':'55vw'}
-               ),
-        Div(
-            H2(speaker.name),
-            Button(Icon('chevron-right')),
-            cls='speaker-name',
-            style={'display': 'flex',
-                'justify-content': 'space-between',
-                'align-items':'center',
-                'width':'100%',
-                'padding':'0 1rem'}
-        ),
-        hx_target='#page-content',
-        hx_get=f'/speakers/{speaker.id}',
-        hx_swap='outerHTML',
-        cls='card card-side bg-base-100 shadow-xl',
-    )
+            Figure(
+                    Img(src=speaker.image_url, alt=speaker.name),
+                    style={'width':'55vw'}
+                ),
+            Div(
+                H2(speaker.name),
+                Button(Icon('chevron-right')),
+                cls='speaker-name',
+                style={'display': 'flex',
+                    'justify-content': 'space-between',
+                    'align-items':'center',
+                    'width':'100%',
+                    'padding':'0 1rem'}
+            ),
+            hx_target='#page-content',
+            hx_get=f'/speakers/{speaker.id}',
+            hx_swap='outerHTML',
+            cls='card card-side bg-base-100 shadow-xl',
+        )
 
 
 def speaker_page(speaker: SpeakerOut):
