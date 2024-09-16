@@ -1,12 +1,11 @@
 from fasthtml.common import *
 from datetime import datetime
 from components.icons import Icon
-from db.data import SESSIONS, SPEAKERS
 from components.titled import CustomTitled
 from crud.core import get_session, get_speaker
 from components.timeline import agenda_timeline
-from db.schemas import EventOut, EVENT_CATEGORY, SpeakerOut
-from components.cards import speaker_card, brief_speaker_card, speaker_page, homepage_card
+from db.data import SESSIONS, SPEAKERS, PRAYER_TIMES
+from components.cards import speaker_card, brief_speaker_card, speaker_page, homepage_card, prayer_times_page
 
 
 plink = Link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css')
@@ -115,13 +114,7 @@ def get():
 def get():
     return Div(
                 H1('Agenda', cls="text-2xl font-bold mb-6 text-center"),
-                Div(
-                    A('9 Oct', cls='tab', role="tab"),
-                    A('10 Oct', cls='tab tab-active', role="tab"),
-                    A('11 Oct', cls='tab', role="tab"),
-                    cls='tabs tabs-bordered',
-                    role="tablist"
-                ),
+                H1('Saturday 12th October', cls="text-xl mb-6 text-center"),
                 agenda_timeline(SESSIONS),
                 id='page-content',
                 cls="blue-background"
@@ -166,22 +159,28 @@ def get(speaker_id: int):
 @rt('/about')
 def get():
     return Div(
-        H1('About Us'),
-        P('Join us on a journey to uncover the driving forces behind the movers and shakers of our time, and discover how their transformative traits are reshaping our collective future.'),
-        P('We delve into the defining characteristics of a generation at the forefront of change.'),
-        P('GAZA Teaching Us: Change is the product of sustained efforts of movers and shakers.'),
-        P('Showcasing how young movers and shakers navigate challenges, challenge  norms, and champion progress.'),
-        P('A testament to the continuous legacy of youth-driven change and the transformative power of visionary young leadership within the Islamic tradition.'),
+        H1('About'),
+        Img(src='banner.png', alt='Conference Banner'),
+        Div(
+            H2('Description'),
+            P('Join us on a journey to uncover the driving forces behind the movers and shakers of our time, and discover how their transformative traits are reshaping our collective future.'),
+            P('We delve into the defining characteristics of a generation at the forefront of change.'),
+            P('GAZA Teaching Us: Change is the product of sustained efforts of movers and shakers.'),
+            P('Showcasing how young movers and shakers navigate challenges, challenge  norms, and champion progress.'),
+            P('A testament to the continuous legacy of youth-driven change and the transformative power of visionary young leadership within the Islamic tradition.'),
+            ),
         id='page-content',
+        cls='container mx-auto p-8',
     )
 
 @rt('/prayer-times')
 def get():
     return Div(
-        H1('Prayer Times'),
-        P('This is a conference'),
-        id='page-content',
-    )
+                H1('Prayer Times', cls="text-2xl font-bold mb-6 text-center text-black"),
+                H1('Saturday 12th October', cls="text-xl mb-6 text-center text-black"),
+                prayer_times_page(PRAYER_TIMES),
+                id='page-content',
+            )
 
 @rt('/admin_login') 
 def get():

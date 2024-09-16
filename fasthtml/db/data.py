@@ -30,10 +30,10 @@ SESSIONS = [
             ]
 
 PRAYER_TIMES = [
-            PrayerTime(id=1, name=PRAYER_NAME.DHUHR, time=datetime(2024, 10, 12, 14, 00)),
-            PrayerTime(id=2, name=PRAYER_NAME.ASR, time=datetime(2024, 10, 12, 17, 30)),
-            PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, time=datetime(2024, 10, 12, 19, 10)),
-            PrayerTime(id=4, name=PRAYER_NAME.ISHA, time=datetime(2024, 10, 12, 21, 00)),
+            PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00 p.m.', time='1:14 p.m.'),
+            PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='5:30 p.m.', time='4:29 p.m.'),
+            PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:10 p.m.', time='6:57 p.m.'),
+            # PrayerTime(id=4, name=PRAYER_NAME.ISHA, iqama='9:00 p.m.'),
             ]
 
 SPEAKERS = [

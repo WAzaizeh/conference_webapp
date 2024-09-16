@@ -62,7 +62,9 @@ class PRAYER_NAME(str, Enum):
     ASR = 'Asr'
     MAGHRIB = 'Maghrib'
     ISHA = 'Isha'
-class PrayerTime(BaseModel):
-    id: Optional[int] = None
+class Prayer(BaseModel):
     name: PRAYER_NAME
-    time: datetime
+    time: str
+
+class PrayerTime(Prayer):
+    iqama: str
