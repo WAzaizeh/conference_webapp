@@ -30,9 +30,9 @@ SESSIONS = [
             ]
 
 PRAYER_TIMES = [
-            PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00 p.m.', time='1:14 p.m.'),
-            PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='5:30 p.m.', time='4:29 p.m.'),
-            PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:10 p.m.', time='6:57 p.m.'),
+            PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00  p.m.', time='1:14  p.m.'),
+            PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='5:30  p.m.', time='4:29  p.m.'),
+            PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:10 p.m.', time='6:57  p.m.'),
             # PrayerTime(id=4, name=PRAYER_NAME.ISHA, iqama='9:00 p.m.'),
             ]
 
@@ -52,7 +52,7 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
             
             SpeakerOut(id=4, name='Dr. Eaman Attia',
                        image_url='speaker_08976.jpg',
-                       bio='Bio of Dr. Eaman Attia'),
+                       bio='''Dr Eaman Attia is a graduate of the Faculty of Pharmacy, University of Toronto. Over the past 25 years her passion has been and continues to be mentoring and inspiring lifelong growth and transformations in Muslim youth and community members. She has served many communities as an inspirational speaker, youth director, mentor, and teacher. She has served as the MAS National Tarbiya Director, and currently serves as the local MAS Dallas Tarbiya Director. She resides in Dallas, TX with her husband and five children'''),
             
             SpeakerOut(id=5, name='Ustadh Sami Hamdi ',
                        image_url='speaker_89773.jpeg',

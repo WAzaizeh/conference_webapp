@@ -1,0 +1,8 @@
+# environment files
+*.env
+
+# ssl certificates
+certs/
+
+# single page routing logic
+single_page_routing/

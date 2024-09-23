@@ -1,24 +1,30 @@
-from .icons import Icon
+from .icon import Icon
 from typing import List
 from db.schemas import SpeakerOut, EventOut, PrayerTime
 from fasthtml.components import Div, Span, Figure, Img, H2, P, Button, A, Hr
 
 
-def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> Div:
-    return Div(
+def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
+    return A(
                 P(title),
                 Img(src=icon_name),
                 cls='card-panel full-card gray custom-card ' + card_color,
                 **kwargs
             )
 
-def speaker_card(event: EventOut, speaker : SpeakerOut) -> Div:
+def speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
     return Div(
                 Figure(Img(src=speaker.image_url, alt=speaker.name)),
                 Div(
-                    H2(event.title),
+                    H2(session.title),
                     P(f'By {speaker.name}'),
-                    P(speaker.bio),
+                    Div(
+                        Span(Icon('clock'), f'{session.start_time.strftime('%H %M')} - {session.end_time.strftime('%H %M')}', cls='session-detail'),
+                        Span(Icon('calendar'), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
+                        Span(Icon('map-pin'), 'Room 101', cls='session-detail'),
+                        cls="card-actions"
+                    ),
+                    cls='card-body'
                 ),
                 hx_target='#page-content',
                 hx_get=f'/speakers/{speaker.id}',
@@ -78,12 +84,14 @@ def prayer_time_card(prayer : PrayerTime) -> Div:
             Div(
                 A('Iqama'),
                 A(prayer.iqama),
-                cls='flex items-center justify-between',
+                cls='flex items-center justify-between text-primary',
                 ),
-            Hr(cls='bg-black h-1'),
+            Hr(cls='bg-secondary h-1 my-8'),
+            cls='prayer-card'
         )
 
 def prayer_times_page(prayers: List[PrayerTime]) -> Div:
     return Div(
             *[prayer_time_card(prayer) for prayer in prayers],
+            cls='p-8'
         )

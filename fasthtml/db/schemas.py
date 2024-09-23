@@ -62,9 +62,20 @@ class PRAYER_NAME(str, Enum):
     ASR = 'Asr'
     MAGHRIB = 'Maghrib'
     ISHA = 'Isha'
+
 class Prayer(BaseModel):
     name: PRAYER_NAME
     time: str
 
 class PrayerTime(Prayer):
     iqama: str
+
+class SponsorBase(BaseModel):
+    id: Optional[int] = None
+    name: str
+    image_url: Optional[str] = None
+    description: Optional[str] = None
+    website: Optional[str] = None
+    facebook: Optional[str] = None
+    instagram: Optional[str] = None
+    twitter: Optional[str] = None
