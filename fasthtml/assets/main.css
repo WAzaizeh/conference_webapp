@@ -42,13 +42,13 @@
     width: 100%;
 }
 
-.speaker-card {
+.speaker-card, .sponsor-card {
     padding: 12px;
     box-shadow: 0px 4px 30px 0px rgba(42, 47, 99, 0.12);
     border-radius: 8px;
 }
 
-.speaker-card .speaker-btn {
+.speaker-card .speaker-btn , .sponsor-card .sponsor-btn {
     color: rgba(178, 210, 245, 1);
 
 }
@@ -56,6 +56,12 @@
 .speaker-card .figure {
     width: 75px;
     border-radius: 50%;
+}
+
+.sponsor-card .figure {
+    max-width: 100px;
+    height: 100px;
+    background: aliceblue;
 }
 
 .speaker-detail-view figure {
@@ -71,6 +77,17 @@
     margin-top: -100px;
     padding: 116px 24px;
     text-align: center;
+}
+
+.sponsor-detail-view {
+    height: 179px;
+}
+
+.sponsor-detail-view figure {
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    overflow: hidden;
 }
 
 .h-20-vh {
@@ -148,7 +165,7 @@ body {
 .card{
     margin: 1rem 1rem;
 }
-.card .speaker-name{
+.card .speaker-name, .card .sponsor-name {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -225,4 +242,8 @@ body {
 
 .h-70-vh {
     height: 70vh;
+}
+
+.bg-aliceblue {
+    background-color: aliceblue;
 }

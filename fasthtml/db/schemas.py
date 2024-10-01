@@ -79,3 +79,7 @@ class SponsorBase(BaseModel):
     facebook: Optional[str] = None
     instagram: Optional[str] = None
     twitter: Optional[str] = None
+
+class SponsorOut(SponsorBase):
+    model_config = ConfigDict(from_attributes=True)
+    id: int

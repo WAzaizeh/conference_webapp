@@ -1,10 +1,13 @@
+import pandas as pd
 from datetime import datetime
+from .schemas import EventOut, EVENT_CATEGORY
 from .schemas import (
     EventOut,
     SpeakerOut,
     EVENT_CATEGORY,
     PrayerTime,
     PRAYER_NAME,
+    SponsorOut,
 )
 
 SESSIONS = [
@@ -29,12 +32,30 @@ SESSIONS = [
             EventOut(id=19, title='Break [Isha Prayer]', description='', start_time=datetime(2024, 10, 12, 21, 00), end_time=datetime(2024, 10, 12, 21, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
             ]
 
+# Read the CSV file
+df = pd.read_pickle('db/updated_sessions.pkl')
+
+# Convert the DataFrame to a list of EventOut objects
+SESSIONS = []
+for index, row in df.iterrows():
+    event = EventOut(
+        id=row['id'],
+        title=row['title'],
+        description=row['description'],
+        start_time=datetime.strptime(row['start_time'], '%Y-%m-%d %H:%M:%S'),
+        end_time=datetime.strptime(row['end_time'], '%Y-%m-%d %H:%M:%S'),
+        location=row['location'],
+        category=EVENT_CATEGORY.MAIN,
+        speakers=[int(speaker_id) for speaker_id in row['speaker_id']] if len(row['speaker_id'])>0 else []
+    )
+    SESSIONS.append(event)
+
 PRAYER_TIMES = [
-            PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00  p.m.', time='1:14  p.m.'),
-            PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='5:30  p.m.', time='4:29  p.m.'),
-            PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:10 p.m.', time='6:57  p.m.'),
-            # PrayerTime(id=4, name=PRAYER_NAME.ISHA, iqama='9:00 p.m.'),
-            ]
+    PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00 p.m.', time='1:14 p.m.'),
+    PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='6:00 p.m.', time='4:29 p.m.'),
+    PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:40 p.m.', time='6:57 p.m.'),
+    PrayerTime(id=4, name=PRAYER_NAME.ISHA, iqama='9:45 p.m.', time='8:06 p.m.'),
+]
 
 SPEAKERS = [
             SpeakerOut(id=1, name='Dr. Yasir Qadhi',
@@ -68,15 +89,30 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
             ]
 
 SPONSORS = [
-            SpeakerOut(id=1, name='Islamic Relief USA',
+            SponsorOut(id=1, name='Islamic Relief USA',
                        image_url='https://charity.org/wp-content/uploads/2022/09/IslamicReliefUSA-1536x864.png.webp',
-                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
-            SpeakerOut(id=2, name='Baitulmaal',
+                       description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
+                       website='https://irusa.org/',
+                       facebook='https://www.facebook.com/IslamicReliefUSA',
+                       instagram='https://www.instagram.com/islamicreliefusa/',
+                       twitter='https://twitter.com/IslamicRelief',
+                       ),
+            SponsorOut(id=2, name='Baitulmaal',
                        image_url='https://baitulmaal.org/wp-content/uploads/2019/03/baitulmaal-black-website.png',
-                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
-            SpeakerOut(id=2, name='Mercy Without Limits',
+                       description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
+                       website='https://baitulmaal.org/',
+                       facebook='https://www.facebook.com/baitulmaal/',
+                       instagram='https://www.instagram.com/baitulmaal_usa/',
+                       twitter='https://twitter.com/baitulmaal',
+                       ),
+            SponsorOut(id=3, name='Mercy Without Limits',
                        image_url='https://cdn-200e7.kxcdn.com/wp-content/uploads/2023/02/logo.svg',
-                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
+                       description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
+                       website='https://mwlimits.org/',
+                       facebook='https://www.facebook.com/mwlimits',
+                       instagram='https://www.instagram.com/mwlimits/',
+                       twitter='https://twitter.com/mwlimits',
+                       ),
             
             
             ]
