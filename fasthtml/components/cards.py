@@ -1,7 +1,8 @@
 from .icon import Icon
 from typing import List
 from db.schemas import SpeakerOut, EventOut, PrayerTime
-from fasthtml.components import Div, Span, Figure, Img, H2, P, Button, A, Hr
+from components.navigation import BackButton
+from fasthtml.components import Div, Span, Figure, Img, H2, H1, P, Button, A, Hr
 
 
 def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
@@ -37,11 +38,11 @@ def brief_speaker_card(speaker: SpeakerOut) -> Div:
     return Div(
             Figure(
                     Img(src=speaker.image_url, alt=speaker.name),
-                    style={'width':'55vw'}
+                    cls="figure"
                 ),
             Div(
                 H2(speaker.name),
-                Button(Icon('chevron-right')),
+                Button(Icon('chevron-circle-right speaker-btn')),
                 cls='speaker-name',
                 style={'display': 'flex',
                     'justify-content': 'space-between',
@@ -52,33 +53,37 @@ def brief_speaker_card(speaker: SpeakerOut) -> Div:
             hx_target='#page-content',
             hx_get=f'/speakers/{speaker.id}',
             hx_swap='outerHTML',
-            cls='card card-side bg-base-100 shadow-xl',
+            cls='card speaker-card card-side bg-base-100 shadow-xl',
         )
 
 
 def speaker_page(speaker: SpeakerOut) -> Div:
     return Div(
+            Div(
+                BackButton(),
+                H1('Speaker Profile', cls='flex-1 text-black font-medium text-center text-base'),
+                cls='flex justify-center items-center p-4',
+            ),
             Figure(
                 Img(
                     src=speaker.image_url,
                     alt=speaker.name,
                     cls="rounded-xl"
                 ),
-                cls="px-10 pt-10"
             ),
             Div(
-                H2(speaker.name, cls="card-title"),
+                H2(speaker.name, cls="text-lg mb-2"),
                 P(speaker.bio),
-                cls="card-body items-center text-center"
+                cls="speaker-detail-body"
             ),
-            cls="card bg-base-100 w-96 shadow-xl"
+            cls="speaker-detail-view blue-background"
         )
 
 def prayer_time_card(prayer : PrayerTime) -> Div:
     return Div(
             Div(
-                A(prayer.name),
-                A(prayer.time),
+                P(prayer.name),
+                P(prayer.time),
                 cls='flex items-center justify-between',
                 ),
             Div(
@@ -86,12 +91,10 @@ def prayer_time_card(prayer : PrayerTime) -> Div:
                 A(prayer.iqama),
                 cls='flex items-center justify-between text-primary',
                 ),
-            Hr(cls='bg-secondary h-1 my-8'),
             cls='prayer-card'
         )
 
 def prayer_times_page(prayers: List[PrayerTime]) -> Div:
     return Div(
             *[prayer_time_card(prayer) for prayer in prayers],
-            cls='p-8'
         )

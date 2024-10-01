@@ -14,7 +14,7 @@ def BottomNav() -> Div:
 
 def BackButton(**kwargs) -> Button:
     return Button(
-        Icon('arrow-left'),
-        cls='btn btn-ghost fixed left-0' + kwargs.get('cls', ''),
+        Icon('chevron-left'),
+        cls='btn btn-ghost' + kwargs.get('cls', ''),
         onclick='goBack()'
         )

@@ -17,9 +17,9 @@ def SpeakerCardBody(speaker_ids: List[int]) -> List:
     speaker = get_speaker(speaker_ids[0]) if speaker_ids else None
     if speaker:
         return [
-            Hr(cls='bg-secondary'),
+            Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
             Div(
-                AvatarCircle(speaker.image_url, speaker.name, cls='mr-1'),
+                AvatarCircle(speaker.image_url, speaker.name, cls='mr-4'),
                 H4(f'By {speaker.name}'),
                 cls='flex flex-row items-center justify-start',
                 ),
@@ -33,9 +33,9 @@ def SpeakerCardBody(speaker_ids: List[int]) -> List:
 def agenda_timeline(events: List[EventOut]):
     return Ul(
         *[Li(
-            Hr(cls='bg-primary'),
+            Hr(cls='bg-primary') if i > 0 else None,
             Div(
-                Span(f'{event.start_time.time().strftime("%H:%M")}', cls='text-sm text-primary'),
+                Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-sm text-primary'),
                 cls='timeline-start'
             ),
             Div(
@@ -45,9 +45,9 @@ def agenda_timeline(events: List[EventOut]):
             ),
             Div(
                 Div(
-                    H3(event.title), 
+                    H3(event.title, cls='text-base'), 
                     *SpeakerCardBody(event.speakers),
-                    cls="timeline-box w-80-vw h-20-vh flex flex-col justify-evenly"
+                    cls="timeline-box p-4 flex flex-col justify-evenly"
                 ),
                 hx_target='#page-content',
                 hx_get=f'/sessions/{event.id}',
@@ -56,6 +56,6 @@ def agenda_timeline(events: List[EventOut]):
             hx_target='#page-content',
             hx_get=f'/sessions/{event.id}',
 
-        ) for event in events],
+        ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )

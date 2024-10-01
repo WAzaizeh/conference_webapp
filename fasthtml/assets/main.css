@@ -6,6 +6,10 @@
     --fallback-s: var(--secondary-color);
 }
 
+.ghost-btm-nav {
+    height: 4rem;
+}
+
 .text-primary {
     color: var(--primary-color);
 }
@@ -14,8 +18,59 @@
     background-color: var(--primary-color);
 }
 
+.prayer-card {
+    border-bottom: 0.75px solid rgba(197, 197, 197, 1);
+    padding: 32px 0;
+    margin: 0 32px;
+    display: grid;
+    grid-gap: 8px;
+}
+
 .timeline-box .bg-secondary, .prayer-card .bg-secondary {
     background-color: var(--secondary-color);
+}
+
+.timeline-middle {
+    font-size: 12px;
+}
+
+.timeline>li>hr {
+    border-width: 1px;
+}
+
+.timeline-vertical .timeline-end {
+    width: 100%;
+}
+
+.speaker-card {
+    padding: 12px;
+    box-shadow: 0px 4px 30px 0px rgba(42, 47, 99, 0.12);
+    border-radius: 8px;
+}
+
+.speaker-card .speaker-btn {
+    color: rgba(178, 210, 245, 1);
+
+}
+
+.speaker-card .figure {
+    width: 75px;
+    border-radius: 50%;
+}
+
+.speaker-detail-view figure {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    margin: auto;
+    overflow: hidden;
+}
+
+.speaker-detail-view .speaker-detail-body {
+    background-color: #ffffff;
+    margin-top: -100px;
+    padding: 116px 24px;
+    text-align: center;
 }
 
 .h-20-vh {
@@ -71,6 +126,12 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
 }
+
+.white-background {
+    background-color: #ffffff;
+    border-bottom: 0.33px solid rgba(0, 0, 0, 0.3);
+}
+
 .flex-container {
     height: 100vh;
     display: flex;
@@ -78,7 +139,8 @@ body {
 }
 .flex-container > *:first-child {
     flex: 1;
-    margin-bottom: 64px;
+    overflow-y: scroll;
+    padding-bottom: 40px;
 }
 .flex-container> *:last-child {
     flex: 0;
@@ -101,14 +163,15 @@ body {
 }
 
 .conference-info {
-    padding: 8px 42px;
+    padding: 12px 42px;
+    display: grid;
+    grid-gap: 10px;
 }
 
 .location-date {
     font-size: 12px;
     font-weight: 500;
     color: #012B59;
-    padding: 10px;
 }
 
 .h3 {

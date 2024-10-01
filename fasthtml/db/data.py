@@ -66,3 +66,17 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
                        image_url='speaker_55263.jpg',
                        bio='''Mohamed AbuTaleb serves as Dean of Administration and Professor at the Boston Islamic Seminary and Senior Fellow at the Yaqeen Institute for Islamic Research. He transitioned from a successful career in technology at a Fortune 100 company to serve the community full-time at the helm of one of the largest Islamic centers in the South, serving as Imam, Religious Director, and Member of the Board for seven years. Dr. AbuTaleb has been featured in media coverage from outlets including National Geographic, NPR, ABC11, Religion News Service, and WRAL; and lectured in many universities including Harvard, MIT, Columbia, Duke, and Georgia Tech. Mohamed pursued seminary training through the Cambridge Islamic College and Al-Salam Institute in the United Kingdom, and completed his Ph.D. and Master’s degrees in electrical engineering from MIT along with degrees in physics and mathematics from the University of Maryland.'''),
             ]
+
+SPONSORS = [
+            SpeakerOut(id=1, name='Islamic Relief USA',
+                       image_url='https://charity.org/wp-content/uploads/2022/09/IslamicReliefUSA-1536x864.png.webp',
+                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
+            SpeakerOut(id=2, name='Baitulmaal',
+                       image_url='https://baitulmaal.org/wp-content/uploads/2019/03/baitulmaal-black-website.png',
+                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
+            SpeakerOut(id=2, name='Mercy Without Limits',
+                       image_url='https://cdn-200e7.kxcdn.com/wp-content/uploads/2023/02/logo.svg',
+                       bio='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.'''),
+            
+            
+            ]

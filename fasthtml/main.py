@@ -5,7 +5,7 @@ from components.page import AppContainer
 from components.navigation import BackButton
 from crud.core import get_session, get_speaker
 from components.timeline import agenda_timeline
-from db.data import SESSIONS, SPEAKERS, PRAYER_TIMES
+from db.data import SESSIONS, SPEAKERS, PRAYER_TIMES, SPONSORS
 from components.cards import (
     speaker_card,
     brief_speaker_card,
@@ -101,7 +101,10 @@ def get():
 def get():
     return AppContainer(
             Div(
-                H1('Agenda', cls='text-gray-800 text-center p-8'),
+                Div(
+                H1('Agenda', cls='flex-1 text-black font-medium text-center text-base'),
+                    cls='flex justify-center items-center p-4',
+                ),
                 H1('Saturday 12th October', cls='text-center'),
                 agenda_timeline(SESSIONS),
                 id='page-content',
@@ -133,7 +136,10 @@ def get(session_id: int):
 def get():
     return AppContainer(
             Div(
-            H1('Speakers', cls='text-black text-center p-4'),
+                Div(
+                    H1('Speakers', cls='flex-1 text-black font-medium text-center text-base'),
+                    cls='flex justify-center items-center p-4',
+                ),
             *[brief_speaker_card(speaker) for speaker in SPEAKERS],
             cls='blue-background',
             id='page-content',
@@ -182,13 +188,13 @@ def get():
             Div(
                 Div(
                     BackButton(),
-                    H1('Prayer Times', cls='text-black text-center'),
+                    H1('Prayer Times', cls='flex-1 text-black font-medium text-center text-base'),
                     cls='flex justify-center items-center p-4',
                     ),
-                H1('Saturday 12th October', cls='text-primary text-center p-4'),
+                H1('Saturday 12th October', cls='text-black font-medium text-center text-sm'),
                 prayer_times_page(PRAYER_TIMES),
                 id='page-content',
-                cls='blue-background'
+                cls='white-background'
                 )
             )
 
@@ -196,12 +202,15 @@ def get():
 def get():
     return AppContainer(
             Div(
-                H1('Sponsors', cls='text-black text-center p-4'),
-                H2('Coming soon...'),
-                id='page-content',
-                cls='blue-background'
-                )
-            )
+                Div(
+                    H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
+                    cls='flex justify-center items-center p-4',
+                ),
+            *[brief_speaker_card(speaker) for speaker in SPONSORS],
+            cls='blue-background',
+            id='page-content',
+        ),
+    )
 
 @rt('/qa')
 def get():
@@ -229,7 +238,7 @@ def get():
 def get():
     return AppContainer(
             Div(
-                H1('Sponsors', cls='text-black text-center p-4'),
+                H1('Registration', cls='text-black text-center p-4'),
                 H2('Get your tickets here!', cls='text-center text-primary p-4'),
                 A(
                     'Buy tickets',
