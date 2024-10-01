@@ -3,15 +3,17 @@ from dotenv import load_dotenv
 from components.icon import Icon
 from components.page import AppContainer
 from components.navigation import BackButton
-from crud.core import get_session, get_speaker
 from components.timeline import agenda_timeline
+from crud.core import get_session, get_speaker, get_sponsor
 from db.data import SESSIONS, SPEAKERS, PRAYER_TIMES, SPONSORS
 from components.cards import (
     speaker_card,
     brief_speaker_card,
     speaker_page,
     homepage_card,
-    prayer_times_page
+    prayer_times_page,
+    brief_sponsor_card,
+    sponsor_page
 )
 
 
@@ -206,17 +208,29 @@ def get():
                     H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
                     cls='flex justify-center items-center p-4',
                 ),
-            *[brief_speaker_card(speaker) for speaker in SPONSORS],
+            *[brief_sponsor_card(sponsor) for sponsor in SPONSORS],
             cls='blue-background',
             id='page-content',
         ),
     )
 
+@rt('/sponsors/{sponsor_id}')
+def get(sponsor_id: int):
+    speaker = get_sponsor(sponsor_id)
+    if speaker:
+        return AppContainer(
+            Div(
+            sponsor_page(speaker),
+            id='page-content',
+            )
+        )
+    return RedirectResponse('/sponsors', status_code=303)
+
 @rt('/qa')
 def get():
     return AppContainer(
             Div(
-                H1('Sponsors', cls='text-black text-center p-4'),
+                H1('Q&A', cls='text-black text-center p-4'),
                 H2('Coming soon...'),
                 id='page-content',
                 cls='blue-background'
@@ -227,7 +241,7 @@ def get():
 def get():
     return AppContainer(
             Div(
-                H1('Sponsors', cls='text-black text-center p-4'),
+                H1('Feedback Survey', cls='text-black text-center p-4'),
                 H2('Coming soon...'),
                 id='page-content',
                 cls='blue-background'
