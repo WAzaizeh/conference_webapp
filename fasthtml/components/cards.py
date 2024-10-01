@@ -20,7 +20,7 @@ def speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
                     H2(session.title),
                     P(f'By {speaker.name}'),
                     Div(
-                        Span(Icon('clock'), f'{session.start_time.strftime('%H %M')} - {session.end_time.strftime('%H %M')}', cls='session-detail'),
+                        Span(Icon('clock'), f"{session.start_time.strftime('%H %M')} - {session.end_time.strftime('%H %M')}", cls='session-detail'),
                         Span(Icon('calendar'), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
                         Span(Icon('map-pin'), 'Room 101', cls='session-detail'),
                         cls='card-actions'
