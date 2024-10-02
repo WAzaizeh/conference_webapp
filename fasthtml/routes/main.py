@@ -73,7 +73,6 @@ def get_main_routes(rt):
                     cls='p-8',
                     ),
                 id='page-content',
-                cls='container',
             )
         )
 
