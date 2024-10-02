@@ -14,8 +14,8 @@ def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
                 **kwargs
             )
 
-def brief_speaker_card(speaker: SpeakerOut) -> Div:
-    return Div(
+def brief_speaker_card(speaker: SpeakerOut) -> A:
+    return A(
             Figure(
                     Img(src=f'/{speaker.image_url}', alt=speaker.name),
                     cls='figure'
@@ -30,10 +30,8 @@ def brief_speaker_card(speaker: SpeakerOut) -> Div:
                     'width':'100%',
                     'padding':'0 1rem'}
             ),
-            hx_target='#page-content',
-            hx_get=f'/speakers/{speaker.id}',
-            hx_swap='outerHTML',
             cls='card speaker-card card-side bg-base-100 shadow-xl',
+            href=f'/speaker/{speaker.id}',
         )
 
 
@@ -148,7 +146,14 @@ def session_speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
                     ),
                     Div(
                         H2(session.title, cls='text-base mb-1'),
-                        P(f'By {speaker.name}', cls='text-sm'),
+                        Div(
+                            P(f'By {speaker.name}', cls='text-sm'),
+                            A(
+                                Icon('chevron-circle-right', cls='color-light-blue'),
+                                href=f'/speaker/{speaker.id}',
+                            ),
+                            cls='flex items-center justify-between',
+                            ),
                     ),
                     cls='flex items-center card card-side session-card',
                 ),
