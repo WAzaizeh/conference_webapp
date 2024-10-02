@@ -108,7 +108,7 @@ def sponsor_page(sponsor: SponsorOut) -> Div:
             ),
             Figure(
                 Img(
-                        src=f'/{sponsor.image_url}',
+                        src=f'{sponsor.image_url}',
                         alt=sponsor.name,
                         cls='rounded'
                     ),
