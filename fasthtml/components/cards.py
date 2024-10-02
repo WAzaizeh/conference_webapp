@@ -142,7 +142,7 @@ def session_speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
                         Img(src=f'/{speaker.image_url}', alt=speaker.name),
                         cls='figure',
                         ),
-                        href=f'/speakers/{speaker.id}',
+                        href=f'/speaker/{speaker.id}',
                     ),
                     Div(
                         H2(session.title, cls='text-base mb-1'),
