@@ -24,7 +24,7 @@ def get_session_routes(rt):
                 ),
             )
 
-    @rt('/sessions/{session_id}')
+    @rt('/session/{session_id}')
     def get(session_id: int):
         session = get_session(session_id)
         if session:
