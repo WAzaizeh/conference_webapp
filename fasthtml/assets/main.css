@@ -6,10 +6,6 @@
     --fallback-s: var(--secondary-color);
 }
 
-.ghost-btm-nav {
-    height: 4rem;
-}
-
 .text-primary {
     color: var(--primary-color);
 }
@@ -70,6 +66,18 @@
     height: 200px;
     margin: auto;
     overflow: hidden;
+    background-color: aliceblue;
+}
+
+.session-detail-view figure {
+    width: 110px;
+    border-radius: 50%;
+    margin-right: 24px;
+}
+
+.session-detail-view .session-card {
+    color: rgba(57, 57, 60, 1);
+
 }
 
 .speaker-detail-view .speaker-detail-body {
@@ -77,17 +85,17 @@
     margin-top: -100px;
     padding: 116px 24px;
     text-align: center;
-}
-
-.sponsor-detail-view {
-    height: 179px;
+    color: rgba(57, 57, 60, 1);
 }
 
 .sponsor-detail-view figure {
-    width: 200px;
-    height: 200px;
+    width: 156px;
     margin: auto;
     overflow: hidden;
+}
+
+.sponsor-social-links a {
+    margin-right: 16px;
 }
 
 .h-20-vh {
@@ -113,7 +121,7 @@ body {
 
 .card-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
     grid-column-gap: 24px;
     grid-row-gap: 24px;
     padding: 0 24px;
@@ -157,8 +165,9 @@ body {
 .flex-container > *:first-child {
     flex: 1;
     overflow-y: scroll;
-    padding-bottom: 40px;
+    padding-bottom: 64px;
 }
+
 .flex-container> *:last-child {
     flex: 0;
 }

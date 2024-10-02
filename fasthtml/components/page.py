@@ -7,7 +7,6 @@ def AppContainer(content: Div) -> Div:
                 Html(data_theme='cupcake'),
                 Div(
                     content,
-                    Div(cls="ghost-btm-nav"),
                     BottomNav(),
                     cls='flex-container'
                 )

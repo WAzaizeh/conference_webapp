@@ -8,7 +8,7 @@ def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
     return Div(
             Div(
                 Img(src=src, alt=alt, cls='avatar circle'),
-                cls='w-14 rounded-full'
+                cls='w-10 rounded-full'
                 ),
             cls='avatar' + ' ' + kwargs.get('cls', '')
             )
@@ -20,7 +20,7 @@ def SpeakerCardBody(speaker_ids: List[int]) -> List:
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
             Div(
                 AvatarCircle(f'/{speaker.image_url}', speaker.name, cls='mr-4'),
-                H4(f'By {speaker.name}'),
+                H4(f'By {speaker.name}', cls='text-xs'),
                 cls='flex flex-row items-center justify-start',
                 ),
             ]
@@ -46,13 +46,13 @@ def agenda_timeline(events: List[EventOut]):
             Div(
                 A(
                     Div(
-                        H3(event.title, cls='text-base'), 
+                        H3(event.title, cls='text-sm'), 
                         *SpeakerCardBody(event.speakers),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
                     href=f'/sessions/{event.id}',
                 ),
-                cls='timeline-end'),
+                cls='timeline-end ml-4'),
             Hr(cls='bg-primary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    

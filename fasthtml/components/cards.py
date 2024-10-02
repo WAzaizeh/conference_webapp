@@ -6,33 +6,13 @@ from fasthtml.components import Div, Span, Figure, Img, H2, H1, P, Button, A, Hr
 
 
 def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
+    custom_cls = kwargs.pop('cls', '')  # Remove 'cls' from kwargs if present
     return A(
                 P(title),
                 Img(src=icon_name),
-                cls='card-panel full-card gray custom-card ' + card_color,
+                cls=f'card-panel gray custom-card {card_color} {custom_cls}',
                 **kwargs
             )
-
-def speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
-    return Div(
-                Figure(Img(src=f'/{speaker.image_url}', alt=speaker.name)),
-                Div(
-                    H2(session.title),
-                    P(f'By {speaker.name}'),
-                    Div(
-                        Span(Icon('clock'), f"{session.start_time.strftime('%H %M')} - {session.end_time.strftime('%H %M')}", cls='session-detail'),
-                        Span(Icon('calendar'), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
-                        Span(Icon('map-pin'), 'Room 101', cls='session-detail'),
-                        cls='card-actions'
-                    ),
-                    cls='card-body'
-                ),
-                hx_target='#page-content',
-                hx_get=f'/speakers/{speaker.id}',
-                hx_swap='outerHTML',
-                cls='card card-side bg-base-100 shadow-xl',
-            )
-
 
 def brief_speaker_card(speaker: SpeakerOut) -> Div:
     return Div(
@@ -72,8 +52,8 @@ def speaker_page(speaker: SpeakerOut) -> Div:
                 ),
             ),
             Div(
-                H2(speaker.name, cls='text-lg mb-2'),
-                P(speaker.bio),
+                H2(speaker.name, cls='text-base mb-2'),
+                P(speaker.bio, cls='text-sm'),
                 cls='speaker-detail-body'
             ),
             cls='speaker-detail-view blue-background'
@@ -130,27 +110,49 @@ def sponsor_page(sponsor: SponsorOut) -> Div:
             ),
             Figure(
                 Img(
-                    src=sponsor.image_url,
-                    alt=sponsor.name,
-                    cls='rounded h-full'
-                ),
-                cls='bg-aliceblue'
-            ),
-            Div(
-                H2(sponsor.name, cls='text-lg mb-2'),
-                P(sponsor.description),
-                cls='sponsor-detail-body flex flex-col justify-center items-center p-6'
-            ),
-            Div(
-                Span('Links and Socials', cls='sponsor-social-title'),
-                Div(
-                    A(Icon('globe'), href=sponsor.website),
-                    A(BrandIcon('facebook-f'), href=sponsor.facebook),
-                    A(BrandIcon('twitter'), href=sponsor.twitter),
-                    A(BrandIcon('instagram'), href=sponsor.instagram),
-                    cls='sponsor-social-links flex justify-around items-center'
+                        src=sponsor.image_url,
+                        alt=sponsor.name,
+                        cls='rounded'
                     ),
-                cls='sponsor-social-container flex flex-col justify-around items-center p-4'
+                cls='flex'
             ),
-            cls='sponsor-detail-view blue-background'
+            Div(
+                    H2(sponsor.name, cls='text-base mb-2 font-medium'),
+                    P(sponsor.description, cls='text-sm'),
+                    Div(
+                        P('Links and Socials', cls='text-sm mb-4 font-medium sponsor-social-title'),
+                        Div(
+                            A(Icon('link'), href=sponsor.website),
+                            A(BrandIcon('facebook-f'), href=sponsor.facebook),
+                            A(BrandIcon('twitter'), href=sponsor.twitter),
+                            A(BrandIcon('instagram'), href=sponsor.instagram),
+                            cls='sponsor-social-links flex items-center'
+                        ),
+                        cls='sponsor-social-container mt-10 text-left'
+                    ),
+                    cls='speaker-detail-body'
+                ),
+            
+            cls='speaker-detail-view blue-background'
         )
+
+def session_speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
+    return Div(
+                Div(
+                    Figure(
+                        Img(src=f'/{speaker.image_url}', alt=speaker.name),
+                        cls='figure',
+                    ),
+                    Div(
+                        H2(session.title, cls='text-base mb-1'),
+                        P(f'By {speaker.name}', cls='text-sm'),
+                    ),
+                    cls='flex items-center card card-side session-card',
+                ),
+                Div(
+                    Span(Icon('clock', solid=False), f"{session.start_time.strftime('%H:%M')} - {session.end_time.strftime('%H:%M')}", cls='session-detail'),
+                    Span(Icon('calendar', solid=False), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
+                    cls='flex items-center text-xs p-4 justify-between',
+                ),
+                cls='p-4 session-detail-view'
+            )
