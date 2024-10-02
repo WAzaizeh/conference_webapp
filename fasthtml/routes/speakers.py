@@ -20,7 +20,7 @@ def get_speaker_routes(rt):
             ),
         )
 
-    @rt('/speakers/{speaker_id}')
+    @rt('/speaker/{speaker_id}')
     def get(speaker_id: int):
         speaker = get_speaker(speaker_id)
         if speaker:
