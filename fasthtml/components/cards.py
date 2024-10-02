@@ -17,7 +17,7 @@ def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
 def brief_speaker_card(speaker: SpeakerOut) -> Div:
     return Div(
             Figure(
-                    Img(src=speaker.image_url, alt=speaker.name),
+                    Img(src=f'/{speaker.image_url}', alt=speaker.name),
                     cls='figure'
                 ),
             Div(
@@ -46,7 +46,7 @@ def speaker_page(speaker: SpeakerOut) -> Div:
             ),
             Figure(
                 Img(
-                    src=speaker.image_url,
+                    src=f'/{speaker.image_url}',
                     alt=speaker.name,
                     cls='rounded-xl'
                 ),
@@ -82,7 +82,7 @@ def prayer_times_page(prayers: List[PrayerTime]) -> Div:
 def brief_sponsor_card(sponsor: SponsorOut) -> Div:
     return Div(
             Figure(
-                    Img(src=sponsor.image_url, alt=sponsor.name),
+                    Img(src=f'/{sponsor.image_url}', alt=sponsor.name),
                     cls='figure'
                 ),
             Div(
@@ -110,7 +110,7 @@ def sponsor_page(sponsor: SponsorOut) -> Div:
             ),
             Figure(
                 Img(
-                        src=sponsor.image_url,
+                        src=f'/{sponsor.image_url}',
                         alt=sponsor.name,
                         cls='rounded'
                     ),
@@ -139,9 +139,12 @@ def sponsor_page(sponsor: SponsorOut) -> Div:
 def session_speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
     return Div(
                 Div(
-                    Figure(
+                    A(
+                        Figure(
                         Img(src=f'/{speaker.image_url}', alt=speaker.name),
                         cls='figure',
+                        ),
+                        href=f'/speakers/{speaker.id}',
                     ),
                     Div(
                         H2(session.title, cls='text-base mb-1'),
