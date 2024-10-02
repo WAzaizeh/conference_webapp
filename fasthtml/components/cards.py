@@ -15,7 +15,7 @@ def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
 
 def speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
     return Div(
-                Figure(Img(src=speaker.image_url, alt=speaker.name)),
+                Figure(Img(src=f'/{speaker.image_url}', alt=speaker.name)),
                 Div(
                     H2(session.title),
                     P(f'By {speaker.name}'),

@@ -2,7 +2,7 @@ from .icon import Icon
 from typing import List
 from db.schemas import EventOut
 from crud.core import get_speaker
-from fasthtml.components import Ul, Li, Div, Hr, H3, P, H4, Img, I, Span
+from fasthtml.components import Ul, Li, Div, Hr, H3, A, H4, Img, I, Span
 
 def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
     return Div(
@@ -19,7 +19,7 @@ def SpeakerCardBody(speaker_ids: List[int]) -> List:
         return [
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
             Div(
-                AvatarCircle(speaker.image_url, speaker.name, cls='mr-4'),
+                AvatarCircle(f'/{speaker.image_url}', speaker.name, cls='mr-4'),
                 H4(f'By {speaker.name}'),
                 cls='flex flex-row items-center justify-start',
                 ),
@@ -44,18 +44,16 @@ def agenda_timeline(events: List[EventOut]):
                 cls='timeline-middle'
             ),
             Div(
-                Div(
-                    H3(event.title, cls='text-base'), 
-                    *SpeakerCardBody(event.speakers),
-                    cls="timeline-box p-4 flex flex-col justify-evenly"
+                A(
+                    Div(
+                        H3(event.title, cls='text-base'), 
+                        *SpeakerCardBody(event.speakers),
+                        cls="timeline-box p-4 flex flex-col justify-evenly"
+                    ),
+                    href=f'/sessions/{event.id}',
                 ),
-                hx_target='#page-content',
-                hx_get=f'/sessions/{event.id}',
                 cls='timeline-end'),
             Hr(cls='bg-primary'),
-            hx_target='#page-content',
-            hx_get=f'/sessions/{event.id}',
-
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )
