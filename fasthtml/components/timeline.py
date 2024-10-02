@@ -50,7 +50,7 @@ def agenda_timeline(events: List[EventOut]):
                         *SpeakerCardBody(event.speakers),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
-                    href=f'/session/{event.id}',
+                    href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
             Hr(cls='bg-primary'),
