@@ -80,7 +80,7 @@ def prayer_times_page(prayers: List[PrayerTime]) -> Div:
 def brief_sponsor_card(sponsor: SponsorOut) -> Div:
     return Div(
             Figure(
-                    Img(src=f'/{sponsor.image_url}', alt=sponsor.name),
+                    Img(src=f'{sponsor.image_url}', alt=sponsor.name),
                     cls='figure'
                 ),
             Div(
