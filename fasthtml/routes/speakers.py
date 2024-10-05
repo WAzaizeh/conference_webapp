@@ -21,7 +21,7 @@ def get_speaker_routes(rt):
             active_button_index=3
         )
 
-    @rt('/speaker/{speaker_id}')
+    @rt('/speakers/{speaker_id}')
     def get(speaker_id: int):
         speaker = get_speaker(speaker_id)
         if speaker:

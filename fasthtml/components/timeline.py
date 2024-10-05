@@ -35,7 +35,7 @@ def agenda_timeline(events: List[EventOut]):
         *[Li(
             Hr(cls='bg-primary') if i > 0 else None,
             Div(
-                Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-sm text-primary'),
+                Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-xs text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(

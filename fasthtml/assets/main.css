@@ -58,7 +58,7 @@
 .sponsor-card .figure {
     max-width: 100px;
     height: 100px;
-    background: aliceblue;
+    background: var(--fallback-b1);
 }
 
 .speaker-detail-view figure {
@@ -89,10 +89,20 @@
     color: rgba(57, 57, 60, 1);
 }
 
+.sponsor-detail-view .sponsor-detail-body {
+    background-color: var(--fallback-b1);
+    margin-top: -100px;
+    padding: 116px 24px;
+    text-align: center;
+    color: rgba(57, 57, 60, 1);
+}
+
 .sponsor-detail-view figure {
-    width: 156px;
+    width: 200px;
+    height: 200px;
     margin: auto;
     overflow: hidden;
+    background-color: aliceblue;
 }
 
 .sponsor-social-links a {
@@ -174,17 +184,16 @@ main.container {
 
 .hero-image {
     background: url(banner.png);
-    height: 53vh;
     background-size: contain;
-    background-position: center;
+    background-position: top;
     width: 100%;
     background-repeat: no-repeat;
+    aspect-ratio: 1.73;
 }
 
 #page-content {
     flex: 1;
     overflow-y: scroll;
-    padding-bottom: 24px;
     max-width: 100%;
 }
 
@@ -213,6 +222,23 @@ main.container {
 
 .home-page-content {
     margin-top: 0;
+}
+
+.about-list {
+    list-style: disc;
+    margin: unset;
+    padding: unset;
+    padding-inline-start: 24px;
+}
+
+.timeline>li>hr {
+    border-width: 1px;
+    width: 1px;
+    border-color: var(--primary-color);
+}
+
+.top-nav-title {
+    margin-left: -40px;
 }
 
 .location-date {
