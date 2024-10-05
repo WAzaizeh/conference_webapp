@@ -18,6 +18,7 @@ def get_sponsor_routes(rt):
                 cls='blue-background',
                 id='page-content',
             ),
+            active_button_index=4
         )
 
     @rt('/sponsors/{sponsor_id}')

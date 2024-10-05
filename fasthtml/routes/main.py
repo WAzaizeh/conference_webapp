@@ -11,7 +11,7 @@ def get_main_routes(rt):
         return AppContainer(
                     Div(
                         Div (
-                            Img(src='banner.png', alt='Conference Banner'),
+                            Div(alt='Conference Banner', cls='hero-image'),
                             Div(
                                 Div(
                                     Img(src='mas-logo-square.png', alt='MAS Logo', cls='logo'),
@@ -42,7 +42,7 @@ def get_main_routes(rt):
                                 homepage_card(icon_name='prayer.svg', title='Prayer Times', card_color='green', href='/prayer-times', cls='full-card'),
                                 homepage_card(icon_name='chat.svg', title='Q&A', card_color='pink', href='/qa', cls='full-card'),
                                 homepage_card(icon_name='survey.svg', title='Feedback Survey', card_color='pink', href='/feedback-survey', cls='full-card'),
-                            cls='grid card-grid mb-7'),
+                            cls='grid card-grid mb-7 home-page-content'),
                             homepage_card(
                                 icon_name='registration.svg', title='Registration', card_color='blue', href='/registration',
                                 cls='mx-6 mt-4'
@@ -51,6 +51,7 @@ def get_main_routes(rt):
                         cls='container mx-auto',
                         id='page-content',
                     ),
+                    active_button_index=1
                 )
     
     @rt('/about')

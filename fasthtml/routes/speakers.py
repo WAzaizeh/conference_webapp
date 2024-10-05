@@ -18,6 +18,7 @@ def get_speaker_routes(rt):
                 cls='blue-background',
                 id='page-content',
             ),
+            active_button_index=3
         )
 
     @rt('/speaker/{speaker_id}')

@@ -3,6 +3,7 @@
 :root {
     --primary-color: #004EA3;
     --secondary-color: #C7C7CC;
+    --fallback-b1: rgba(255, 255, 255, 1);
     --fallback-s: var(--secondary-color);
 }
 
@@ -81,7 +82,7 @@
 }
 
 .speaker-detail-view .speaker-detail-body {
-    background-color: #ffffff;
+    background-color: var(--fallback-b1);
     margin-top: -100px;
     padding: 116px 24px;
     text-align: center;
@@ -128,6 +129,8 @@ body {
     margin-top: 30px;
 }
 .btm-nav {
+    flex: 0;
+    position: relative;
     border-top: 0.4px rgba(0, 0, 0, 0.3);
 }
 
@@ -135,6 +138,11 @@ body {
     font-size: 10px;
     color: #8395b5;
 }
+
+.btm-nav .nav-item:hover, .btm-nav .nav-item.active {
+    color: rgba(0, 78, 163, 1);
+}
+
 .teal {
     background-color: #009688;
     color: white;
@@ -153,24 +161,33 @@ body {
 }
 
 .white-background {
-    background-color: #ffffff;
+    background-color: var(--fallback-b1);
     border-bottom: 0.33px solid rgba(0, 0, 0, 0.3);
 }
 
-.flex-container {
-    height: 100vh;
+main.container {
     display: flex;
     flex-direction: column;
-}
-.flex-container > *:first-child {
-    flex: 1;
-    overflow-y: scroll;
-    padding-bottom: 64px;
+    height: 100vh;
+    max-width: 100%;
 }
 
-.flex-container> *:last-child {
-    flex: 0;
+.hero-image {
+    background: url(banner.png);
+    height: 53vh;
+    background-size: contain;
+    background-position: center;
+    width: 100%;
+    background-repeat: no-repeat;
 }
+
+#page-content {
+    flex: 1;
+    overflow-y: scroll;
+    padding-bottom: 24px;
+    max-width: 100%;
+}
+
 .card{
     margin: 1rem 1rem;
 }
@@ -189,9 +206,13 @@ body {
 }
 
 .conference-info {
-    padding: 12px 42px;
+    padding: 12px 42px 24px 42px;
     display: grid;
     grid-gap: 10px;
+}
+
+.home-page-content {
+    margin-top: 0;
 }
 
 .location-date {

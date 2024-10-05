@@ -22,6 +22,7 @@ def get_session_routes(rt):
                     id='page-content',
                     cls='blue-background'
                 ),
+                active_button_index=2
             )
 
     @rt('/session/{session_id}')
