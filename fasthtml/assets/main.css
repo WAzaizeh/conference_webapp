@@ -11,6 +11,10 @@
     color: var(--primary-color);
 }
 
+.text-secondary {
+    color: var(--secondary-color);
+}
+
 .bg-primary {
     background-color: var(--primary-color);
 }
@@ -102,7 +106,6 @@
     height: 200px;
     margin: auto;
     overflow: hidden;
-    background-color: aliceblue;
 }
 
 .sponsor-social-links a {
@@ -234,7 +237,7 @@ main.container {
 .timeline>li>hr {
     border-width: 1px;
     width: 1px;
-    border-color: var(--primary-color);
+    /* border-color: var(--primary-color); */
 }
 
 .top-nav-title {
@@ -306,4 +309,12 @@ main.container {
 
 .color-light-blue {
     color: #A5C7F3;
+}
+
+.border-primary {
+    border-color: var(--primary-color);
+}
+
+.border-secondary {
+    border-color: var(--secondary-color);
 }
