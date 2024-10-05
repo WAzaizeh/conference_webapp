@@ -1,7 +1,8 @@
 from db.data import PRAYER_TIMES
+from components.navigation import TopNav
 from components.page import AppContainer
 from components.cards import homepage_card
-from components.navigation import TopNav
+from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
 from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li
 
@@ -116,20 +117,21 @@ def get_main_routes(rt):
 
     @rt('/registration')
     def get():
-        return AppContainer(
-                Div(
-                    TopNav('Registration'),
-                    Div(
-                        H2('Get your tickets here!', cls='text-center text-primary p-4'),
-                        A(
-                            'Buy tickets',
-                            href='https://buytickets.at/mascyp/1359890',
-                            title='Buy tickets for Muslim American Society - CYP',  
-                            cls='btn bg-primary text-white flex justify-center',
-                        ),
-                        cls='flex flex-col justify-center items-center',
-                    ),
-                    id='page-content',
-                    cls='blue-background flex flex-col'
-                    )
-                )
+        return RedirectResponse('https://buytickets.at/mascyp/1359890')
+        # return AppContainer(
+        #         Div(
+        #             TopNav('Registration'),
+        #             Div(
+        #                 H2('Get your tickets here!', cls='text-center text-primary p-4'),
+        #                 A(
+        #                     'Buy tickets',
+        #                     href='https://buytickets.at/mascyp/1359890',
+        #                     title='Buy tickets for Muslim American Society - CYP',  
+        #                     cls='btn bg-primary text-white flex justify-center',
+        #                 ),
+        #                 cls='flex flex-col justify-center items-center',
+        #             ),
+        #             id='page-content',
+        #             cls='blue-background flex flex-col'
+        #             )
+        #         )
