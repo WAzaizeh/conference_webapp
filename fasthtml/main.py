@@ -22,7 +22,7 @@ falink = Link(
 )
 mlink = Link(
     rel='stylesheet',
-    href='/main.css',
+    href='/main_v2.css',
     type='text/css',
 )
 fontLink = Link(
@@ -33,7 +33,7 @@ materialLink = Link(
     rel='stylesheet',
     href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200',
 )
-back_button_js = Script(src='/back_button.js')
+back_button_js = Script(src='/back_button_v2.js')
 
 app = FastHTML(hdrs=[tlink, dlink, falink, mlink, fontLink, materialLink, back_button_js])
 rt = app.route

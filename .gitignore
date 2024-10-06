@@ -13,3 +13,7 @@ single_page_routing/
 
 # jupyter notebooks used to manipulate data
 *.ipynb
+
+# vscode settings
+.vscode
+.vscode/*
