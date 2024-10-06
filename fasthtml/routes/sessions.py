@@ -5,7 +5,7 @@ from components.navigation import TopNav
 from fasthtml.common import RedirectResponse
 from crud.core import get_session, get_speaker
 from fasthtml.components import H1, H3, Div, P
-from components.timeline import agenda_timeline
+from components.timeline import agenda_timeline, agenda_timeline_2
 
 
 def get_session_routes(rt):
@@ -19,6 +19,22 @@ def get_session_routes(rt):
                     ),
                     H1('Saturday 12th October', cls='text-center font-medium text-base'),
                     agenda_timeline(SESSIONS),
+                    id='page-content',
+                    cls='blue-background'
+                ),
+                active_button_index=2
+            )
+    
+    @rt('/agenda_2')
+    def get():
+        return AppContainer(
+                Div(
+                    Div(
+                    H1('Agenda', cls='flex-1 text-black font-medium text-center text-base'),
+                        cls='flex justify-center items-center p-4',
+                    ),
+                    H1('Testing progress timeline', cls='text-center font-medium text-base'),
+                    agenda_timeline_2(SESSIONS),
                     id='page-content',
                     cls='blue-background'
                 ),
