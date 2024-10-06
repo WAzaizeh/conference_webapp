@@ -186,12 +186,18 @@ main.container {
 }
 
 .hero-image {
-    background: url(banner.png);
+    background: url(banner_2.png);
     background-size: contain;
     background-position: top;
     width: 100%;
     background-repeat: no-repeat;
-    aspect-ratio: 1.73;
+    aspect-ratio: 1.6;
+}
+
+.hero-image.cropped{
+    aspect-ratio: 2.2;
+    background-size: cover;
+    background-position: center;
 }
 
 #page-content {

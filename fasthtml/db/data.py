@@ -113,6 +113,13 @@ SPONSORS = [
                        instagram='https://www.instagram.com/mwlimits/',
                        twitter='https://twitter.com/mwlimits',
                        ),
-            
-            
+            SponsorOut(id=4, name='United Mission for Relief & Development',
+                       image_url='/sponsor_4.png',
+                       description='''United Mission for Relief & Development (UMR) is a registered 501(c)(3) nonprofit organization focused on providing disaster relief and recovery services to the underserved both domestically in the U.S. and internationally across the globe.
+                       We hope you'll join us in our efforts to make a significant impact in the lives of millions around the world.''',
+                       website='https://www.umrelief.org/',
+                       facebook='https://www.facebook.com/umrelief/',
+                       instagram='https://www.instagram.com/umrelief/',
+                       twitter='https://twitter.com/umrelief',
+                       ),
             ]
