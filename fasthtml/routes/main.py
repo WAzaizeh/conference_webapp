@@ -95,14 +95,15 @@ def get_main_routes(rt):
     
     @rt('/qa')
     def get():
-        return AppContainer(
-                Div(
-                    TopNav('Q&A'),
-                    H2('Coming soon...'),
-                    id='page-content',
-                    cls='blue-background'
-                    )
-                )
+        return RedirectResponse('https://app.sli.do/event/cRE7CEK9iN7cR8Rg2UFZMk')
+        # return AppContainer(
+        #         Div(
+        #             TopNav('Q&A'),
+        #             H2('Coming soon...'),
+        #             id='page-content',
+        #             cls='blue-background'
+        #             )
+        #         )
 
     @rt('/feedback-survey')
     def get():
