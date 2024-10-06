@@ -62,7 +62,7 @@ SPEAKERS = [
                        image_url='speaker_98079.jpg',
                        bio='''Dr. Yasir Qadhi joined East Plano Islamic Center as a resident scholar in July 2019. He completed his primary and secondary education in Jeddah, Saudi Arabia. He graduated with a B.Sc. in Chemical Engineering from the University of Houston, after which he was accepted as a student at the Islamic University of Madinah. There, he completed a second Bachelors degree, specializing in Hadith studies, and then went on to complete M.A. in in Islamic Theology from the College of Dawah. He then returned to the United States, and completed a PhD in Religious Studies from Yale University.'''),
             
-            SpeakerOut(id=2, name='Dr. Haifa Younis',
+            SpeakerOut(id=2, name='Dr. Haifaa Younis',
                        image_url='speaker_13467.jpg',
                        bio='''Dr. Haifaa Younis is an American Board Certified Obstetrician and Gynecologist, and the founder and Chairman of Jannah Institute. She teaches seminars on the thematic commentary of various chapters of the Holy Qur’an and their practical relevance in our day-to-day living. She also offers retreats on key topics that combine the inner essence of Islam with an outward expression of practice. Dr. Haifaa graduated from the Mecca Institute of Islamic Studies in Jeddah, Saudi Arabia and completed memorizing the Qur'an at Al-Huda Qur’an Memorization School in Jeddah. She is passionate about spreading the word of Allah (swt) and igniting the love of Islam and the Qur’an through her teachings.'''),
             
