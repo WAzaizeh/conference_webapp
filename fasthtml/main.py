@@ -7,7 +7,6 @@ from routes.speakers import get_speaker_routes
 from routes.sponsors import get_sponsor_routes
 
 
-plink = Link(rel='stylesheet', href='https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css')
 tlink = (Script(src='https://unpkg.com/tailwindcss-cdn@3.4.3/tailwindcss.js'),)
 dlink = [Link(
     rel='stylesheet',
@@ -34,7 +33,7 @@ materialLink = Link(
     rel='stylesheet',
     href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200',
 )
-back_button_js = Script('function goBack() { window.history.back(); }')
+back_button_js = Script(src='/back_button.js')
 
 app = FastHTML(hdrs=[tlink, dlink, falink, mlink, fontLink, materialLink, back_button_js])
 rt = app.route

@@ -35,13 +35,12 @@ def SpeakerCardBody(speaker_ids: List[int]) -> List:
 def agenda_timeline(events: List[EventOut]):
     return Ul(
         *[Li(
-            Hr(cls='border-primary') if i > 0 else None,
             Div(
                 Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-xs text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(
-                Icon('circle', cls='text-primary'),
+                Icon('circle', cls='text-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'text-primary'),
                 
                 cls='timeline-middle'
             ),
@@ -55,13 +54,12 @@ def agenda_timeline(events: List[EventOut]):
                     href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
-            Hr(cls='border-primary'),
+            Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'border-primary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )
 
 def agenda_timeline_2(events: List[EventOut]):
-    print(datetime.now(ZoneInfo('America/Chicago')).hour)
     return Ul(
         *[Li(
             Div(
@@ -69,7 +67,7 @@ def agenda_timeline_2(events: List[EventOut]):
                 cls='timeline-start'
             ),
             Div(
-                Icon('circle', cls='text-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.start_time.hour else 'text-secondary'),
+                Icon('circle', cls='text-secondary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'text-primary'),
                 
                 cls='timeline-middle'
             ),
@@ -83,7 +81,7 @@ def agenda_timeline_2(events: List[EventOut]):
                     href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
-            Hr(cls='border-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.start_time.hour else 'border-secondary'),
+            Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'border-primary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )

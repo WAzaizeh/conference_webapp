@@ -1,4 +1,5 @@
 import pandas as pd
+from zoneinfo import ZoneInfo
 from datetime import datetime
 from .schemas import EventOut, EVENT_CATEGORY
 from .schemas import (
@@ -10,27 +11,27 @@ from .schemas import (
     SponsorOut,
 )
 
-SESSIONS = [
-            EventOut(id=1, title='Quran Recitation & Welcome', description='', start_time=datetime(2024, 10, 12, 10, 00), end_time=datetime(2024, 10, 12, 10, 15), location='room 1', category=EVENT_CATEGORY.MAIN),
-            EventOut(id=2, title='Talk#1', description='', start_time=datetime(2024, 10, 12, 10, 15), end_time=datetime(2024, 10, 12, 11, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[4]),
-            EventOut(id=3, title='Talk#2', description='', start_time=datetime(2024, 10, 12, 11, 00), end_time=datetime(2024, 10, 12, 11, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[5]),
-            EventOut(id=4, title='Trivia Break & Prizes', description='', start_time=datetime(2024, 10, 12, 11, 45), end_time=datetime(2024, 10, 12, 12, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=5, title='Talk#3', description='', start_time=datetime(2024, 10, 12, 12, 00), end_time=datetime(2024, 10, 12, 12, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[7]),
-            EventOut(id=6, title='Youth Lightning Talk-1', description='', start_time=datetime(2024, 10, 12, 12, 45), end_time=datetime(2024, 10, 12, 13, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=7, title='Break [Lunch & Dhuhr Prayer]', description='', start_time=datetime(2024, 10, 12, 13, 00), end_time=datetime(2024, 10, 12, 14, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=8, title='Trivia Break & Prizes Sponsor Presentation #1', description='', start_time=datetime(2024, 10, 12, 14, 30), end_time=datetime(2024, 10, 12, 14, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=9, title='Talk#4', description='', start_time=datetime(2024, 10, 12, 14, 45), end_time=datetime(2024, 10, 12, 15, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[2]),
-            EventOut(id=10, title='Talk#5', description='', start_time=datetime(2024, 10, 12, 15, 30), end_time=datetime(2024, 10, 12, 16, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[6]),
-            EventOut(id=11, title='Youth Lightning Talk-2', description='', start_time=datetime(2024, 10, 12, 16, 15), end_time=datetime(2024, 10, 12, 16, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=12, title='Talk#6', description='', start_time=datetime(2024, 10, 12, 16, 30), end_time=datetime(2024, 10, 12, 17, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=13, title='Break [Snacks & Asr Prayer]', description='', start_time=datetime(2024, 10, 12, 17, 15), end_time=datetime(2024, 10, 12, 18, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=14, title='Talk#7', description='', start_time=datetime(2024, 10, 12, 18, 00), end_time=datetime(2024, 10, 12, 18, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[3]),
-            EventOut(id=15, title='Sponsor Presentation#2', description='', start_time=datetime(2024, 10, 12, 18, 45), end_time=datetime(2024, 10, 12, 18, 55), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=16, title='Break [Maghreb Prayer]', description='', start_time=datetime(2024, 10, 12, 18, 55), end_time=datetime(2024, 10, 12, 19, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            EventOut(id=17, title='Talk#8', description='', start_time=datetime(2024, 10, 12, 19, 30), end_time=datetime(2024, 10, 12, 20, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[7]),
-            EventOut(id=18, title='Talk#9 & Conclusion', description='', start_time=datetime(2024, 10, 12, 20, 15), end_time=datetime(2024, 10, 12, 21, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[2]),
-            EventOut(id=19, title='Break [Isha Prayer]', description='', start_time=datetime(2024, 10, 12, 21, 00), end_time=datetime(2024, 10, 12, 21, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
-            ]
+# SESSIONS = [
+#             EventOut(id=1, title='Quran Recitation & Welcome', description='', start_time=datetime(2024, 10, 12, 10, 00), end_time=datetime(2024, 10, 12, 10, 15), location='room 1', category=EVENT_CATEGORY.MAIN),
+#             EventOut(id=2, title='Talk#1', description='', start_time=datetime(2024, 10, 12, 10, 15), end_time=datetime(2024, 10, 12, 11, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[4]),
+#             EventOut(id=3, title='Talk#2', description='', start_time=datetime(2024, 10, 12, 11, 00), end_time=datetime(2024, 10, 12, 11, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[5]),
+#             EventOut(id=4, title='Trivia Break & Prizes', description='', start_time=datetime(2024, 10, 12, 11, 45), end_time=datetime(2024, 10, 12, 12, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=5, title='Talk#3', description='', start_time=datetime(2024, 10, 12, 12, 00), end_time=datetime(2024, 10, 12, 12, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[7]),
+#             EventOut(id=6, title='Youth Lightning Talk-1', description='', start_time=datetime(2024, 10, 12, 12, 45), end_time=datetime(2024, 10, 12, 13, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=7, title='Break [Lunch & Dhuhr Prayer]', description='', start_time=datetime(2024, 10, 12, 13, 00), end_time=datetime(2024, 10, 12, 14, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=8, title='Trivia Break & Prizes Sponsor Presentation #1', description='', start_time=datetime(2024, 10, 12, 14, 30), end_time=datetime(2024, 10, 12, 14, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=9, title='Talk#4', description='', start_time=datetime(2024, 10, 12, 14, 45), end_time=datetime(2024, 10, 12, 15, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[2]),
+#             EventOut(id=10, title='Talk#5', description='', start_time=datetime(2024, 10, 12, 15, 30), end_time=datetime(2024, 10, 12, 16, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[6]),
+#             EventOut(id=11, title='Youth Lightning Talk-2', description='', start_time=datetime(2024, 10, 12, 16, 15), end_time=datetime(2024, 10, 12, 16, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=12, title='Talk#6', description='', start_time=datetime(2024, 10, 12, 16, 30), end_time=datetime(2024, 10, 12, 17, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=13, title='Break [Snacks & Asr Prayer]', description='', start_time=datetime(2024, 10, 12, 17, 15), end_time=datetime(2024, 10, 12, 18, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=14, title='Talk#7', description='', start_time=datetime(2024, 10, 12, 18, 00), end_time=datetime(2024, 10, 12, 18, 45), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[3]),
+#             EventOut(id=15, title='Sponsor Presentation#2', description='', start_time=datetime(2024, 10, 12, 18, 45), end_time=datetime(2024, 10, 12, 18, 55), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=16, title='Break [Maghreb Prayer]', description='', start_time=datetime(2024, 10, 12, 18, 55), end_time=datetime(2024, 10, 12, 19, 30), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             EventOut(id=17, title='Talk#8', description='', start_time=datetime(2024, 10, 12, 19, 30), end_time=datetime(2024, 10, 12, 20, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[7]),
+#             EventOut(id=18, title='Talk#9 & Conclusion', description='', start_time=datetime(2024, 10, 12, 20, 15), end_time=datetime(2024, 10, 12, 21, 00), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[2]),
+#             EventOut(id=19, title='Break [Isha Prayer]', description='', start_time=datetime(2024, 10, 12, 21, 00), end_time=datetime(2024, 10, 12, 21, 15), location='room 1', category=EVENT_CATEGORY.MAIN, speakers=[]),
+#             ]
 
 # Read the CSV file
 df = pd.read_pickle('db/updated_sessions.pkl')
@@ -42,8 +43,8 @@ for index, row in df.iterrows():
         id=row['id'],
         title=row['title'],
         description=row['description'],
-        start_time=datetime.strptime(row['start_time'], '%Y-%m-%d %H:%M:%S'),
-        end_time=datetime.strptime(row['end_time'], '%Y-%m-%d %H:%M:%S'),
+        start_time=datetime.strptime(row['start_time'], '%Y-%m-%d %H:%M:%S').replace(tzinfo=ZoneInfo('America/Chicago')),
+        end_time=datetime.strptime(row['end_time'], '%Y-%m-%d %H:%M:%S').replace(tzinfo=ZoneInfo('America/Chicago')),
         location=row['location'],
         category=EVENT_CATEGORY.MAIN,
         speakers=[int(speaker_id) for speaker_id in row['speaker_id']] if len(row['speaker_id'])>0 else []
@@ -83,14 +84,14 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
                        image_url='speaker_79872.png',
                        bio='''Often described as the fatherly figure by students, Shaykh Yaser exudes a calm, gentle and caring demeanor that welcomes students to ask questions with awe and respect. Shaykh Yaser started his career in Electronic Engineering in the UAE, then in Madinah where he graduated as class Valedictorian with the highest honors from the Islamic University of Madinah’s College of Shari'ah (Fiqh and Usul) in 1996. He learned from various highly respected scholars such as Shaykh Mohammed Amin Al-Shanqiti and Shaykh Al-'Uthaymin. In 1997, he went to work as a relief program aide to rebuild war-torn Bosnia. In 2000, he immigrated to the U.S. where he served as an Imam at The Islamic Center in El Paso, Texas and a director of English programs in Da'wah and outreach for the Orland Park Prayer Center. He is currently serving as Imam of the renowned Valley Ranch Islamic Center in Irving, Texas.'''),
                     
-            SpeakerOut(id=7, name='Dr. Mohamed Aboutaleb',
+            SpeakerOut(id=7, name='Dr. Mohamed Abutaleb',
                        image_url='speaker_55263.jpg',
-                       bio='''Dr. Mohamed Aboutaleb serves as Dean of Administration and Professor at the Boston Islamic Seminary and Senior Fellow at the Yaqeen Institute for Islamic Research. He transitioned from a successful career in technology at a Fortune 100 company to serve the community full-time at the helm of one of the largest Islamic centers in the South, serving as Imam, Religious Director, and Member of the Board for seven years. Dr. Aboutaleb has been featured in media coverage from outlets including National Geographic, NPR, ABC11, Religion News Service, and WRAL; and lectured in many universities including Harvard, MIT, Columbia, Duke, and Georgia Tech. Mohamed pursued seminary training through the Cambridge Islamic College and Al-Salam Institute in the United Kingdom, and completed his Ph.D. and Master’s degrees in electrical engineering from MIT along with degrees in physics and mathematics from the University of Maryland.'''),
+                       bio='''Dr. Mohamed Abutaleb serves as Dean of Administration and Professor at the Boston Islamic Seminary and Senior Fellow at the Yaqeen Institute for Islamic Research. He transitioned from a successful career in technology at a Fortune 100 company to serve the community full-time at the helm of one of the largest Islamic centers in the South, serving as Imam, Religious Director, and Member of the Board for seven years. Dr. Abutaleb has been featured in media coverage from outlets including National Geographic, NPR, ABC11, Religion News Service, and WRAL; and lectured in many universities including Harvard, MIT, Columbia, Duke, and Georgia Tech. Mohamed pursued seminary training through the Cambridge Islamic College and Al-Salam Institute in the United Kingdom, and completed his Ph.D. and Master’s degrees in electrical engineering from MIT along with degrees in physics and mathematics from the University of Maryland.'''),
             ]
 
 SPONSORS = [
             SponsorOut(id=1, name='Islamic Relief USA',
-                       image_url='https://charity.org/wp-content/uploads/2022/09/IslamicReliefUSA-1536x864.png.webp',
+                       image_url='/sponsor_1.png',
                        description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
                        website='https://irusa.org/',
                        facebook='https://www.facebook.com/IslamicReliefUSA',
@@ -98,7 +99,7 @@ SPONSORS = [
                        twitter='https://twitter.com/IslamicRelief',
                        ),
             SponsorOut(id=2, name='Baitulmaal',
-                       image_url='https://baitulmaal.org/wp-content/uploads/2019/03/baitulmaal-black-website.png',
+                       image_url='/sponsor_2.png',
                        description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
                        website='https://baitulmaal.org/',
                        facebook='https://www.facebook.com/baitulmaal/',
@@ -106,7 +107,7 @@ SPONSORS = [
                        twitter='https://twitter.com/baitulmaal',
                        ),
             SponsorOut(id=3, name='Mercy Without Limits',
-                       image_url='https://cdn-200e7.kxcdn.com/wp-content/uploads/2023/02/logo.svg',
+                       image_url='/sponsor_3.png',
                        description='''Islamic Relief USA provides relief and development in a dignified manner regardless of gender, race, or religion, and works to empower individuals in their communities and give them a voice in the world.''',
                        website='https://mwlimits.org/',
                        facebook='https://www.facebook.com/mwlimits',
