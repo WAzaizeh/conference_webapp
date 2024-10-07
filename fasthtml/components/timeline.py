@@ -67,7 +67,7 @@ def agenda_timeline_2(events: List[EventOut]):
                 cls='timeline-start'
             ),
             Div(
-                Icon('circle', cls='text-secondary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'text-primary'),
+                Icon('circle', cls='text-primary' if datetime.now(ZoneInfo('Australia/Hobart')).hour > event.start_time.hour else 'text-secondary'),
                 
                 cls='timeline-middle'
             ),
@@ -81,7 +81,7 @@ def agenda_timeline_2(events: List[EventOut]):
                     href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
-            Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'border-primary'),
+            Hr(cls='border-primary' if datetime.now(ZoneInfo('Australia/Hobart')).hour > event.end_time.hour else 'border-secondary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )
