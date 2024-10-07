@@ -1,7 +1,7 @@
 from fasthtml.common import *
 from routes.main import get_main_routes
-from components.page import AppContainer
 from routes.admin import get_admin_routes
+from utils.static import fetch_static_files
 from routes.sessions import get_session_routes
 from routes.speakers import get_speaker_routes
 from routes.sponsors import get_sponsor_routes
@@ -20,11 +20,6 @@ falink = Link(
     crossorigin='anonymous',
     referrerpolicy='no-referrer'
 )
-mlink = Link(
-    rel='stylesheet',
-    href='/main_v2.css',
-    type='text/css',
-)
 fontLink = Link(
     rel='stylesheet',
     href='https://fonts.cdnfonts.com/css/inter',
@@ -33,9 +28,9 @@ materialLink = Link(
     rel='stylesheet',
     href='https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200',
 )
-back_button_js = Script(src='/back_button_v2.js')
+static_fils_hdrs = fetch_static_files()
 
-app = FastHTML(hdrs=[tlink, dlink, falink, mlink, fontLink, materialLink, back_button_js])
+app = FastHTML(hdrs=[tlink, dlink, falink, fontLink, materialLink, *static_fils_hdrs])
 rt = app.route
 
 # stylesheet link routing
