@@ -142,9 +142,8 @@ body {
     margin-top: 30px;
 }
 .btm-nav {
-    flex: 0;
-    position: relative;
     border-top: 0.4px rgba(0, 0, 0, 0.3);
+    position: sticky;
 }
 
 .btm-nav .nav-item {
@@ -178,11 +177,15 @@ body {
     border-bottom: 0.33px solid rgba(0, 0, 0, 0.3);
 }
 
+html, body {
+    height:100%;
+}
+
 main.container {
     display: flex;
     flex-direction: column;
-    height: 100vh;
     max-width: 100%;
+    height: 100%;
 }
 
 .hero-image {
@@ -202,7 +205,8 @@ main.container {
 
 #page-content {
     flex: 1;
-    overflow-y: scroll;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     max-width: 100%;
 }
 
@@ -254,6 +258,7 @@ main.container {
     font-size: 12px;
     font-weight: 500;
     color: #012B59;
+    gap: 8px;
 }
 
 .h3 {

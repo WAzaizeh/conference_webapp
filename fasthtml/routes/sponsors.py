@@ -29,6 +29,7 @@ def get_sponsor_routes(rt):
                 Div(
                 sponsor_page(speaker),
                 id='page-content',
-                )
+                ),
+                active_button_index=4
             )
         return RedirectResponse('/sponsors', status_code=303)

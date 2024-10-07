@@ -29,6 +29,7 @@ def get_speaker_routes(rt):
                 Div(
                 speaker_page(speaker),
                 id='page-content',
-                )
+                ),
+                active_button_index=3
             )
         return RedirectResponse('/speakers', status_code=303)

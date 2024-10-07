@@ -59,6 +59,7 @@ def get_session_routes(rt):
                             cls='flex flex-col flex-1'
                         ),
                     id='page-content', cls='blue-background p-0 flex flex-col'
-                    )
+                    ),
+                    active_button_index=2
                 )
         return RedirectResponse('/agenda', status_code=303)
