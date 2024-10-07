@@ -75,7 +75,7 @@ def get_main_routes(rt):
                                 Div(
                                     Span(
                                         Img(src='location.png', alt='location icon', cls='hero-icon'),
-                                        P('1515 Blake Dr, Richardson'),
+                                        P('5353 Independence Pkwy, Frisco'),
                                         cls='flex items-center justify-between',
                                     ),
                                     Span(
