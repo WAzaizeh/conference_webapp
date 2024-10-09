@@ -51,7 +51,7 @@ def agenda_timeline(events: List[EventOut]):
                         *SpeakerCardBody(event.speakers),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
-                    href=f'/session/{event.id}' if event.description else None,
+                    href=f'/session/{event.id}' if event.speakers else None,
                 ),
                 cls='timeline-end ml-4'),
             Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'border-primary'),
@@ -67,7 +67,7 @@ def agenda_timeline_2(events: List[EventOut]):
                 cls='timeline-start'
             ),
             Div(
-                Icon('circle', cls='text-primary' if datetime.now(ZoneInfo('Australia/Hobart')).hour > event.start_time.hour else 'text-secondary'),
+                Icon('circle', cls='text-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.start_time.hour else 'text-secondary'),
                 
                 cls='timeline-middle'
             ),
@@ -81,7 +81,7 @@ def agenda_timeline_2(events: List[EventOut]):
                     href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
-            Hr(cls='border-primary' if datetime.now(ZoneInfo('Australia/Hobart')).hour > event.end_time.hour else 'border-secondary'),
+            Hr(cls='border-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'border-secondary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )
