@@ -95,6 +95,10 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
                        image_url='speaker_66543.jpg',
                        bio='''Shaykh Ahmed Mabrouk, Director of Quran Programs.  Shaykh Ahmed, the Director of the Quran, Ijazah, Tajweed and Tafseer programs has been involved in the Unity Center since 2008. Shaykh Ahmed is a graduate of Al-Azhar University, and has obtained his Ijazah (Quranic License). He obtained his masters in Islamic Studies, followed by PhD in Islamic Studies from Mishkah University. He plays an integral role with the young children through the Muslim Unity Center Quran School, as well as various Tajweed and Tafseer studies for Men and Women.'''
                        ),
+            SpeakerOut(id=9, name='Belal Elseisy',
+                       image_url='speaker_99998.jpg',
+                       bio='''Belal is a college student and organizer with Students for Justice in Palestine at the University of Texas at Dallas for the past year.''',
+                        ),
             ]
 
 SPONSORS = [
