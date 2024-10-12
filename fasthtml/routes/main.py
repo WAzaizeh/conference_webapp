@@ -127,7 +127,8 @@ def get_main_routes(rt):
                     cls='p-8',
                     ),
                 id='page-content',
-            )
+            ),
+            active_button_index=1
         )
 
     @rt('/prayer-times')
@@ -139,7 +140,8 @@ def get_main_routes(rt):
                     prayer_times_page(PRAYER_TIMES),
                     id='page-content',
                     cls='white-background'
-                    )
+                    ),
+                active_button_index=1
                 )
     
     @rt('/qa')
@@ -162,7 +164,8 @@ def get_main_routes(rt):
                     H2('Coming soon...'),
                     id='page-content',
                     cls='blue-background'
-                    )
+                    ),
+                active_button_index=1
                 )
 
     @rt('/registration')

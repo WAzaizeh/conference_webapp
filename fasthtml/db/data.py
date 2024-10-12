@@ -91,9 +91,9 @@ He memorized the Qur’an in Karachi at an early age. After high school, he retu
                        image_url='speaker_55263.jpg',
                        bio='''Dr. Mohamed Abutaleb serves as Dean of Administration and Professor at the Boston Islamic Seminary and Senior Fellow at the Yaqeen Institute for Islamic Research. He transitioned from a successful career in technology at a Fortune 100 company to serve the community full-time at the helm of one of the largest Islamic centers in the South, serving as Imam, Religious Director, and Member of the Board for seven years. Dr. Abutaleb has been featured in media coverage from outlets including National Geographic, NPR, ABC11, Religion News Service, and WRAL; and lectured in many universities including Harvard, MIT, Columbia, Duke, and Georgia Tech. Mohamed pursued seminary training through the Cambridge Islamic College and Al-Salam Institute in the United Kingdom, and completed his Ph.D. and Master’s degrees in electrical engineering from MIT along with degrees in physics and mathematics from the University of Maryland.'''
                        ),
-            SpeakerOut(id=8, name='Sh. Ahmed Mabrouk',
-                       image_url='speaker_66543.jpg',
-                       bio='''Shaykh Ahmed Mabrouk, Director of Quran Programs.  Shaykh Ahmed, the Director of the Quran, Ijazah, Tajweed and Tafseer programs has been involved in the Unity Center since 2008. Shaykh Ahmed is a graduate of Al-Azhar University, and has obtained his Ijazah (Quranic License). He obtained his masters in Islamic Studies, followed by PhD in Islamic Studies from Mishkah University. He plays an integral role with the young children through the Muslim Unity Center Quran School, as well as various Tajweed and Tafseer studies for Men and Women.'''
+            SpeakerOut(id=8, name='Sh. Ramadan Elsabagh',
+                       image_url='speaker_97276.jpg',
+                       bio='''Shaykh Ramadan Elsabagh, Director of Quran Program, Islamic Services Foundation (IDF), Dallas, TX.'''
                        ),
             SpeakerOut(id=9, name='Belal Elseisy',
                        image_url='speaker_99998.jpg',
