@@ -1,4 +1,3 @@
-from db.data import SESSIONS
 from components.page import AppContainer
 from components.cards import session_speaker_card
 from components.navigation import TopNav
@@ -6,11 +5,12 @@ from fasthtml.common import RedirectResponse
 from crud.core import get_session, get_speaker
 from fasthtml.components import H1, H3, Div, P
 from components.timeline import agenda_timeline, agenda_timeline_2
-
+from db.service import db_service
 
 def get_session_routes(rt):
     @rt('/agenda')
     def get():
+        sessions = db_service.get_all_events()
         return AppContainer(
                 Div(
                     Div(
@@ -18,7 +18,7 @@ def get_session_routes(rt):
                         cls='flex justify-center items-center p-4',
                     ),
                     H1('Saturday 12th October', cls='text-center font-medium text-base'),
-                    agenda_timeline(SESSIONS),
+                    agenda_timeline(sessions),
                     id='page-content',
                     cls='blue-background'
                 ),
@@ -27,6 +27,7 @@ def get_session_routes(rt):
     
     @rt('/agenda_2')
     def get():
+        sessions = db_service.get_all_events()
         return AppContainer(
                 Div(
                     Div(
@@ -34,7 +35,7 @@ def get_session_routes(rt):
                         cls='flex justify-center items-center p-4',
                     ),
                     H1('Testing progress timeline', cls='text-center font-medium text-base'),
-                    agenda_timeline_2(SESSIONS),
+                    agenda_timeline_2(sessions),
                     id='page-content',
                     cls='blue-background'
                 ),
@@ -43,9 +44,9 @@ def get_session_routes(rt):
 
     @rt('/session/{session_id}')
     def get(session_id: int):
-        session = get_session(session_id)
+        session = db_service.get_event_by_id(session_id)
         if session:
-            session_speakers = [get_speaker(speaker_id) for speaker_id in session.speakers]
+            session_speakers = [db_service.get_speaker_by_id(speaker_id) for speaker_id in session.speakers]
             return AppContainer(
                     Div(
                         TopNav('Session Details'),

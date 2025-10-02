@@ -1,78 +1,107 @@
 from pydantic import BaseModel
-from datetime import datetime
 from typing import List, Optional
+from datetime import datetime
 from enum import Enum
-from pydantic.config import ConfigDict
 
 class EVENT_CATEGORY(str, Enum):
-    MAIN = 'main session'
-    CYP = 'College & Young Professionals'
+    MAIN = "MAIN"
+    WORKSHOP = "WORKSHOP"
+    BREAK = "BREAK"
+
+class PRAYER_NAME(str, Enum):
+    FAJR = "FAJR"
+    DHUHR = "DHUHR"
+    ASR = "ASR"
+    MAGHRIB = "MAGHRIB"
+    ISHA = "ISHA"
+
+# ==================== EVENT SCHEMAS ====================
 
 class EventBase(BaseModel):
-    id: Optional[int] = None
     title: str
+    description: Optional[str] = ""
     start_time: datetime
     end_time: datetime
-    location: str
-    category: EVENT_CATEGORY
-    description: Optional[str] = None
+    location: Optional[str] = ""
+    category: EVENT_CATEGORY = EVENT_CATEGORY.MAIN
 
 class EventCreate(EventBase):
-    start_time: datetime = datetime(2024, 10, 21, 10, 0)
-    end_time: datetime = datetime(2024, 10, 21, 21, 0)
-    location: str = 'Colin College Conference Center'
-    category: EVENT_CATEGORY = EVENT_CATEGORY.MAIN
-    description: Optional[str] = None
     speaker_ids: Optional[List[int]] = []
 
-class EventUpdate(EventBase):
+class EventUpdate(BaseModel):
     title: Optional[str] = None
+    description: Optional[str] = None
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     location: Optional[str] = None
     category: Optional[EVENT_CATEGORY] = None
-    description: Optional[str] = None
     speaker_ids: Optional[List[int]] = None
 
 class EventOut(EventBase):
-    model_config = ConfigDict(from_attributes=True)
     id: int
-    speakers: Optional[List[int]] = []
+    speakers: List[int] = []
+    
+    class Config:
+        from_attributes = True
+
+# ==================== SPEAKER SCHEMAS ====================
 
 class SpeakerBase(BaseModel):
-    id: Optional[int] = None
     name: str
+    image_url: Optional[str] = ""
+    bio: Optional[str] = ""
+
+class SpeakerCreate(SpeakerBase):
+    pass
+
+class SpeakerUpdate(BaseModel):
+    name: Optional[str] = None
     image_url: Optional[str] = None
     bio: Optional[str] = None
 
-class SpeakerCreate(SpeakerBase):
-    event_ids: Optional[List[int]] = None
-
-class SpeakerUpdate(SpeakerBase):
-    event_ids: Optional[List[int]] = None
-
 class SpeakerOut(SpeakerBase):
-    model_config = ConfigDict(from_attributes=True)
     id: int
-    events: Optional[List[int]] = []
+    
+    class Config:
+        from_attributes = True
 
-class PRAYER_NAME(str, Enum):
-    FAJR = 'Fajr'
-    DHUHR = 'Dhuhr'
-    ASR = 'Asr'
-    MAGHRIB = 'Maghrib'
-    ISHA = 'Isha'
+# ==================== PRAYER TIME SCHEMAS ====================
 
-class Prayer(BaseModel):
+class PrayerTimeBase(BaseModel):
     name: PRAYER_NAME
     time: str
-
-class PrayerTime(Prayer):
     iqama: str
 
+class PrayerTimeCreate(PrayerTimeBase):
+    pass
+
+class PrayerTimeUpdate(BaseModel):
+    name: Optional[PRAYER_NAME] = None
+    time: Optional[str] = None
+    iqama: Optional[str] = None
+
+class PrayerTimeOut(PrayerTimeBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
+# ==================== SPONSOR SCHEMAS ====================
+
 class SponsorBase(BaseModel):
-    id: Optional[int] = None
     name: str
+    image_url: Optional[str] = ""
+    description: Optional[str] = ""
+    website: Optional[str] = ""
+    facebook: Optional[str] = ""
+    instagram: Optional[str] = ""
+    twitter: Optional[str] = ""
+
+class SponsorCreate(SponsorBase):
+    pass
+
+class SponsorUpdate(BaseModel):
+    name: Optional[str] = None
     image_url: Optional[str] = None
     description: Optional[str] = None
     website: Optional[str] = None
@@ -81,5 +110,7 @@ class SponsorBase(BaseModel):
     twitter: Optional[str] = None
 
 class SponsorOut(SponsorBase):
-    model_config = ConfigDict(from_attributes=True)
     id: int
+    
+    class Config:
+        from_attributes = True

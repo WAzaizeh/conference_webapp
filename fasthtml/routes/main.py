@@ -4,6 +4,7 @@ from components.page import AppContainer
 from components.cards import homepage_card
 from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
+from db.service import db_service
 from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li
 
 def get_main_routes(rt):
@@ -133,11 +134,12 @@ def get_main_routes(rt):
 
     @rt('/prayer-times')
     def get():
+        prayer_times = db_service.get_all_prayer_times()
         return AppContainer(
                 Div(
                     TopNav('Prayer Times'),
                     H1('Saturday 12th October', cls='text-black font-medium text-center text-sm'),
-                    prayer_times_page(PRAYER_TIMES),
+                    prayer_times_page(prayer_times),
                     id='page-content',
                     cls='white-background'
                     ),

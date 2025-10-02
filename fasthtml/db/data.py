@@ -6,7 +6,7 @@ from .schemas import (
     EventOut,
     SpeakerOut,
     EVENT_CATEGORY,
-    PrayerTime,
+    PrayerTimeOut,
     PRAYER_NAME,
     SponsorOut,
 )
@@ -52,10 +52,10 @@ for index, row in df.iterrows():
     SESSIONS.append(event)
 
 PRAYER_TIMES = [
-    PrayerTime(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00 p.m.', time='1:14 p.m.'),
-    PrayerTime(id=2, name=PRAYER_NAME.ASR, iqama='6:00 p.m.', time='4:29 p.m.'),
-    PrayerTime(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:40 p.m.', time='6:57 p.m.'),
-    PrayerTime(id=4, name=PRAYER_NAME.ISHA, iqama='9:45 p.m.', time='8:06 p.m.'),
+    PrayerTimeOut(id=1, name=PRAYER_NAME.DHUHR, iqama='2:00 p.m.', time='1:14 p.m.'),
+    PrayerTimeOut(id=2, name=PRAYER_NAME.ASR, iqama='6:00 p.m.', time='4:29 p.m.'),
+    PrayerTimeOut(id=3, name=PRAYER_NAME.MAGHRIB, iqama='7:40 p.m.', time='6:57 p.m.'),
+    PrayerTimeOut(id=4, name=PRAYER_NAME.ISHA, iqama='9:45 p.m.', time='8:06 p.m.'),
 ]
 
 SPEAKERS = [
