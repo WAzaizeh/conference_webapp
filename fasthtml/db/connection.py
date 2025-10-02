@@ -8,7 +8,7 @@ from .models import Base
 
 class DatabaseManager:
     def __init__(self):
-        database_url = os.getenv('DATABASE_URL', 'sqlite+aiosqlite:///./conference.db')
+        database_url = os.getenv('DATABASE_URL')
         print(f"Original DATABASE_URL: {database_url}")
         
         # Convert postgresql to postgresql+asyncpg for async support

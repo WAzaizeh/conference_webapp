@@ -5,16 +5,14 @@ from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from .models import Base
 
+# Load .env.dev only for local development
+if not os.getenv('K_SERVICE'):  # Not running on Cloud Run
+    load_dotenv('.env.dev')
 
 class SyncDatabaseManager:
     def __init__(self):
-        database_url = os.getenv('DATABASE_URL', 'sqlite:///./conference.db')
+        database_url = os.getenv('DATABASE_URL')
         print(f"Original DATABASE_URL: {database_url}")
-        
-        # Convert postgresql to postgresql+psycopg2 for sync support
-        if database_url.startswith('postgresql://'):
-            database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://')
-            print(f"Converted to psycopg2: {database_url}")
         
         self.database_url = database_url
         self.engine = create_engine(database_url, echo=True)
