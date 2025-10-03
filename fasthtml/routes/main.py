@@ -1,10 +1,10 @@
-from db.data import PRAYER_TIMES
 from components.navigation import TopNav
 from components.page import AppContainer
 from components.cards import homepage_card
 from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
-from db.service import db_service
+from db.connection import db_manager
+from crud.prayer_time import get_prayer_times
 from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li
 
 def get_main_routes(rt):
@@ -133,8 +133,9 @@ def get_main_routes(rt):
         )
 
     @rt('/prayer-times')
-    def get():
-        prayer_times = db_service.get_all_prayer_times()
+    async def get():
+        async with db_manager.AsyncSessionLocal() as db_session:
+            prayer_times = await get_prayer_times(db_session)
         return AppContainer(
                 Div(
                     TopNav('Prayer Times'),

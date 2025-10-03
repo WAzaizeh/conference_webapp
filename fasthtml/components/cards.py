@@ -1,6 +1,6 @@
 from typing import List
 from .icon import Icon, BrandIcon
-from db.schemas import SpeakerOut, EventOut, PrayerTime, SponsorOut
+from db.schemas import SpeakerOut, EventOut, PrayerTimeOut, SponsorOut
 from components.navigation import TopNav
 from fasthtml.components import Div, Span, Figure, Img, H2, H1, P, Button, A, Hr
 
@@ -53,7 +53,7 @@ def speaker_page(speaker: SpeakerOut) -> Div:
             cls='speaker-detail-view blue-background'
         )
 
-def prayer_time_card(prayer : PrayerTime) -> Div:
+def prayer_time_card(prayer : PrayerTimeOut) -> Div:
     return Div(
             Div(
                 P(prayer.name),
@@ -68,7 +68,7 @@ def prayer_time_card(prayer : PrayerTime) -> Div:
             cls='prayer-card'
         )
 
-def prayer_times_page(prayers: List[PrayerTime]) -> Div:
+def prayer_times_page(prayers: List[PrayerTimeOut]) -> Div:
     return Div(
             *[prayer_time_card(prayer) for prayer in prayers],
         )

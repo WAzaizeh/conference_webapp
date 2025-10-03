@@ -27,6 +27,11 @@ async def get_sponsors(db: AsyncSession, skip: int = 0, limit: int = 100) -> Lis
     )
     return result.scalars().all()
 
+async def get_sponsor(db: AsyncSession, sponsor_id: int) -> Optional[Sponsor]:
+    """Get a sponsor by ID"""
+    result = await db.execute(select(Sponsor).where(Sponsor.id == sponsor_id))
+    return result.scalar_one_or_none()
+
 async def update_sponsor(db: AsyncSession, sponsor_id: int, sponsor_update: SponsorUpdate) -> Optional[Sponsor]:
     """Update a sponsor"""
     result = await db.execute(select(Sponsor).where(Sponsor.id == sponsor_id))

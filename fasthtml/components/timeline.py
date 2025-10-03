@@ -2,8 +2,7 @@ from .icon import Icon
 from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from db.schemas import EventOut
-from crud.core import get_speaker
+from db.schemas import EventOut, SpeakerOut
 from fasthtml.components import Ul, Li, Div, Hr, H3, A, H4, Img, I, Span
 
 def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
@@ -15,8 +14,8 @@ def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
             cls='avatar' + ' ' + kwargs.get('cls', '')
             )
 
-def SpeakerCardBody(speaker_ids: List[int]) -> List:
-    speaker = get_speaker(speaker_ids[0]) if speaker_ids else None
+def SpeakerCardBody(speakers_data: List[SpeakerOut]) -> List:
+    speaker = speakers_data[0] if speakers_data else None
     if speaker:
         return [
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
@@ -48,7 +47,7 @@ def agenda_timeline(events: List[EventOut]):
                 A(
                     Div(
                         H3(event.title, cls='text-sm'), 
-                        *SpeakerCardBody(event.speakers),
+                        *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
                     href=f'/session/{event.id}' if event.speakers else None,
@@ -75,7 +74,7 @@ def agenda_timeline_2(events: List[EventOut]):
                 A(
                     Div(
                         H3(event.title, cls='text-sm'), 
-                        *SpeakerCardBody(event.speakers),
+                        *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
                     href=f'/session/{event.id}' if event.description else None,

@@ -1,14 +1,15 @@
-from crud.core import get_sponsor
 from fasthtml.components import Div, H1
 from components.page import AppContainer
 from fasthtml.common import RedirectResponse
 from components.cards import brief_sponsor_card, sponsor_page
-from db.service import db_service
+from crud.sponsor import get_sponsors, get_sponsor
+from db.connection import db_manager
 
 def get_sponsor_routes(rt):
     @rt('/sponsors')
-    def get():
-        sponsors = db_service.get_all_sponsors()
+    async def get():
+        async with db_manager.AsyncSessionLocal() as db_session:
+            sponsors = await get_sponsors(db_session)
         return AppContainer(
                 Div(
                     Div(
@@ -23,8 +24,9 @@ def get_sponsor_routes(rt):
         )
 
     @rt('/sponsors/{sponsor_id}')
-    def get(sponsor_id: int):
-        sponsor = db_service.get_sponsor_by_id(sponsor_id)
+    async def get(sponsor_id: int):
+        async with db_manager.AsyncSessionLocal() as db_session:
+            sponsor = await get_sponsor(db_session, sponsor_id)
         if sponsor:
             return AppContainer(
                 Div(

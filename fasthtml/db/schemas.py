@@ -15,6 +15,27 @@ class PRAYER_NAME(str, Enum):
     MAGHRIB = "MAGHRIB"
     ISHA = "ISHA"
 
+# ==================== SPEAKER SCHEMAS ====================
+
+class SpeakerBase(BaseModel):
+    name: str
+    image_url: Optional[str] = ""
+    bio: Optional[str] = ""
+
+class SpeakerCreate(SpeakerBase):
+    pass
+
+class SpeakerUpdate(BaseModel):
+    name: Optional[str] = None
+    image_url: Optional[str] = None
+    bio: Optional[str] = None
+
+class SpeakerOut(SpeakerBase):
+    id: int
+    
+    class Config:
+        from_attributes = True
+
 # ==================== EVENT SCHEMAS ====================
 
 class EventBase(BaseModel):
@@ -40,27 +61,6 @@ class EventUpdate(BaseModel):
 class EventOut(EventBase):
     id: int
     speakers: List[int] = []
-    
-    class Config:
-        from_attributes = True
-
-# ==================== SPEAKER SCHEMAS ====================
-
-class SpeakerBase(BaseModel):
-    name: str
-    image_url: Optional[str] = ""
-    bio: Optional[str] = ""
-
-class SpeakerCreate(SpeakerBase):
-    pass
-
-class SpeakerUpdate(BaseModel):
-    name: Optional[str] = None
-    image_url: Optional[str] = None
-    bio: Optional[str] = None
-
-class SpeakerOut(SpeakerBase):
-    id: int
     
     class Config:
         from_attributes = True

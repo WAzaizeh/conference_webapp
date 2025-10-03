@@ -2,15 +2,8 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import delete, update
 from datetime import datetime
-from db.models import Event, Speaker, PrayerTime, Sponsor, User, Session, AuditLog
-from db.schemas import (
-    EventOut, EventCreate, EventUpdate,
-    SpeakerOut, SpeakerCreate, SpeakerUpdate,
-    PrayerTimeOut, PrayerTimeCreate, PrayerTimeUpdate,
-    SponsorOut, SponsorCreate, SponsorUpdate
-)
+from db.models import Event, Speaker, Session
 
 async def get_events_by_date_range(
     db: AsyncSession, 

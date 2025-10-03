@@ -11,13 +11,8 @@ class DatabaseManager:
         database_url = os.getenv('DATABASE_URL')
         print(f"Original DATABASE_URL: {database_url}")
         
-        # Convert postgresql to postgresql+asyncpg for async support
-        if database_url.startswith('postgresql://'):
-            database_url = re.sub(r'^postgresql:', 'postgresql+asyncpg:', database_url)
-            print(f"Converted to asyncpg: {database_url}")
-        elif database_url.startswith('sqlite://'):
-            database_url = database_url.replace('sqlite://', 'sqlite+aiosqlite://')
-        
+        database_url = database_url.replace('postgresql://', 'postgresql+asyncpg://')
+
         self.database_url = database_url
         self.engine = create_async_engine(database_url, echo=True)
         self.AsyncSessionLocal = sessionmaker(

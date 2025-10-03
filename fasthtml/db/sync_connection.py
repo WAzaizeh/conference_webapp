@@ -7,13 +7,15 @@ from .models import Base
 
 # Load .env.dev only for local development
 if not os.getenv('K_SERVICE'):  # Not running on Cloud Run
-    load_dotenv('.env.dev')
+    load_dotenv('dev.env')
 
 class SyncDatabaseManager:
     def __init__(self):
         database_url = os.getenv('DATABASE_URL')
         print(f"Original DATABASE_URL: {database_url}")
-        
+
+        database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://')
+
         self.database_url = database_url
         self.engine = create_engine(database_url, echo=True)
         self.SessionLocal = sessionmaker(bind=self.engine)

@@ -1,14 +1,15 @@
-from crud.core import get_speaker
 from fasthtml.components import Div, H1
 from components.page import AppContainer
 from fasthtml.common import RedirectResponse
 from components.cards import brief_speaker_card, speaker_page
-from db.service import db_service
+from crud.speaker import get_speakers, get_speaker
+from db.connection import db_manager
 
 def get_speaker_routes(rt):
     @rt('/speakers')
-    def get():
-        speakers = db_service.get_all_speakers()
+    async def get():
+        async with db_manager.AsyncSessionLocal() as db_session:
+            speakers = await get_speakers(db_session)
         return AppContainer(
                 Div(
                     Div(
@@ -23,8 +24,9 @@ def get_speaker_routes(rt):
         )
 
     @rt('/speakers/{speaker_id}')
-    def get(speaker_id: int):
-        speaker = db_service.get_speaker_by_id(speaker_id)
+    async def get(speaker_id: int):
+        async with db_manager.AsyncSessionLocal() as db_session:
+            speaker = await get_speaker(db_session, speaker_id)
         if speaker:
             return AppContainer(
                 Div(

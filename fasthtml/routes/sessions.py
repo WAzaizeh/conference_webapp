@@ -2,15 +2,24 @@ from components.page import AppContainer
 from components.cards import session_speaker_card
 from components.navigation import TopNav
 from fasthtml.common import RedirectResponse
-from crud.core import get_session, get_speaker
+from crud.event import get_event, get_events
+from crud.speaker import get_speaker
 from fasthtml.components import H1, H3, Div, P
 from components.timeline import agenda_timeline, agenda_timeline_2
-from db.service import db_service
+from db.connection import db_manager
 
 def get_session_routes(rt):
+
     @rt('/agenda')
-    def get():
-        sessions = db_service.get_all_events()
+    async def get():
+        async with db_manager.AsyncSessionLocal() as db_session:
+            events = await get_events(db_session)
+            for event in events:
+                event.speakers_data = []
+                for speaker in event.speakers:
+                    speaker = await get_speaker(db_session, speaker.id)
+                    if speaker:
+                        event.speakers_data.append(speaker)
         return AppContainer(
                 Div(
                     Div(
@@ -18,7 +27,7 @@ def get_session_routes(rt):
                         cls='flex justify-center items-center p-4',
                     ),
                     H1('Saturday 12th October', cls='text-center font-medium text-base'),
-                    agenda_timeline(sessions),
+                    agenda_timeline(events),
                     id='page-content',
                     cls='blue-background'
                 ),
@@ -27,7 +36,7 @@ def get_session_routes(rt):
     
     @rt('/agenda_2')
     def get():
-        sessions = db_service.get_all_events()
+        sessions = get_events()
         return AppContainer(
                 Div(
                     Div(
@@ -44,9 +53,9 @@ def get_session_routes(rt):
 
     @rt('/session/{session_id}')
     def get(session_id: int):
-        session = db_service.get_event_by_id(session_id)
+        session = get_event(session_id)
         if session:
-            session_speakers = [db_service.get_speaker_by_id(speaker_id) for speaker_id in session.speakers]
+            session_speakers = [get_speaker(speaker_id) for speaker_id in session.speakers]
             return AppContainer(
                     Div(
                         TopNav('Session Details'),
