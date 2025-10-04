@@ -81,7 +81,7 @@ def get_main_routes(rt):
                                     ),
                                     Span(
                                         Img(src='calendar.png', alt='calendar icon', cls='hero-icon'),
-                                        P('Oct 12, 2024'),
+                                        P('Oct 18, 2025'),
                                         cls='flex items-center justify-between',
                                     ),
                                     cls='flex items-center justify-between location-date'

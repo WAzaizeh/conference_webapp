@@ -1,15 +1,15 @@
-FROM ghcr.io/astral-sh/uv:python3.10-bookworm-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 
-# Copy dependency files
-COPY pyproject.toml uv.lock ./
+# Copy requirements file
+COPY requirements.txt .
 
-# Install dependencies
-RUN uv sync --frozen
+# Install dependencies with pip
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application code (not mounted, actually copied)
-COPY app/ ./app/
+# Copy application code
+COPY app/ .
 
 # Set environment variables
 ENV ENVIRONMENT=production
@@ -20,5 +20,4 @@ ENV HOST=0.0.0.0
 EXPOSE 8080
 
 # Run the application
-WORKDIR /app/app
-CMD ["uv", "run", "--directory", "/app/app", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
