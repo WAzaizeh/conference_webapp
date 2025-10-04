@@ -1,16 +1,24 @@
-FROM python:3.12.4-slim
-ENV PYTHONUNBUFFERED True
+FROM ghcr.io/astral-sh/uv:python3.10-bookworm-slim
 
 WORKDIR /app
 
-ENV HOST 0.0.0.0
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
 
-COPY requirements.txt .
+# Install dependencies
+RUN uv sync --frozen
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy application code (not mounted, actually copied)
+COPY app/ ./app/
 
-COPY . .
+# Set environment variables
+ENV ENVIRONMENT=production
+ENV PORT=8080
+ENV HOST=0.0.0.0
 
+# Expose port
 EXPOSE 8080
 
-CMD ["python", "main.py", "--host", "0.0.0.0", "--port", "8080"]
+# Run the application
+WORKDIR /app/app
+CMD ["uv", "run", "--directory", "/app/app", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
