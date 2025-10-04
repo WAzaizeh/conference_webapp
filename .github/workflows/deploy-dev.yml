@@ -1,0 +1,39 @@
+name: Deploy to Cloud Run (Development)
+
+on:
+  push:
+    branches:
+      - dev_2025
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Docker
+      run: gcloud auth configure-docker
+
+    - name: Build Docker image
+      run: |
+        docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/mas-cyp-conference:${{ github.sha }} .
+
+    - name: Push Docker image
+      run: docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/mas-cyp-conference:${{ github.sha }}
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy ${{ secrets.GCP_RUN_NAME_DEV }} \
+          --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/mas-cyp-conference:${{ github.sha }} \
+          --platform managed \
+          --region ${{ secrets.GCP_REGION }} \
+          --allow-unauthenticated \
+          --set-env-vars="ENVIRONMENT=development"
