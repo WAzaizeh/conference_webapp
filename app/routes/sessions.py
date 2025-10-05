@@ -26,7 +26,7 @@ def get_session_routes(rt):
                     H1('Agenda', cls='flex-1 text-black font-medium text-center text-base'),
                         cls='flex justify-center items-center p-4',
                     ),
-                    H1('Saturday 12th October', cls='text-center font-medium text-base'),
+                    H1('Saturday 18th October', cls='text-center font-medium text-base'),
                     agenda_timeline(events),
                     id='page-content',
                     cls='blue-background'
