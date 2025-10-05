@@ -139,7 +139,7 @@ def get_main_routes(rt):
         return AppContainer(
                 Div(
                     TopNav('Prayer Times'),
-                    H1('Saturday 12th October', cls='text-black font-medium text-center text-sm'),
+                    H1('Saturday 18th October', cls='text-black font-medium text-center text-sm'),
                     prayer_times_page(prayer_times),
                     id='page-content',
                     cls='white-background'
