@@ -18,3 +18,8 @@ single_page_routing/
 # vscode settings
 .vscode
 .vscode/*
+
+# python cache
+__pycache__/
+*.pyc
+app/**/*.pyc

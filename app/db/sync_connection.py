@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 from .models import Base
+from contextlib import contextmanager
 
 # Load .env.dev only for local development
 if not os.getenv('K_SERVICE'):  # Not running on Cloud Run
@@ -44,3 +45,12 @@ class SyncDatabaseManager:
 
 # Global sync database manager instance
 sync_db_manager = SyncDatabaseManager()
+
+@contextmanager
+def get_db():
+    """Context manager for database sessions"""
+    db = sync_db_manager.SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()

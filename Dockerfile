@@ -1,14 +1,14 @@
-FROM python:3.12.4-slim
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 ENV PYTHONUNBUFFERED=True
 
 WORKDIR /app
 
 ENV HOST=0.0.0.0
 
-COPY requirements.txt .
+COPY pyproject.toml .
 
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv sync
 
 COPY app/ .
 
-CMD ["python", "main.py"]
+CMD ["uv", "run", "python", "main.py"]

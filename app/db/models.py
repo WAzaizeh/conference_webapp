@@ -78,10 +78,6 @@ class Session(Base):
     id = Column(String(255), primary_key=True)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    last_seen_at = Column(DateTime(timezone=True), server_default=func.now())
-    user_agent = Column(Text)
-    ip = Column(String(45))
-    revoked = Column(Boolean, default=False)
     
     user = relationship("User")
 

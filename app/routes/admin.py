@@ -1,12 +1,11 @@
-import os
-from dotenv import load_dotenv
-from hmac import compare_digest
 from dataclasses import dataclass
 from components.icon import Icon
 from components.page import AppContainer
-from fasthtml.common import Router, RedirectResponse
+from fasthtml.common import Router, RedirectResponse, Response
 from fasthtml.components import Button, H1, Div, Form, Label, Input
-
+from db.models import User
+from utils.auth import verify_password
+from db.sync_connection import get_db
 
 def get_admin_routes(rt: Router):
     @rt('/settings')
@@ -66,27 +65,35 @@ def get_admin_routes(rt: Router):
                 )
             )
 
-    # Handling admin login POST request
-    load_dotenv()
     @dataclass
     class AdminLogin: username: str; password: str
 
     @rt('/admin_login')
     def post(admin: AdminLogin, sess):
-        # Get admin credentials from environment variables
-        ADMIN_USERNAME = os.getenv('ADMIN_USERNAME')
-        print(ADMIN_USERNAME)
-        ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
-
         if not admin.username or not admin.password:
             return RedirectResponse('/admin_login', status_code=303)
         
-        # Compare preset credentials with input
-        if compare_digest(admin.username, ADMIN_USERNAME) and compare_digest(admin.password, ADMIN_PASSWORD):
+        # Query user by email (using email as username)
+        with get_db() as db_session:
+            user = db_session.query(User).filter(
+                User.email == admin.username,
+                User.is_active == True
+            ).first()
+
+        # Verify password
+        if user and verify_password(admin.password, user.password_hash):
             sess['admin_auth'] = True
-            return RedirectResponse('/admin_dashboard', status_code=303)
+            sess['user_id'] = str(user.id)
+            sess['user_email'] = user.email
+            return Response(
+                status_code=200,
+                headers={'HX-Redirect': '/admin_dashboard'}
+            )
         else:
-            return RedirectResponse('/admin_login', status_code=303)
+            return Response(
+                status_code=200,
+                headers={'HX-Redirect': '/admin_login'}
+            )
 
     @rt('/admin_dashboard')
     def get(sess):
