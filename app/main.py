@@ -5,6 +5,7 @@ from utils.static import fetch_static_files
 from routes.sessions import get_session_routes
 from routes.speakers import get_speaker_routes
 from routes.sponsors import get_sponsor_routes
+from routes.feedback import get_feedback_routes
 import os, uvicorn
 
 tlink = (Script(src='https://unpkg.com/tailwindcss-cdn@3.4.3/tailwindcss.js'),)
@@ -44,6 +45,7 @@ get_admin_routes(rt)
 get_session_routes(rt)
 get_speaker_routes(rt)
 get_sponsor_routes(rt)
+get_feedback_routes(rt)
 
 # Run the FastHTML app with Uvicorn, using the SSL certificate and private key
 if __name__ == "__main__":

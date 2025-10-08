@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from db.models import Base, Event, Speaker, PrayerTime, Sponsor, event_speakers
-from db.data import SESSIONS, SPEAKERS, PRAYER_TIMES, SPONSORS
 
 
 # Create synchronous engine

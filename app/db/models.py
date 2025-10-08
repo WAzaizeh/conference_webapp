@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Table
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Table, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -93,3 +93,12 @@ class AuditLog(Base):
     ts = Column(DateTime(timezone=True), server_default=func.now())
     
     user = relationship("User")
+
+class FeedbackSubmission(Base):
+    __tablename__ = 'feedback_submissions'
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    submission_data = Column(JSON, nullable=False)  # Store all survey responses as JSON
+    submitted_at = Column(DateTime(timezone=True), server_default=func.now())
+    ip_address = Column(String(45))  # To track submissions and prevent duplicates
+    user_agent = Column(Text)  # Additional tracking

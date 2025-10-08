@@ -92,7 +92,7 @@ def get_main_routes(rt):
                                 homepage_card(icon_name='about.svg', title='About', card_color='blue', href='/about', cls='full-card'),
                                 homepage_card(icon_name='prayer.svg', title='Prayer Times', card_color='green', href='/prayer-times', cls='full-card'),
                                 homepage_card(icon_name='chat.svg', title='Q&A', card_color='pink', href='/qa', cls='full-card'),
-                                homepage_card(icon_name='survey.svg', title='Feedback Survey', card_color='pink', href='/feedback-survey', cls='full-card'),
+                                homepage_card(icon_name='survey.svg', title='Feedback Survey', card_color='pink', href='/feedback', cls='full-card'),
                             cls='grid card-grid mb-7 home-page-content'),
                             homepage_card(
                                 icon_name='registration.svg', title='Registration', card_color='blue', href='/registration',
@@ -159,17 +159,17 @@ def get_main_routes(rt):
         #             )
         #         )
 
-    @rt('/feedback-survey')
-    def get():
-        return AppContainer(
-                Div(
-                    TopNav('Feedback Survey'),
-                    H2('Coming soon...'),
-                    id='page-content',
-                    cls='blue-background'
-                    ),
-                active_button_index=1
-                )
+    # @rt('/feedback-survey')
+    # def get():
+    #     return AppContainer(
+    #             Div(
+    #                 TopNav('Feedback Survey'),
+    #                 H2('Coming soon...'),
+    #                 id='page-content',
+    #                 cls='blue-background'
+    #                 ),
+    #             active_button_index=1
+    #             )
 
     @rt('/registration')
     def get():

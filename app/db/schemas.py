@@ -114,3 +114,17 @@ class SponsorOut(SponsorBase):
     
     class Config:
         from_attributes = True
+
+# ==================== FEEDBACK SCHEMAS ====================
+
+class FeedbackSubmissionCreate(BaseModel):
+    submission_data: dict
+
+class FeedbackSubmissionOut(BaseModel):
+    id: str
+    submission_data: dict
+    submitted_at: datetime
+    ip_address: Optional[str] = None
+    
+    class Config:
+        from_attributes = True
