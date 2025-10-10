@@ -55,7 +55,7 @@ def get():
                         Input(placeholder='Password', name='password', type='password', cls='grow'),
                         cls='input input-bordered flex items-center gap-2',
                         ),
-                    Button('Login', cls='btn btn-primary'),
+                    Button('Login', type='submit', cls='btn btn-primary'),
                     hx_post='/admin_login',
                     method='post',
                     cls='flex flex-col items-center justify-evenly h-35-vh',
