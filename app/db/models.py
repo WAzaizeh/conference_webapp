@@ -4,6 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
 import uuid
+from datetime import datetime, timezone
 
 Base = declarative_base()
 
@@ -25,9 +26,13 @@ class Event(Base):
     end_time = Column(DateTime(timezone=True), nullable=False)
     location = Column(String(255))
     category = Column(String(50), default='MAIN')
+    is_qa_active = Column(Boolean, default=False) 
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
     # Many-to-many relationship with speakers
     speakers = relationship("Speaker", secondary=event_speakers, back_populates="events")
+    questions = relationship('Question', back_populates='event', cascade='all, delete-orphan')
 
 class Speaker(Base):
     __tablename__ = 'speakers'
@@ -100,8 +105,8 @@ class FeedbackSubmission(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     submission_data = Column(JSON, nullable=False)  # Store all survey responses as JSON
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
-    ip_address = Column(String(45))  # To track submissions and prevent duplicates
-    user_agent = Column(Text)  # Additional tracking
+    session_id = Column(String(255))  # NEW: Track by session/cookie
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 class Question(Base):
     __tablename__ = 'questions'
@@ -112,18 +117,20 @@ class Question(Base):
     question_text = Column(Text, nullable=False)
     is_visible = Column(Boolean, default=False)  # Only visible questions shown to public
     is_answered = Column(Boolean, default=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    ip_address = Column(String(45))
     likes_count = Column(Integer, default=0)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     
-    event = relationship("Event", backref="questions")
+    # Relationships
+    event = relationship("Event", back_populates="questions")
+    likes = relationship('QuestionLike', back_populates='question', cascade='all, delete-orphan')
 
 class QuestionLike(Base):
     __tablename__ = 'question_likes'
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     question_id = Column(UUID(as_uuid=True), ForeignKey('questions.id', ondelete='CASCADE'), nullable=False)
-    session_id = Column(String(255))  # Track by session to allow undo
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    session_id = Column(String(255), nullable=False)  # Track by session to allow undo
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     
-    question = relationship("Question", backref="likes")
+    question = relationship("Question", back_populates="likes")

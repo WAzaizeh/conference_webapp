@@ -1,20 +1,14 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
-from sqlalchemy import delete, update
-from datetime import datetime
-from db.models import Event, Speaker, PrayerTime, Sponsor, User, Session, AuditLog
+from db.models import PrayerTime
 from db.schemas import (
-    EventOut, EventCreate, EventUpdate,
-    SpeakerOut, SpeakerCreate, SpeakerUpdate,
-    PrayerTimeOut, PrayerTimeCreate, PrayerTimeUpdate,
-    SponsorOut, SponsorCreate, SponsorUpdate
+    PrayerTimeCreate, PrayerTimeUpdate,
 )
 
 async def create_prayer_time(db: AsyncSession, prayer_time: PrayerTimeCreate) -> PrayerTime:
     """Create a new prayer time"""
-    db_prayer_time = PrayerTime(**prayer_time.dict())
+    db_prayer_time = PrayerTime(**prayer_time.model_dump())
     db.add(db_prayer_time)
     await db.commit()
     await db.refresh(db_prayer_time)

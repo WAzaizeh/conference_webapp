@@ -12,14 +12,24 @@ from crud.question import (
     toggle_like,
     check_user_liked
 )
-from crud.event import get_event, get_events
+from crud.event import get_event, get_events, toggle_qa_active
 from utils.sse_manager import sse_manager
 from utils.auth import require_moderator
-from datetime import datetime, timezone
+from core.app import rt
 import asyncio
 import uuid
-from core.app import rt
-    
+
+def get_or_create_session_id(request):
+    """Get existing session ID from cookie or create new one"""
+    session_id = request.cookies.get('qa_session_id')
+    if not session_id:
+        session_id = str(uuid.uuid4())
+    return session_id
+
+def get_nickname_from_cookie(request):
+    """Get stored nickname from cookie"""
+    return request.cookies.get('qa_nickname', 'Anonymous')
+
 @rt('/qa')
 async def get(request, sess):
     """Q&A main page - select session (accessible to everyone)"""
@@ -29,14 +39,11 @@ async def get(request, sess):
         # Sort events by start time
         events = sorted(events, key=lambda e: e.start_time)
         
-        # Get current time
-        now = datetime.now(timezone.utc)
-        
         # Build event cards
         event_cards = []
         for event in events:
-            # Check if event is currently active
-            is_active = event.start_time <= now <= event.end_time
+            # Check if QA is active
+            is_active = event.is_qa_active
             
             # Format time
             time_str = event.start_time.strftime("%I:%M %p")
@@ -53,9 +60,12 @@ async def get(request, sess):
                                 H3(event.title, cls="card-title text-lg"),
                                 Span(
                                     I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
-                                    "Active Now",
+                                    "Q&A Active",
                                     cls="badge badge-primary"
-                                ) if is_active else None,
+                                ) if is_active else Span(
+                                    "Q&A Closed",
+                                    cls="badge badge-ghost"
+                                ),
                                 cls="flex justify-between items-start"
                             ),
                             P(
@@ -87,7 +97,13 @@ async def get(request, sess):
                 
                 # Events grid
                 Div(
-                    *event_cards,
+                    *event_cards if event_cards else [
+                        Div(
+                            I(cls="fas fa-inbox text-4xl text-base-content/30 mb-4"),
+                            P("No Q&A sessions available", cls="text-base-content/60"),
+                            cls="text-center py-12"
+                        )
+                    ],
                     cls="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
                 ),
                 
@@ -96,12 +112,10 @@ async def get(request, sess):
         )
 
 @rt('/qa/event/{event_id}')
-async def get(request, event_id: int, sess):
+async def get(request, sess, event_id: int):
     """Q&A page for a specific event (accessible to everyone)"""
-    # Get or create session ID for like tracking
-    session_id = request.cookies.get('qa_session_id')
-    if not session_id:
-        session_id = str(uuid.uuid4())
+    session_id = get_or_create_session_id(request)
+    stored_nickname = get_nickname_from_cookie(request)
     
     async with db_manager.AsyncSessionLocal() as db:
         event = await get_event(db, event_id)
@@ -117,9 +131,8 @@ async def get(request, event_id: int, sess):
             if await check_user_liked(db, str(q.id), session_id):
                 user_likes.add(str(q.id))
     
-    # Check if event is currently active
-    now = datetime.now(timezone.utc)
-    is_active = event.start_time <= now <= event.end_time
+    # Check if QA is active
+    is_active = event.is_qa_active
     
     return AppContainer(
         Div(
@@ -142,16 +155,26 @@ async def get(request, event_id: int, sess):
                     ),
                     Span(
                         I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
-                        "Live Q&A Active",
+                        "Q&A Active - Submit Questions",
                         cls="badge badge-primary badge-lg mt-2"
-                    ) if is_active else None,
+                    ) if is_active else Span(
+                        I(cls="fas fa-lock mr-2"),
+                        "Q&A Closed - View Only",
+                        cls="badge badge-ghost badge-lg mt-2"
+                    ),
                     cls="mb-6"
                 ),
                 cls="mb-8"
             ),
             
-            # Question submission form
-            QuestionForm(event_id),
+            # Question submission form (only if active)
+            QuestionForm(event_id, initial_nickname=stored_nickname) if is_active else Div(
+                Div(
+                    I(cls="fas fa-info-circle text-info text-2xl mb-2"),
+                    P("Question submissions are currently closed for this session.", cls="font-semibold"),
+                    cls="alert alert-info flex flex-col items-center mb-6"
+                )
+            ),
             
             # Tabs for Recent/Popular
             Div(
@@ -179,7 +202,7 @@ async def get(request, event_id: int, sess):
             # Questions list
             QuestionsListContainer(questions, user_likes=user_likes),
             
-            # SSE connection for live updates (only if active)
+            # SSE connection for live updates
             Script(f"""
                 if (typeof(EventSource) !== "undefined") {{
                     const eventSource = new EventSource('/qa/event/{event_id}/stream');
@@ -203,7 +226,7 @@ async def get(request, event_id: int, sess):
                         eventSource.close();
                     }});
                 }}
-            """) if is_active else None,
+            """),
             
             cls="container mx-auto px-4 py-8 max-w-4xl"
         )
@@ -212,7 +235,7 @@ async def get(request, event_id: int, sess):
 @rt('/qa/event/{event_id}/questions')
 async def get(request, event_id: int, sort: str = "recent"):
     """Get questions list (for tab switching) - accessible to everyone"""
-    session_id = request.cookies.get('qa_session_id', str(uuid.uuid4()))
+    session_id = get_or_create_session_id(request)
     
     async with db_manager.AsyncSessionLocal() as db:
         questions = await get_questions_by_event(db, event_id, visible_only=True, sort_by=sort)
@@ -234,12 +257,12 @@ async def get(request, event_id: int, sort: str = "recent"):
 
 @rt('/qa/event/{event_id}/submit')
 async def post(request, event_id: int):
-    """Submit a new question - accessible to everyone"""
+    """Submit a new question - only if Q&A is active"""
     form_data = await request.form()
-    ip_address = request.client.host if hasattr(request, 'client') else None
+    session_id = get_or_create_session_id(request)
     
     async with db_manager.AsyncSessionLocal() as db:
-        # Validate event exists
+        # Validate event exists and QA is active
         event = await get_event(db, event_id)
         if not event:
             return Div(
@@ -247,10 +270,19 @@ async def post(request, event_id: int):
                 cls="alert alert-error"
             )
         
+        if not event.is_qa_active:
+            return Div(
+                P("Q&A is currently closed for this session", cls="text-error"),
+                cls="alert alert-error mb-4"
+            )
+        
+        # Get nickname and save to cookie
+        nickname = form_data.get('nickname', 'Anonymous').strip() or 'Anonymous'
+        
         # Create question
         question_create = QuestionCreate(
             event_id=event_id,
-            nickname=form_data.get('nickname', 'Anonymous').strip() or 'Anonymous',
+            nickname=nickname,
             question_text=form_data.get('question_text', '').strip()
         )
         
@@ -260,7 +292,7 @@ async def post(request, event_id: int):
                 cls="alert alert-error mb-4"
             )
         
-        question = await create_question(db, question_create, ip_address)
+        question = await create_question(db, question_create)
         
         # Broadcast update via SSE
         await sse_manager.send_question_update(
@@ -278,20 +310,24 @@ async def post(request, event_id: int):
         )
     
     # Return success message and reset form
-    return Div(
+    return (
         Div(
-            I(cls="fas fa-check-circle text-success text-2xl mb-2"),
-            P("Question submitted! It will appear after moderator approval.", cls="font-semibold"),
-            cls="alert alert-success mb-4 flex flex-col items-center"
+            Div(
+                I(cls="fas fa-check-circle text-success text-2xl mb-2"),
+                P("Question submitted! It will appear after moderator approval.", cls="font-semibold"),
+                cls="alert alert-success mb-4 flex flex-col items-center"
+            ),
+            QuestionForm(event_id, initial_nickname=nickname),
+            id="question-form"
         ),
-        QuestionForm(event_id),
-        id="question-form"
+        cookie('qa_nickname', nickname, max_age=86400*365),  # Remember nickname for 1 year
+        cookie('qa_session_id', session_id, max_age=86400*365)
     )
 
 @rt('/qa/question/{question_id}/like')
 async def post(request, question_id: str):
     """Toggle like on a question - accessible to everyone"""
-    session_id = request.cookies.get('qa_session_id', str(uuid.uuid4()))
+    session_id = get_or_create_session_id(request)
     
     async with db_manager.AsyncSessionLocal() as db:
         question = await get_question(db, question_id)
@@ -301,7 +337,7 @@ async def post(request, question_id: str):
         # Toggle like
         liked, new_count = await toggle_like(db, question_id, session_id)
         
-        # Broadcast like update via SSE to both regular and moderator views
+        # Broadcast like update via SSE
         await sse_manager.send_question_update(
             question.event_id,
             {
@@ -315,7 +351,10 @@ async def post(request, question_id: str):
         question = await get_question(db, question_id)
         user_liked = await check_user_liked(db, question_id, session_id)
     
-    return QuestionCard(question, show_admin_controls=False, user_liked=user_liked)
+    return (
+        QuestionCard(question, show_admin_controls=False, user_liked=user_liked),
+        cookie('qa_session_id', session_id, max_age=86400*30)  # 30 days
+    )
 
 @rt('/qa/event/{event_id}/stream')
 async def get(request, event_id: int):
@@ -350,7 +389,7 @@ async def get(request, event_id: int):
         }
     )
 
-# Moderator routes - require authentication
+# Moderator routes - require authentication via decorator
 @rt('/qa/moderator/event/{event_id}')
 @require_moderator
 async def get(req, sess, event_id: int):
@@ -374,14 +413,45 @@ async def get(req, sess, event_id: int):
                     cls="btn btn-ghost mb-4"
                 ),
                 Div(
-                    Span("Moderator View", cls="badge badge-secondary mb-2"),
+                    Div(
+                        Span("Moderator View", cls="badge badge-secondary mb-2 mr-2"),
+                        A(
+                            I(cls="fas fa-eye mr-2"),
+                            "Guest View",
+                            href=f"/qa/event/{event_id}",
+                            cls="btn btn-sm btn-outline",
+                            target="_blank"
+                        ),
+                        cls="flex items-center gap-2 mb-2"
+                    ),
                     H1(event.title, cls="text-3xl font-bold mb-2"),
                     P(
                         I(cls="far fa-clock mr-2"),
                         event.start_time.strftime("%I:%M %p"),
                         " • ",
                         event.location or "TBA",
-                        cls="text-base-content/70"
+                        cls="text-base-content/70 mb-2"
+                    ),
+                    # Q&A Activation Toggle
+                    Div(
+                        Button(
+                            I(cls=f"fas fa-{'unlock' if event.is_qa_active else 'lock'} mr-2"),
+                            "Deactivate Q&A" if event.is_qa_active else "Activate Q&A",
+                            cls=f"btn btn-{'error' if event.is_qa_active else 'success'}",
+                            hx_post=f"/qa/moderator/event/{event_id}/toggle-qa",
+                            hx_swap="none",
+                            onclick="setTimeout(() => location.reload(), 500)"
+                        ),
+                        Span(
+                            I(cls="fas fa-circle text-success mr-2 animate-pulse"),
+                            "Q&A Active",
+                            cls="badge badge-success ml-2"
+                        ) if event.is_qa_active else Span(
+                            I(cls="fas fa-circle text-error mr-2"),
+                            "Q&A Closed",
+                            cls="badge badge-error ml-2"
+                        ),
+                        cls="flex items-center gap-2"
                     ),
                     cls="mb-6"
                 ),
@@ -451,9 +521,6 @@ async def get(req, sess):
         # Sort events by start time
         events = sorted(events, key=lambda e: e.start_time)
         
-        # Get current time
-        now = datetime.now(timezone.utc)
-        
         # Build event cards with question counts
         event_cards = []
         for event in events:
@@ -462,15 +529,15 @@ async def get(req, sess):
             total_questions = len(questions)
             hidden_questions = sum(1 for q in questions if not q.is_visible)
             
-            # Check if event is currently active
-            is_active = event.start_time <= now <= event.end_time
+            # Check if QA is active
+            is_active = event.is_qa_active
             
             # Format time
             time_str = event.start_time.strftime("%I:%M %p")
             
             card_class = "card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
             if is_active:
-                card_class += " border-2 border-primary"
+                card_class += " border-2 border-success"
             
             event_cards.append(
                 A(
@@ -480,10 +547,14 @@ async def get(req, sess):
                                 H3(event.title, cls="card-title text-lg"),
                                 Div(
                                     Span(
-                                        I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
+                                        I(cls="fas fa-circle text-success mr-2 animate-pulse"),
                                         "Active",
-                                        cls="badge badge-primary badge-sm"
-                                    ) if is_active else None,
+                                        cls="badge badge-success badge-sm"
+                                    ) if is_active else Span(
+                                        I(cls="fas fa-circle text-error mr-2"),
+                                        "Closed",
+                                        cls="badge badge-error badge-sm"
+                                    ),
                                     Span(
                                         I(cls="fas fa-question-circle mr-1"),
                                         str(total_questions),
@@ -520,7 +591,7 @@ async def get(req, sess):
                     Span("Moderator Panel", cls="badge badge-secondary badge-lg mb-4"),
                     H1("Q&A Session Management", cls="text-4xl font-bold mb-2"),
                     P(
-                        "Select a session to moderate questions",
+                        "Select a session to moderate questions and control Q&A activation",
                         cls="text-base-content/70"
                     ),
                     cls="text-center mb-8"
@@ -541,6 +612,18 @@ async def get(req, sess):
                 cls="container mx-auto px-4 py-8"
             )
         )
+
+@rt('/qa/moderator/event/{event_id}/toggle-qa')
+@require_moderator
+async def post(req, sess, event_id: int):
+    """Toggle Q&A activation status"""
+    async with db_manager.AsyncSessionLocal() as db:
+        event = await toggle_qa_active(db, event_id)
+        if not event:
+            return Response("Event not found", status_code=404)
+    
+    # Return success response (page will reload via onclick handler)
+    return Response("OK")
 
 @rt('/qa/moderator/question/{question_id}/toggle-visibility')
 @require_moderator

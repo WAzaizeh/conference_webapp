@@ -1,26 +1,43 @@
-from pydantic import BaseModel
-from typing import List, Optional
+from pydantic import BaseModel, Field, UUID4
 from datetime import datetime
-from enum import Enum
+from typing import Optional, List, Dict, Any
 
-class EVENT_CATEGORY(str, Enum):
-    MAIN = "MAIN"
-    WORKSHOP = "WORKSHOP"
-    BREAK = "BREAK"
+# Event schemas
+class EventBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    start_time: datetime
+    end_time: datetime
+    location: Optional[str] = None
+    category: Optional[str] = "MAIN"
 
-class PRAYER_NAME(str, Enum):
-    FAJR = "FAJR"
-    DHUHR = "DHUHR"
-    ASR = "ASR"
-    MAGHRIB = "MAGHRIB"
-    ISHA = "ISHA"
+class EventCreate(EventBase):
+    pass
 
-# ==================== SPEAKER SCHEMAS ====================
+class EventUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    location: Optional[str] = None
+    category: Optional[str] = None
+    is_qa_active: Optional[bool] = None
 
+class Event(EventBase):
+    id: int
+    is_qa_active: bool = False
+    created_at: datetime
+    updated_at: datetime
+    speakers: List['Speaker'] = []
+    
+    class Config:
+        from_attributes = True
+
+# Speaker schemas
 class SpeakerBase(BaseModel):
     name: str
-    image_url: Optional[str] = ""
-    bio: Optional[str] = ""
+    image_url: Optional[str] = None
+    bio: Optional[str] = None
 
 class SpeakerCreate(SpeakerBase):
     pass
@@ -30,72 +47,42 @@ class SpeakerUpdate(BaseModel):
     image_url: Optional[str] = None
     bio: Optional[str] = None
 
-class SpeakerOut(SpeakerBase):
+class Speaker(SpeakerBase):
     id: int
+    events: List['Event'] = []
     
     class Config:
         from_attributes = True
 
-# ==================== EVENT SCHEMAS ====================
-
-class EventBase(BaseModel):
-    title: str
-    description: Optional[str] = ""
-    start_time: datetime
-    end_time: datetime
-    location: Optional[str] = ""
-    category: EVENT_CATEGORY = EVENT_CATEGORY.MAIN
-
-class EventCreate(EventBase):
-    speaker_ids: Optional[List[int]] = []
-
-class EventUpdate(BaseModel):
-    title: Optional[str] = None
-    description: Optional[str] = None
-    start_time: Optional[datetime] = None
-    end_time: Optional[datetime] = None
-    location: Optional[str] = None
-    category: Optional[EVENT_CATEGORY] = None
-    speaker_ids: Optional[List[int]] = None
-
-class EventOut(EventBase):
-    id: int
-    speakers: List[int] = []
-    
-    class Config:
-        from_attributes = True
-
-# ==================== PRAYER TIME SCHEMAS ====================
-
+# Prayer Time schemas
 class PrayerTimeBase(BaseModel):
-    name: PRAYER_NAME
-    time: str
-    iqama: str
+    name: str
+    time: Optional[str] = None
+    iqama: Optional[str] = None
 
 class PrayerTimeCreate(PrayerTimeBase):
     pass
 
 class PrayerTimeUpdate(BaseModel):
-    name: Optional[PRAYER_NAME] = None
+    name: Optional[str] = None
     time: Optional[str] = None
     iqama: Optional[str] = None
 
-class PrayerTimeOut(PrayerTimeBase):
+class PrayerTime(PrayerTimeBase):
     id: int
     
     class Config:
         from_attributes = True
 
-# ==================== SPONSOR SCHEMAS ====================
-
+# Sponsor schemas
 class SponsorBase(BaseModel):
     name: str
-    image_url: Optional[str] = ""
-    description: Optional[str] = ""
-    website: Optional[str] = ""
-    facebook: Optional[str] = ""
-    instagram: Optional[str] = ""
-    twitter: Optional[str] = ""
+    image_url: Optional[str] = None
+    description: Optional[str] = None
+    website: Optional[str] = None
+    facebook: Optional[str] = None
+    instagram: Optional[str] = None
+    twitter: Optional[str] = None
 
 class SponsorCreate(SponsorBase):
     pass
@@ -109,50 +96,70 @@ class SponsorUpdate(BaseModel):
     instagram: Optional[str] = None
     twitter: Optional[str] = None
 
-class SponsorOut(SponsorBase):
+class Sponsor(SponsorBase):
     id: int
     
     class Config:
         from_attributes = True
 
-# ==================== FEEDBACK SCHEMAS ====================
+# User schemas
+class UserBase(BaseModel):
+    email: str
+    role: str
 
-class FeedbackSubmissionCreate(BaseModel):
-    submission_data: dict
+class UserCreate(UserBase):
+    password: str
 
-class FeedbackSubmissionOut(BaseModel):
-    id: str
-    submission_data: dict
-    submitted_at: datetime
-    ip_address: Optional[str] = None
+class UserUpdate(BaseModel):
+    email: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+
+class User(UserBase):
+    id: UUID4
+    is_active: bool
+    created_at: datetime
+    last_login_at: Optional[datetime] = None
     
     class Config:
         from_attributes = True
 
-# ==================== Q&A SCHEMAS ====================
-
+# Question schemas
 class QuestionCreate(BaseModel):
     event_id: int
-    nickname: str
+    nickname: str = "Anonymous"
     question_text: str
 
 class QuestionUpdate(BaseModel):
+    nickname: Optional[str] = None
+    question_text: Optional[str] = None
     is_visible: Optional[bool] = None
     is_answered: Optional[bool] = None
 
-class QuestionOut(BaseModel):
-    id: str
+class Question(BaseModel):
+    id: UUID4
     event_id: int
     nickname: str
     question_text: str
     is_visible: bool
     is_answered: bool
-    created_at: datetime
     likes_count: int
+    created_at: datetime
+    updated_at: datetime
     
     class Config:
         from_attributes = True
 
-class QuestionLikeCreate(BaseModel):
-    question_id: str
-    session_id: str
+# Feedback schemas
+class FeedbackSubmissionCreate(BaseModel):
+    submission_data: Dict[str, Any]
+
+class FeedbackSubmission(BaseModel):
+    id: UUID4
+    submission_data: Dict[str, Any]
+    submitted_at: datetime
+    session_id: Optional[str] = None
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True

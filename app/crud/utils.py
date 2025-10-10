@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from datetime import datetime
-from db.models import Event, Speaker, Session
+from db.models import Event, Speaker
 
 async def get_events_by_date_range(
     db: AsyncSession, 

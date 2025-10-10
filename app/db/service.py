@@ -1,7 +1,7 @@
 from sqlalchemy.orm import selectinload
 from .sync_connection import sync_db_manager
 from .models import Event, Speaker, PrayerTime, Sponsor
-from .schemas import EventOut, SpeakerOut, PrayerTimeOut, SponsorOut, EVENT_CATEGORY, PRAYER_NAME
+from .schemas import Event, Speaker, PrayerTime, Sponsor, EVENT_CATEGORY, PRAYER_NAME
 
 class DatabaseService:
     """Service for database operations"""
@@ -18,7 +18,7 @@ class DatabaseService:
                 )
                 events = events.scalars().all()
                 return [
-                    EventOut(
+                    Event(
                         id=event.id,
                         title=event.title,
                         description=event.description,
@@ -42,7 +42,7 @@ class DatabaseService:
                 )
                 speakers = result.scalars().all()
                 return [
-                    SpeakerOut(
+                    Speaker(
                         id=speaker.id,
                         name=speaker.name,
                         image_url=speaker.image_url,
@@ -62,7 +62,7 @@ class DatabaseService:
                 )
                 prayer_times = result.scalars().all()
                 return [
-                    PrayerTimeOut(
+                    PrayerTime(
                         id=prayer.id,
                         name=PRAYER_NAME(prayer.name),
                         time=prayer.time,
@@ -82,7 +82,7 @@ class DatabaseService:
                 )
                 sponsors = result.scalars().all()
                 return [
-                    SponsorOut(
+                    Sponsor(
                         id=sponsor.id,
                         name=sponsor.name,
                         image_url=sponsor.image_url,
@@ -106,7 +106,7 @@ class DatabaseService:
                 )
                 speaker = result.scalar_one_or_none()
                 if speaker:
-                    return SpeakerOut(
+                    return Speaker(
                         id=speaker.id,
                         name=speaker.name,
                         image_url=speaker.image_url,
@@ -128,7 +128,7 @@ class DatabaseService:
                 )
                 event = result.scalar_one_or_none()
                 if event:
-                    return EventOut(
+                    return Event(
                         id=event.id,
                         title=event.title,
                         description=event.description,

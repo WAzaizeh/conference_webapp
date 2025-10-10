@@ -2,7 +2,7 @@ from .icon import Icon
 from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from db.schemas import EventOut, SpeakerOut
+from db.schemas import Event, Speaker
 from fasthtml.components import Ul, Li, Div, Hr, H3, A, H4, Img, I, Span
 
 def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
@@ -14,7 +14,7 @@ def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
             cls='avatar' + ' ' + kwargs.get('cls', '')
             )
 
-def SpeakerCardBody(speakers_data: List[SpeakerOut]) -> List:
+def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
     speaker = speakers_data[0] if speakers_data else None
     if speaker:
         return [
@@ -31,7 +31,7 @@ def SpeakerCardBody(speakers_data: List[SpeakerOut]) -> List:
             Div(cls='hidden'),
         ]
 
-def agenda_timeline(events: List[EventOut]):
+def agenda_timeline(events: List[Event]):
     return Ul(
         *[Li(
             Div(
@@ -58,7 +58,7 @@ def agenda_timeline(events: List[EventOut]):
         cls='timeline timeline-vertical timeline-compact p-8'    
         )
 
-def agenda_timeline_2(events: List[EventOut]):
+def agenda_timeline_2(events: List[Event]):
     return Ul(
         *[Li(
             Div(

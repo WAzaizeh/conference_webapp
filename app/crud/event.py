@@ -2,14 +2,10 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import delete, update
-from datetime import datetime
-from db.models import Event, Speaker, PrayerTime, Sponsor, User, Session, AuditLog
+from sqlalchemy import delete
+from db.models import Event, Speaker
 from db.schemas import (
-    EventOut, EventCreate, EventUpdate,
-    SpeakerOut, SpeakerCreate, SpeakerUpdate,
-    PrayerTimeOut, PrayerTimeCreate, PrayerTimeUpdate,
-    SponsorOut, SponsorCreate, SponsorUpdate
+    EventCreate, EventUpdate,
 )
 
 async def create_event(db: AsyncSession, event: EventCreate) -> Event:
@@ -64,3 +60,16 @@ async def delete_event(db: AsyncSession, event_id: int) -> bool:
     result = await db.execute(delete(Event).where(Event.id == event_id))
     await db.commit()
     return result.rowcount > 0
+
+async def toggle_qa_active(db: AsyncSession, event_id: int) -> Optional[Event]:
+    """Toggle Q&A active status for an event"""
+    db_event = await get_event(db, event_id)
+    if not db_event:
+        return None
+    
+    # Toggle the is_qa_active field
+    db_event.is_qa_active = not db_event.is_qa_active
+    
+    await db.commit()
+    await db.refresh(db_event)
+    return db_event

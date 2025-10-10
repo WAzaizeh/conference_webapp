@@ -1,12 +1,14 @@
 from typing import List
 from .icon import Icon, BrandIcon
-from db.schemas import SpeakerOut, EventOut, PrayerTimeOut, SponsorOut
+from db.schemas import Speaker, Event, PrayerTime, Sponsor
 from components.navigation import TopNav
 from fasthtml.components import Div, Span, Figure, Img, H2, H1, P, Button, A, Hr
 
 
-def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
+def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool = False, **kwargs) -> A:
     custom_cls = kwargs.pop('cls', '')  # Remove 'cls' from kwargs if present
+    if bold_style:
+        custom_cls += ' font-bold border-2 border-pink-300 shadow-lg'
     return A(
                 P(title),
                 Img(src=icon_name),
@@ -14,7 +16,7 @@ def homepage_card(icon_name : str, title: str, card_color: str, **kwargs) -> A:
                 **kwargs
             )
 
-def brief_speaker_card(speaker: SpeakerOut) -> A:
+def brief_speaker_card(speaker: Speaker) -> A:
     return A(
             Figure(
                     Img(src=f'/{speaker.image_url}', alt=speaker.name),
@@ -35,7 +37,7 @@ def brief_speaker_card(speaker: SpeakerOut) -> A:
         )
 
 
-def speaker_page(speaker: SpeakerOut) -> Div:
+def speaker_page(speaker: Speaker) -> Div:
     return Div(
             TopNav('Speaker Profile'),
             Figure(
@@ -53,7 +55,7 @@ def speaker_page(speaker: SpeakerOut) -> Div:
             cls='speaker-detail-view blue-background'
         )
 
-def prayer_time_card(prayer : PrayerTimeOut) -> Div:
+def prayer_time_card(prayer : PrayerTime) -> Div:
     return Div(
             Div(
                 P(prayer.name),
@@ -68,12 +70,12 @@ def prayer_time_card(prayer : PrayerTimeOut) -> Div:
             cls='prayer-card'
         )
 
-def prayer_times_page(prayers: List[PrayerTimeOut]) -> Div:
+def prayer_times_page(prayers: List[PrayerTime]) -> Div:
     return Div(
             *[prayer_time_card(prayer) for prayer in prayers],
         )
 
-def brief_sponsor_card(sponsor: SponsorOut) -> Div:
+def brief_sponsor_card(sponsor: Sponsor) -> Div:
     return A(
             Figure(
                     Img(src=f'{sponsor.image_url}', alt=sponsor.name),
@@ -93,7 +95,7 @@ def brief_sponsor_card(sponsor: SponsorOut) -> Div:
             href=f'/sponsors/{sponsor.id}',
         )
 
-def sponsor_page(sponsor: SponsorOut) -> Div:
+def sponsor_page(sponsor: Sponsor) -> Div:
     return Div(
             TopNav('Sponsor Details'),
             Figure(
@@ -124,7 +126,7 @@ def sponsor_page(sponsor: SponsorOut) -> Div:
             cls='sponsor-detail-view blue-background'
         )
 
-def session_speaker_card(session: EventOut, speaker : SpeakerOut) -> Div:
+def session_speaker_card(session: Event, speaker : Speaker) -> Div:
     return Div(
                 Div(
                     A(

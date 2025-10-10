@@ -1,20 +1,15 @@
 from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy.orm import selectinload
-from sqlalchemy import delete, update
-from datetime import datetime
-from db.models import Event, Speaker, PrayerTime, Sponsor, User, Session, AuditLog
+from sqlalchemy import delete
+from db.models import Sponsor
 from db.schemas import (
-    EventOut, EventCreate, EventUpdate,
-    SpeakerOut, SpeakerCreate, SpeakerUpdate,
-    PrayerTimeOut, PrayerTimeCreate, PrayerTimeUpdate,
-    SponsorOut, SponsorCreate, SponsorUpdate
+    SponsorCreate, SponsorUpdate
 )
 
 async def create_sponsor(db: AsyncSession, sponsor: SponsorCreate) -> Sponsor:
     """Create a new sponsor"""
-    db_sponsor = Sponsor(**sponsor.dict())
+    db_sponsor = Sponsor(**sponsor.model_dump())
     db.add(db_sponsor)
     await db.commit()
     await db.refresh(db_sponsor)

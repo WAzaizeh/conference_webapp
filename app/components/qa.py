@@ -101,7 +101,7 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
         id=f"question-{question_id}"
     )
 
-def QuestionForm(event_id: int):
+def QuestionForm(event_id: int, initial_nickname="Anonymous"):
     """Form to submit a new question"""
     return Div(
         H3("Ask a Question", cls="text-2xl font-bold mb-4"),
@@ -113,7 +113,7 @@ def QuestionForm(event_id: int):
                     name="nickname",
                     id="nickname",
                     placeholder="Anonymous",
-                    value="Anonymous",
+                    value=initial_nickname,
                     cls="input input-bordered w-full"
                 ),
                 cls="form-control mb-4"
