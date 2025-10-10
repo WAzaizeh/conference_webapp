@@ -102,3 +102,28 @@ class FeedbackSubmission(Base):
     submitted_at = Column(DateTime(timezone=True), server_default=func.now())
     ip_address = Column(String(45))  # To track submissions and prevent duplicates
     user_agent = Column(Text)  # Additional tracking
+
+class Question(Base):
+    __tablename__ = 'questions'
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    event_id = Column(Integer, ForeignKey('events.id', ondelete='CASCADE'), nullable=False)
+    nickname = Column(String(100), nullable=False)
+    question_text = Column(Text, nullable=False)
+    is_visible = Column(Boolean, default=False)  # Only visible questions shown to public
+    is_answered = Column(Boolean, default=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    ip_address = Column(String(45))
+    likes_count = Column(Integer, default=0)
+    
+    event = relationship("Event", backref="questions")
+
+class QuestionLike(Base):
+    __tablename__ = 'question_likes'
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    question_id = Column(UUID(as_uuid=True), ForeignKey('questions.id', ondelete='CASCADE'), nullable=False)
+    session_id = Column(String(255))  # Track by session to allow undo
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    
+    question = relationship("Question", backref="likes")

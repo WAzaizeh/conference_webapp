@@ -13,7 +13,6 @@ if not os.getenv('K_SERVICE'):  # Not running on Cloud Run
 class SyncDatabaseManager:
     def __init__(self):
         database_url = os.getenv('DATABASE_URL')
-        print(f"Original DATABASE_URL: {database_url}")
 
         database_url = database_url.replace('postgresql://', 'postgresql+psycopg2://')
 

@@ -128,3 +128,31 @@ class FeedbackSubmissionOut(BaseModel):
     
     class Config:
         from_attributes = True
+
+# ==================== Q&A SCHEMAS ====================
+
+class QuestionCreate(BaseModel):
+    event_id: int
+    nickname: str
+    question_text: str
+
+class QuestionUpdate(BaseModel):
+    is_visible: Optional[bool] = None
+    is_answered: Optional[bool] = None
+
+class QuestionOut(BaseModel):
+    id: str
+    event_id: int
+    nickname: str
+    question_text: str
+    is_visible: bool
+    is_answered: bool
+    created_at: datetime
+    likes_count: int
+    
+    class Config:
+        from_attributes = True
+
+class QuestionLikeCreate(BaseModel):
+    question_id: str
+    session_id: str

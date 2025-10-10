@@ -8,14 +8,13 @@ from .models import Base
 class DatabaseManager:
     def __init__(self):
         database_url = os.getenv('DATABASE_URL')
-        print(f"Original DATABASE_URL: {database_url}")
         
         database_url = database_url.replace('postgresql://', 'postgresql+asyncpg://')
 
         self.database_url = database_url
         self.engine = create_async_engine(
             database_url,
-            echo=True,
+            echo=False,
             pool_pre_ping=True,  # Verify connections before using them
             pool_size=5,  # Number of connections to maintain
             max_overflow=10,  # Additional connections when pool is full
