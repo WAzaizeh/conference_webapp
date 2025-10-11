@@ -4,7 +4,7 @@ from components.feedback_form import FeedbackForm
 from db.connection import db_manager
 from db.schemas import FeedbackSubmissionCreate
 from crud.feedback import create_feedback, check_recent_submission
-from utils.auth import require_moderator
+from utils.auth import is_moderator, require_moderator
 from sqlalchemy.future import select
 from sqlalchemy import func
 from db.models import FeedbackSubmission
@@ -29,7 +29,8 @@ async def get(request, sess):
             FeedbackForm(),
             
             cls="container mx-auto px-4 py-8"
-        )
+        ),
+        is_moderator=is_moderator(sess)
     )
 
 @rt('/feedback/submit')
@@ -69,7 +70,8 @@ async def post(request, sess):
                         cls="card bg-base-100 shadow-xl p-8 max-w-md mx-auto"
                     ),
                     cls="container mx-auto px-4 py-16"
-                )
+                ),
+                is_moderator=is_moderator(sess)
             )
         
         # Process form data
@@ -112,7 +114,8 @@ async def post(request, sess):
                 cls="card bg-base-100 shadow-xl p-8 max-w-md mx-auto"
             ),
             cls="container mx-auto px-4 py-16"
-        )
+        ),
+        is_moderator=is_moderator(sess)
     )
 
 @rt('/feedback/moderator')
@@ -169,5 +172,5 @@ async def get(req, sess):
             
             cls="container mx-auto px-4 py-8"
         ),
-        active_button_index=6  # Feedback is button 6 in the nav
+        is_moderator=is_moderator(sess)
     )

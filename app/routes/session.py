@@ -8,9 +8,10 @@ from fasthtml.components import H1, H3, Div, P
 from components.timeline import agenda_timeline, agenda_timeline_2
 from db.connection import db_manager
 from core.app import rt
+from utils.auth import is_moderator
 
 @rt('/agenda')
-async def get():
+async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db_session:
         events = await get_events(db_session)
         for event in events:
@@ -30,11 +31,12 @@ async def get():
                 id='page-content',
                 cls='blue-background'
             ),
-            active_button_index=2
+            active_button_index=2,
+            is_moderator=is_moderator(sess),
         )
 
 @rt('/agenda_2')
-async def get():
+async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db_session:
         sessions = await get_events(db_session)
     return AppContainer(
@@ -48,11 +50,12 @@ async def get():
                 id='page-content',
                 cls='blue-background'
             ),
-            active_button_index=2
+            active_button_index=2,
+            is_moderator=is_moderator(sess),
         )
 
 @rt('/session/{session_id}')
-async def get(session_id: int):
+async def get(req, sess, session_id: int):
     async with db_manager.AsyncSessionLocal() as db_session:
         session = await get_event(db_session, session_id)
     if session:
@@ -70,6 +73,7 @@ async def get(session_id: int):
                     ),
                 id='page-content', cls='blue-background p-0 flex flex-col'
                 ),
-                active_button_index=2
+                active_button_index=2,
+                is_moderator=is_moderator(sess)
             )
     return RedirectResponse('/agenda', status_code=303)

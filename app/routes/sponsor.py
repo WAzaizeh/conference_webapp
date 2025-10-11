@@ -5,10 +5,11 @@ from components.cards import brief_sponsor_card, sponsor_page
 from crud.sponsor import get_sponsors, get_sponsor
 from db.connection import db_manager
 from core.app import rt
+from utils.auth import is_moderator
 
 
 @rt('/sponsors')
-async def get():
+async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db_session:
         sponsors = await get_sponsors(db_session)
     return AppContainer(
@@ -21,11 +22,12 @@ async def get():
             cls='blue-background',
             id='page-content',
         ),
-        active_button_index=4
+        active_button_index=4,
+        is_moderator=is_moderator(sess)
     )
 
 @rt('/sponsors/{sponsor_id}')
-async def get(sponsor_id: int):
+async def get(req, sess, sponsor_id: int):
     async with db_manager.AsyncSessionLocal() as db_session:
         sponsor = await get_sponsor(db_session, sponsor_id)
     if sponsor:
@@ -34,6 +36,7 @@ async def get(sponsor_id: int):
             sponsor_page(sponsor),
             id='page-content',
             ),
-            active_button_index=4
+            active_button_index=4,
+            is_moderator=is_moderator(sess)
         )
     return RedirectResponse('/sponsors', status_code=303)

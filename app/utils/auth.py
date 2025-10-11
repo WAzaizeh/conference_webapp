@@ -1,6 +1,10 @@
 from passlib.context import CryptContext
 from fasthtml.common import RedirectResponse
 from functools import wraps
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.future import select
+from typing import Optional
+from db.models import User
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -26,6 +30,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def is_moderator(sess):
     """Check if user is a moderator"""
+    print(f"Session auth key: {sess.get('admin_auth')}")
+    print(f"Session user_id: {sess.get('user_id')}")
     return sess.get('admin_auth', False)
 
 def require_moderator(f):
@@ -36,3 +42,22 @@ def require_moderator(f):
             return admin_login_redir(req.url.path)
         return await f(req, sess, *args, **kwargs)
     return wrapper
+
+async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
+    """
+    Get user by email address
+    
+    Args:
+        db: Async database session
+        email: User's email address
+        
+    Returns:
+        User object if found and active, None otherwise
+    """
+    result = await db.execute(
+        select(User).where(
+            User.email == email,
+            User.is_active == True
+        )
+    )
+    return result.scalar_one_or_none()

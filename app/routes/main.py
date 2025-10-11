@@ -13,6 +13,7 @@ from utils.auth import is_moderator
 def get(sess):
     """Homepage with conditional cards based on user role"""
     user_is_moderator = is_moderator(sess)
+    print(f'route User is moderator: {sess.get("admin_auth")}')
     
     # Build card list based on user type
     cards = [
@@ -79,11 +80,12 @@ def get(sess):
             cls='container mx-auto',
             id='page-content',
         ),
-        active_button_index=1
+        active_button_index=1,
+        is_moderator=user_is_moderator
     )
 
 @rt('/about')
-def get():
+def get(req, sess):
     bulletPoints = [
         'Join us on a journey to uncover the driving forces behind the movers and shakers of our time, and discover how their transformative traits are reshaping our collective future.', 
         'We delve into the defining characteristics of a generation at the forefront of change.',
@@ -105,11 +107,12 @@ def get():
                 ),
             id='page-content',
         ),
-        active_button_index=1
+        active_button_index=1,
+        is_moderator=is_moderator(sess)
     )
 
 @rt('/prayer-times')
-async def get():
+async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db_session:
         prayer_times = await get_prayer_times(db_session)
     return AppContainer(
@@ -120,7 +123,8 @@ async def get():
                 id='page-content',
                 cls='white-background'
                 ),
-            active_button_index=1
+            active_button_index=1,
+            is_moderator=is_moderator(sess)
             )
 
 # @rt('/qa')
@@ -148,7 +152,7 @@ async def get():
 #             )
 
 @rt('/registration')
-def get():
+def get(resq, sess):
     return RedirectResponse('https://buytickets.at/mascyp/1359890')
     # return AppContainer(
     #         Div(

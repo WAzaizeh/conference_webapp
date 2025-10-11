@@ -14,7 +14,7 @@ from crud.question import (
 )
 from crud.event import get_event, get_events, toggle_qa_active
 from utils.sse_manager import sse_manager
-from utils.auth import require_moderator
+from utils.auth import is_moderator, require_moderator
 from core.app import rt
 import asyncio
 import uuid
@@ -108,7 +108,8 @@ async def get(request, sess):
                 ),
                 
                 cls="container mx-auto px-4 py-8"
-            )
+            ),
+            is_moderator=is_moderator(sess)
         )
 
 @rt('/qa/event/{event_id}')
@@ -229,7 +230,8 @@ async def get(request, sess, event_id: int):
             """),
             
             cls="container mx-auto px-4 py-8 max-w-4xl"
-        )
+        ),
+        is_moderator=is_moderator(sess),
     ), cookie('qa_session_id', session_id, max_age=86400*30)  # 30 days
 
 @rt('/qa/event/{event_id}/questions')
@@ -508,7 +510,8 @@ async def get(req, sess, event_id: int):
             """),
             
             cls="container mx-auto px-4 py-8 max-w-4xl"
-        )
+        ),
+        is_moderator=is_moderator(sess),
     )
 
 @rt('/qa/moderator')
@@ -610,7 +613,8 @@ async def get(req, sess):
                 ),
                 
                 cls="container mx-auto px-4 py-8"
-            )
+            ),
+            is_moderator=is_moderator(sess)
         )
 
 @rt('/qa/moderator/event/{event_id}/toggle-qa')
