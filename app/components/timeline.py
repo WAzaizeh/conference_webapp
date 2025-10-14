@@ -20,7 +20,7 @@ def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
         return [
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
             Div(
-                AvatarCircle(f'/{speaker.image_url}', speaker.name, cls='mr-4'),
+                AvatarCircle(f'{speaker.image_url}', speaker.name, cls='mr-4'),
                 H4(f'By {speaker.name}', cls='text-xs'),
                 cls='flex flex-row items-center justify-start',
                 ),

@@ -19,7 +19,7 @@ def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool
 def brief_speaker_card(speaker: Speaker) -> A:
     return A(
             Figure(
-                    Img(src=f'/{speaker.image_url}', alt=speaker.name),
+                    Img(src=speaker.image_url, alt=speaker.name),
                     cls='figure'
                 ),
             Div(
@@ -42,7 +42,7 @@ def speaker_page(speaker: Speaker) -> Div:
             TopNav('Speaker Profile'),
             Figure(
                 Img(
-                    src=f'/{speaker.image_url}',
+                    src=speaker.image_url,
                     alt=speaker.name,
                     cls='rounded-xl'
                 ),
@@ -131,7 +131,7 @@ def session_speaker_card(session: Event, speaker : Speaker) -> Div:
                 Div(
                     A(
                         Figure(
-                        Img(src=f'/{speaker.image_url}', alt=speaker.name),
+                        Img(src=speaker.image_url, alt=speaker.name),
                         cls='figure',
                         ),
                         href=f'/speakers/{speaker.id}',
