@@ -11,6 +11,7 @@ single_page_routing/
 # data file
 *.csv
 *.tsv
+*.json
 
 # jupyter notebooks used to manipulate data
 *.ipynb
