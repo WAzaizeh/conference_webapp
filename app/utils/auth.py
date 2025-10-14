@@ -30,8 +30,6 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def is_moderator(sess):
     """Check if user is a moderator"""
-    print(f"Session auth key: {sess.get('admin_auth')}")
-    print(f"Session user_id: {sess.get('user_id')}")
     return sess.get('admin_auth', False)
 
 def require_moderator(f):

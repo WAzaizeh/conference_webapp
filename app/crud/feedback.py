@@ -14,7 +14,8 @@ async def create_feedback(
     """Create a new feedback submission"""
     db_feedback = FeedbackSubmission(
         submission_data=feedback.submission_data,
-        session_id=session_id
+        session_id=session_id,
+        created_at=datetime.now(timezone.utc)
     )
     db.add(db_feedback)
     await db.commit()
@@ -68,6 +69,7 @@ async def update_feedback(
     
     if db_feedback:
         db_feedback.submission_data = feedback_data
+        db_feedback.created_at = datetime.now(timezone.utc)
         await db.commit()
         await db.refresh(db_feedback)
     
@@ -79,3 +81,16 @@ async def get_feedback_count(db: AsyncSession) -> int:
         select(func.count(FeedbackSubmission.id))
     )
     return result.scalar() or 0
+
+async def get_user_feedback(
+    db: AsyncSession,
+    session_id: str
+) -> Optional[FeedbackSubmission]:
+    """Get the most recent feedback submission for a session"""
+    result = await db.execute(
+        select(FeedbackSubmission)
+        .where(FeedbackSubmission.session_id == session_id)
+        .order_by(FeedbackSubmission.submitted_at.desc())
+        .limit(1)
+    )
+    return result.scalar_one_or_none()

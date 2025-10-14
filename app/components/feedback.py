@@ -1,6 +1,6 @@
 from fasthtml.common import *
 
-def SingleSelectQuestion(question: str, name: str, options: list[str], required: bool = True):
+def SingleSelectQuestion(question: str, name: str, options: list[str], required: bool = True, selected_value: str = None):
     """
     Single select radio button question using DaisyUI
     
@@ -9,6 +9,7 @@ def SingleSelectQuestion(question: str, name: str, options: list[str], required:
         name: The form field name
         options: List of option strings
         required: Whether the question is required
+        selected_value: The currently selected value (for editing)
     """
     return Div(
         H3(question, cls="text-lg font-semibold mb-3"),
@@ -20,7 +21,8 @@ def SingleSelectQuestion(question: str, name: str, options: list[str], required:
                         name=name,
                         value=option,
                         cls="radio radio-primary",
-                        required=required if i == 0 else False
+                        required=required if i == 0 else False,
+                        checked=(option == selected_value)
                     ),
                     Span(option, cls="ml-3"),
                     cls="label cursor-pointer justify-start gap-2 py-2"
@@ -33,7 +35,7 @@ def SingleSelectQuestion(question: str, name: str, options: list[str], required:
     )
 
 
-def MultiSelectQuestion(question: str, name: str, options: list[str], required: bool = False):
+def MultiSelectQuestion(question: str, name: str, options: list[str], required: bool = False, selected_values: list[str] = None):
     """
     Multi select checkbox question using DaisyUI
     
@@ -42,7 +44,11 @@ def MultiSelectQuestion(question: str, name: str, options: list[str], required: 
         name: The form field name (will be appended with [] for each option)
         options: List of option strings
         required: Whether at least one option is required
+        selected_values: List of currently selected values (for editing)
     """
+    if selected_values is None:
+        selected_values = []
+    
     return Div(
         H3(question, cls="text-lg font-semibold mb-3"),
         Div(
@@ -52,7 +58,8 @@ def MultiSelectQuestion(question: str, name: str, options: list[str], required: 
                         type="checkbox",
                         name=f"{name}[]",
                         value=option,
-                        cls="checkbox checkbox-primary"
+                        cls="checkbox checkbox-primary",
+                        checked=(option in selected_values)
                     ),
                     Span(option, cls="ml-3"),
                     cls="label cursor-pointer justify-start gap-2 py-2"
@@ -65,7 +72,7 @@ def MultiSelectQuestion(question: str, name: str, options: list[str], required: 
     )
 
 
-def TextInputQuestion(question: str, name: str, placeholder: str = "", required: bool = False, multiline: bool = False):
+def TextInputQuestion(question: str, name: str, placeholder: str = "", required: bool = False, multiline: bool = False, value: str = ""):
     """
     Text input question using DaisyUI
     
@@ -75,9 +82,11 @@ def TextInputQuestion(question: str, name: str, placeholder: str = "", required:
         placeholder: Placeholder text
         required: Whether the question is required
         multiline: If True, uses textarea instead of input
+        value: Pre-filled value (for editing)
     """
     input_field = (
         Textarea(
+            value,
             name=name,
             placeholder=placeholder,
             cls="textarea textarea-bordered textarea-primary w-full h-32",
@@ -86,6 +95,7 @@ def TextInputQuestion(question: str, name: str, placeholder: str = "", required:
         Input(
             type="text",
             name=name,
+            value=value,
             placeholder=placeholder,
             cls="input input-bordered input-primary w-full",
             required=required
@@ -102,7 +112,7 @@ def TextInputQuestion(question: str, name: str, placeholder: str = "", required:
     )
 
 
-def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool = True):
+def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool = True, selected_rating: str = None):
     """
     Rating question using DaisyUI radio buttons styled as stars
     
@@ -111,6 +121,7 @@ def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool
         name: The form field name
         max_rating: Maximum rating value (default 5)
         required: Whether the question is required
+        selected_rating: The currently selected rating (for editing)
     """
     return Div(
         H3(question, cls="text-lg font-semibold mb-3"),
@@ -121,12 +132,13 @@ def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool
                         type="radio",
                         name=name,
                         value=str(i),
-                        cls="mask mask-star-2 bg-primary",
-                        required=required if i == 1 else False
+                        cls="mask mask-star",
+                        required=required if i == 1 else False,
+                        checked="checked" if str(i) == selected_rating else None
                     )
                     for i in range(1, max_rating + 1)
                 ],
-                cls="rating rating-lg"
+                cls="rating"
             ),
             cls="form-control"
         ),

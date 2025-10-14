@@ -17,14 +17,7 @@ from utils.sse_manager import sse_manager
 from utils.auth import is_moderator, require_moderator
 from core.app import rt
 import asyncio
-import uuid
-
-def get_or_create_session_id(request):
-    """Get existing session ID from cookie or create new one"""
-    session_id = request.cookies.get('qa_session_id')
-    if not session_id:
-        session_id = str(uuid.uuid4())
-    return session_id
+from utils.session import get_or_create_session_id
 
 def get_nickname_from_cookie(request):
     """Get stored nickname from cookie"""

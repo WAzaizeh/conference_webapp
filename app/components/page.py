@@ -15,7 +15,6 @@ def AppContainer(content: Div, active_button_index: int = None, is_moderator: bo
         is_moderator: Whether user is authenticated moderator
     """
     # Auth button/link in top-right corner
-    print(f'{is_moderator=}')
     if is_moderator:
         auth_element = Div(
             Span(

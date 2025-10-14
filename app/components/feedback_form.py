@@ -4,16 +4,40 @@ from .feedback import (
     MultiSelectQuestion,
     TextInputQuestion
 )
-from fasthtml.common import Form, Div, Button
+from fasthtml.common import *
 
-def FeedbackForm():
+def FeedbackForm(initial_values: dict = None, is_edit: bool = False):
+    """
+    Feedback form component
+    
+    Args:
+        initial_values: Dictionary of form field values to pre-populate
+        is_edit: Whether this is an edit form (shows different submit text)
+    """
+    if initial_values is None:
+        initial_values = {}
+    
+    def get_value(key, default=""):
+        """Helper to get value from initial_values"""
+        return initial_values.get(key, default)
+    
+    def is_checked(key, value):
+        """Helper to check if checkbox should be checked"""
+        field_value = initial_values.get(key)
+        if isinstance(field_value, list):
+            return value in field_value
+        return field_value == value
+    
+    submit_text = "Update Feedback" if is_edit else "Submit Feedback"
+    
     return Form(
             # Overall Experience Rating
             RatingQuestion(
                 question="How would you rate your overall conference experience?",
                 name="overall_rating",
                 max_rating=5,
-                required=True
+                required=True,
+                selected_rating=get_value("overall_rating")
             ),
             
             # Content Quality
@@ -27,7 +51,8 @@ def FeedbackForm():
                     "Fair",
                     "Poor"
                 ],
-                required=True
+                required=True,
+                selected_value=get_value("content_quality")
             ),
             
             # Most Valuable Aspects
@@ -42,7 +67,8 @@ def FeedbackForm():
                     "Food and refreshments",
                     "Venue and location",
                     "Event organization"
-                ]
+                ],
+                selected_values=get_value("valuable_aspects")
             ),
             
             # Favorite Session (Optional)
@@ -51,7 +77,8 @@ def FeedbackForm():
                 name="favorite_session",
                 placeholder="Tell us about your favorite part...",
                 required=False,
-                multiline=False
+                multiline=False,
+                value=get_value("favorite_session")
             ),
             
             # Improvement Suggestions
@@ -60,7 +87,8 @@ def FeedbackForm():
                 name="improvements",
                 placeholder="Your suggestions help us create better experiences...",
                 required=False,
-                multiline=True
+                multiline=True,
+                value=get_value("improvements")
             ),
             
             # Would Attend Again
@@ -74,7 +102,8 @@ def FeedbackForm():
                     "Probably not",
                     "Definitely not"
                 ],
-                required=True
+                required=True,
+                selected_value=get_value("attend_again")
             ),
             
             # Additional Comments
@@ -83,13 +112,14 @@ def FeedbackForm():
                 name="additional_comments",
                 placeholder="Share any other thoughts...",
                 required=False,
-                multiline=True
+                multiline=True,
+                value=get_value("additional_comments")
             ),
             
             # Submit Button
             Div(
                 Button(
-                    "Submit Feedback",
+                    submit_text,
                     type="submit",
                     cls="btn btn-primary btn-lg w-full sm:w-auto px-12"
                 ),
