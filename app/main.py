@@ -13,7 +13,6 @@ def get(fname:str):
         return FileResponse(file_path)
     return Response("File not found", status_code=404)
 
-import routes.loader_io  # Ensure loader_io routes are registered
 
 # Static file routes - for images
 @rt('/{fname:path}.{ext:static}')
