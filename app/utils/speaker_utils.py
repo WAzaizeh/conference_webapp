@@ -11,7 +11,6 @@ def get_speaker_image_url(speaker_id: int, name: str, image_url: str = None) -> 
     Returns:
         str: URL to display for the speaker (either their image or placeholder)
     """
-    print(f'Incoming image_url: {image_url}' if image_url else None)
     if image_url and image_url.strip() and image_url != 'null':
         # Return existing image URL - ensure it's absolute
         if image_url.startswith('http://') or image_url.startswith('https://'):

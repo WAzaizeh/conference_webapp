@@ -13,7 +13,6 @@ from utils.auth import is_moderator
 def get(sess):
     """Homepage with conditional cards based on user role"""
     user_is_moderator = is_moderator(sess)
-    print(f'route User is moderator: {sess.get("admin_auth")}')
     
     # Build card list based on user type
     cards = [

@@ -28,7 +28,6 @@ async def get_speaker(db: AsyncSession, speaker_id: int) -> Optional[Speaker]:
         select(Speaker).options(selectinload(Speaker.events)).where(Speaker.id == speaker_id)
     )
     speaker = result.scalar_one_or_none()
-    print(f'Image url from DB for speaker {speaker_id}: {speaker.image_url}' if speaker and speaker.image_url else None)
     return _enrich_speaker_image(speaker) if speaker else None
 
 async def get_speakers(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[Speaker]:
