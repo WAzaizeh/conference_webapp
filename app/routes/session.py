@@ -66,7 +66,7 @@ async def get(req, sess, session_id: int):
                 Div(
                     TopNav('Session Details'),
                     Div (
-                        *[session_speaker_card(session, speaker) for speaker in session.speakers],
+                        session_speaker_card(session, getattr(session, 'speakers', [])),
                         Div (
                             H3('Description', cls='text-sm font-semibold mb-2'),
                             P(session.description, cls='text-sm'),

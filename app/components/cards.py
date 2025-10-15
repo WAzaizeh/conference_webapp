@@ -126,33 +126,47 @@ def sponsor_page(sponsor: Sponsor) -> Div:
             cls='sponsor-detail-view blue-background'
         )
 
-def session_speaker_card(session: Event, speaker : Speaker) -> Div:
+def session_speaker_card(session: Event, speakers: List[Speaker]) -> Div:
+    """Display session with multiple speakers using avatar group"""
     return Div(
+        Div(
+            # Title in top row
+            H2(session.title, cls='text-base mb-3 font-medium'),
+            # Bottom row: avatars left, names right
+            Div(
+                # Avatar group - overlapping circular images on left
                 Div(
-                    A(
-                        Figure(
-                        Img(src=speaker.image_url, alt=speaker.name),
-                        cls='figure',
-                        ),
-                        href=f'/speakers/{speaker.id}',
-                    ),
-                    Div(
-                        H2(session.title, cls='text-base mb-1'),
-                        Div(
-                            P(f'By {speaker.name}', cls='text-sm'),
-                            A(
-                                Icon('chevron-circle-right', cls='color-light-blue'),
-                                href=f'/speakers/{speaker.id}',
+                    *[
+                        A(
+                            Div(
+                                Img(src=speaker.image_url, alt=speaker.name),
+                                cls='w-12 h-12 rounded-full'
                             ),
-                            cls='flex items-center justify-between',
-                            ),
-                    ),
-                    cls='flex items-center card card-side session-card',
+                            href=f'/speakers/{speaker.id}',
+                            cls='avatar hover:z-10 hover:scale-110 transition-transform'
+                        ) for speaker in speakers
+                    ],
+                    cls='avatar-group -space-x-4'
                 ),
+                # Speaker names stacked on right
                 Div(
-                    Span(Icon('clock', solid=False), f"{session.start_time.strftime('%H:%M')} - {session.end_time.strftime('%H:%M')}", cls='session-detail'),
-                    Span(Icon('calendar', solid=False), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
-                    cls='flex items-center text-xs p-4 justify-between',
+                    *[
+                        A(
+                            f"{speaker.name}",
+                            href=f'/speakers/{speaker.id}',
+                            cls='text-sm text-primary hover:underline'
+                        ) for speaker in speakers
+                    ],
+                    cls='flex flex-col gap-1'
                 ),
-                cls='p-4 session-detail-view'
-            )
+                cls='flex items-center justify-between gap-4'
+            ),
+            cls='card-body p-4'
+        ),
+        Div(
+            Span(Icon('clock', solid=False), f"{session.start_time.strftime('%I:%M %p')} - {session.end_time.strftime('%I:%M %p')}", cls='session-detail'),
+            Span(Icon('calendar', solid=False), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
+            cls='flex items-center text-xs p-4 justify-between'
+        ),
+        cls='card session-detail-view'
+    )

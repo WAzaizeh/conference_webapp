@@ -3,7 +3,7 @@ from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from db.schemas import Event, Speaker
-from fasthtml.components import Ul, Li, Div, Hr, H3, A, H4, Img, I, Span
+from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span
 
 def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
     return Div(
@@ -16,14 +16,27 @@ def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
 
 def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
     if speakers_data:
+        # Get speaker names for comma-separated list
+        speaker_names = ', '.join([speaker.name for speaker in speakers_data])
+        
         return [
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
-            *[Div(
-                AvatarCircle(f'{speaker.image_url}', speaker.name, cls='mr-4'),
-                H4(f'By {speaker.name}', cls='text-xs'),
+            Div(
+                # Avatar group - overlapping circular images
+                Div(
+                    *[
+                        Div(
+                            Img(src=speaker.image_url, alt=speaker.name, cls='avatar circle'),
+                            cls='w-10 h-10 rounded-full'
+                        ) for speaker in speakers_data
+                    ],
+                    cls='avatar-group -space-x-3'
+                ),
+                # Comma-separated speaker names
+                H4(f'By {speaker_names}', cls='text-xs ml-2'),
                 cls='flex flex-row items-center justify-start',
-                ) for speaker in speakers_data]
-            ]
+            )
+        ]
     else:
         return [
             Hr(cls='hidden'),
@@ -49,7 +62,7 @@ def agenda_timeline(events: List[Event]):
                         *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
-                    href=f'/session/{event.id}' if event.speakers else None,
+                    href=f'/session/{event.id}' if event.description else None,
                 ),
                 cls='timeline-end ml-4'),
             Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'border-primary'),
