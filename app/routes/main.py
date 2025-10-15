@@ -10,7 +10,7 @@ from core.app import rt
 from utils.auth import is_moderator
 
 @rt('/')
-def get(sess):
+def get(req, sess):
     """Homepage with conditional cards based on user role"""
     user_is_moderator = is_moderator(sess)
     
@@ -85,7 +85,8 @@ def get(sess):
             id='page-content',
         ),
         active_button_index=1,
-        is_moderator=user_is_moderator
+        is_moderator=user_is_moderator,
+        request=req  # Pass request to show moderator login on select pages
     )
 
 @rt('/about')

@@ -104,7 +104,8 @@ async def get(request, sess):
                 
                 cls="container mx-auto px-4 py-8"
             ),
-            is_moderator=is_moderator(sess)
+            is_moderator=is_moderator(sess),
+            request=request  # Pass request to show moderator login on select pages
         )
 
 @rt('/qa/event/{event_id}')
@@ -222,6 +223,7 @@ async def get(request, sess, event_id: int):
             cls="container mx-auto px-4 py-8 max-w-4xl"
         ),
         is_moderator=is_moderator(sess),
+        request=request,  # Pass request to show moderator login on select pages
     ), cookie('qa_session_id', session_id, max_age=86400*30)  # 30 days
 
 @rt('/qa/event/{event_id}/questions')
@@ -497,6 +499,7 @@ async def get(req, sess, event_id: int):
             cls="container mx-auto px-4 py-8 max-w-4xl"
         ),
         is_moderator=is_moderator(sess),
+        request=req  # Pass request to show moderator login on select pages
     )
 
 @rt('/qa/moderator')
@@ -598,7 +601,8 @@ async def get(req, sess):
                 
                 cls="container mx-auto px-4 py-8"
             ),
-            is_moderator=is_moderator(sess)
+            is_moderator=is_moderator(sess),
+            request=req  # Pass request to show moderator login on select pages
         )
 
 @rt('/qa/moderator/event/{event_id}/toggle-qa')

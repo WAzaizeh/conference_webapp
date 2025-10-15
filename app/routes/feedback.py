@@ -35,7 +35,8 @@ async def get(request, sess):
                 button_href="/feedback/edit",
                 icon_color="text-success"
             ),
-            is_moderator=is_moderator(sess)
+            is_moderator=is_moderator(sess),
+            request=request  # Pass request to show moderator login on select pages
         )
     
     return AppContainer(
@@ -55,7 +56,8 @@ async def get(request, sess):
             
             cls="container mx-auto px-4 py-8"
         ),
-        is_moderator=is_moderator(sess)
+        is_moderator=is_moderator(sess),
+        request=request  # Pass request to show moderator login on select pages
     )
 
 @rt('/feedback/edit')
@@ -94,7 +96,8 @@ async def get(request, sess):
             
             cls="container mx-auto px-4 py-8"
         ),
-        is_moderator=is_moderator(sess)
+        is_moderator=is_moderator(sess),
+        request=request  # Pass request to show moderator login on select pages
     )
 
 @rt('/feedback/submit')
@@ -135,7 +138,8 @@ async def post(request, sess):
             button_href="/",
             icon_color="text-success"
         ),
-        is_moderator=is_moderator(sess)
+        is_moderator=is_moderator(sess),
+        request=request  # Pass request to show moderator login on select pages
     )
 
 @rt('/feedback/moderator')
@@ -191,5 +195,6 @@ async def get(req, sess):
             
             cls="container mx-auto px-4 py-8"
         ),
-        is_moderator=is_moderator(sess)
+        is_moderator=is_moderator(sess),
+        request=req  # Pass request to show moderator login on select pages
     )
