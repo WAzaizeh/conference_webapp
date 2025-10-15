@@ -35,7 +35,7 @@ def agenda_timeline(events: List[Event]):
     return Ul(
         *[Li(
             Div(
-                Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-xs text-primary ml-4'),
+                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-xs text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(
@@ -62,7 +62,7 @@ def agenda_timeline_2(events: List[Event]):
     return Ul(
         *[Li(
             Div(
-                Span(f'{event.start_time.time().strftime("%H:%M")} - {event.end_time.time().strftime("%H:%M")}', cls='text-xs text-primary ml-4'),
+                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-xs text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(
