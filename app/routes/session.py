@@ -14,6 +14,9 @@ from utils.auth import is_moderator
 async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db_session:
         events = await get_events(db_session)
+        # sort by start_time
+        events.sort(key=lambda e: e.start_time)
+        # Fetch and attach speaker data for each event
         for event in events:
             event.speakers_data = []
             for speaker in event.speakers:

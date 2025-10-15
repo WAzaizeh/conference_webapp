@@ -42,16 +42,21 @@ def get(sess):
                     Div(
                         Img(src='mas-logo-square.png', alt='MAS Logo', cls='logo'),
                         Div( 
-                            H1('2nd Annual CYP Conference', cls='h3'),
-                            P('Mover and Shakers in Islam: Transformative Traits'),
+                            H1('3rd Annual CYP Conference', cls='h3'),
+                            P('Weathering the Storm: Faith, Resilience & Action'),
                             cls='logo-text-text'  
                         ),
                         cls='card card-side logo-text'
                     ),
                     Div(
                         Span(
-                            Img(src='location.png', alt='location icon', cls='hero-icon'),
-                            P('5353 Independence Pkwy, Frisco'),
+                            A(
+                                Img(src='location.png', alt='location icon', cls='hero-icon'),
+                                P('Crystal Banquet, Plano'),
+                                href='https://www.google.com/maps/search/?api=1&query=Crystal+Banquet+Hall+Plano+TX',
+                                target='_blank',
+                                cls='flex items-center justify-between hover:text-primary transition-colors',
+                            ),
                             cls='flex items-center justify-between',
                         ),
                         Span(
@@ -85,12 +90,16 @@ def get(sess):
 
 @rt('/about')
 def get(req, sess):
+    paragraphs = [
+        'In the wake of the recent ICE abductions targeting Muslim leaders in Dallas, our community once again finds itself in the heart of a storm — a test of faith, unity, and conviction. This comes while the Muslim Ummah continues to reel from the pain and anguish of two long years of genocide in Gaza — a wound that weighs heavily on every conscious heart.',
+        'In response to these realities, MAS Dallas and its College & Young Professionals (CYP) program have chosen to change the original theme of the 3rd Annual CYP Conference (October 18, 2025) to “Weathering the Storm: Faith, Resilience & Action.” This new direction calls not only CYP members, but our entire community, to meet this defining moment with clarity, courage, and divine purpose.',
+        'Storms are not unfamiliar to those who strive for truth. Throughout history, believers have faced waves of trials — each carrying divine wisdom within the ongoing “push and pull” between truth and falsehood. This conference invites college students and young professionals & the whole community  to reflect deeply on why we face such storms, how we remain steadfast through them, and what it means to emerge from them stronger and more united.',
+        'Through inspiring talks, interactive discussion circles, and a powerful panel on Faith, Resilience, and Collective Action, we will explore:',
+    ]
     bulletPoints = [
-        'Join us on a journey to uncover the driving forces behind the movers and shakers of our time, and discover how their transformative traits are reshaping our collective future.', 
-        'We delve into the defining characteristics of a generation at the forefront of change.',
-        'GAZA Teaching Us: Change is the product of sustained efforts of movers and shakers.',
-        'Showcasing how young movers and shakers navigate challenges, challenge  norms, and champion progress.',
-        'A testament to the continuous legacy of youth-driven change and the transformative power of visionary young leadership within the Islamic tradition.'
+        'Faith: Grounding the heart in certainty of Allah’s plan — so that the losses of this world never shake the believer’s hope in the eternal reward.',
+        'Resilience: Preparing before the storm hits — drawing lessons from those who stood firm with courage, patience, and Tawakkul (trust in Allah).',
+        'Action: Moving beyond reaction — embodying goodness, organizing collectively, and serving as instruments of Allah’s mercy and justice on earth.',
     ]
     return AppContainer(
         Div(
@@ -98,6 +107,7 @@ def get(req, sess):
             Div(alt='Conference banner_2', cls='hero-image'),
             Div(
                 H2('Description' , cls='font-bold pb-2'),
+                P(*paragraphs, cls='text-sm mb-4'),
                 Ul(
                     *[Li(point) for point in bulletPoints],
                     cls='text-sm about-list'
