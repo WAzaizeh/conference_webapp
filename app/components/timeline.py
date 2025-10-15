@@ -15,15 +15,14 @@ def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
             )
 
 def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
-    speaker = speakers_data[0] if speakers_data else None
-    if speaker:
+    if speakers_data:
         return [
             Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
-            Div(
+            *[Div(
                 AvatarCircle(f'{speaker.image_url}', speaker.name, cls='mr-4'),
                 H4(f'By {speaker.name}', cls='text-xs'),
                 cls='flex flex-row items-center justify-start',
-                ),
+                ) for speaker in speakers_data]
             ]
     else:
         return [
