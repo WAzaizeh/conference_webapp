@@ -1,4 +1,4 @@
-from fasthtml.components import Div, H1
+from fasthtml.components import Div, H1, P
 from components.page import AppContainer
 from fasthtml.common import RedirectResponse
 from components.cards import brief_sponsor_card, sponsor_page
@@ -8,17 +8,33 @@ from core.app import rt
 from utils.auth import is_moderator
 
 
+# @rt('/sponsors')
+# async def get(req, sess):
+#     async with db_manager.AsyncSessionLocal() as db_session:
+#         sponsors = await get_sponsors(db_session)
+#     return AppContainer(
+#             Div(
+#                 Div(
+#                     H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
+#                     cls='flex justify-center items-center p-4',
+#                 ),
+#             *[brief_sponsor_card(sponsor) for sponsor in sponsors],
+#             cls='blue-background',
+#             id='page-content',
+#         ),
+#         active_button_index=4,
+#         is_moderator=is_moderator(sess)
+#     )
+
 @rt('/sponsors')
 async def get(req, sess):
-    async with db_manager.AsyncSessionLocal() as db_session:
-        sponsors = await get_sponsors(db_session)
     return AppContainer(
             Div(
                 Div(
                     H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
                     cls='flex justify-center items-center p-4',
                 ),
-            *[brief_sponsor_card(sponsor) for sponsor in sponsors],
+                P('Coming soon!', cls='text-center text-lg text-black mb-4'),
             cls='blue-background',
             id='page-content',
         ),
