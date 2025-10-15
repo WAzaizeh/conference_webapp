@@ -152,7 +152,7 @@ async def get(req, sess):
 
 @rt('/registration')
 def get(resq, sess):
-    return RedirectResponse('https://buytickets.at/mascyp/1359890')
+    return RedirectResponse('https://www.tickettailor.com/events/mascyp/1841794')
     # return AppContainer(
     #         Div(
     #             TopNav('Registration'),
