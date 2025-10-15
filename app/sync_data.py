@@ -1,12 +1,23 @@
 import json
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from db.sync_connection import get_db
 from db.models import Event, Speaker, PrayerTime, event_speakers
 
 def parse_datetime(dt_string):
-    """Parse ISO format datetime string"""
+    """Parse ISO format datetime string and convert to CDT (naive)"""
     if dt_string:
-        return datetime.fromisoformat(dt_string)
+        # Parse the ISO string (assumes UTC if no timezone specified)
+        dt = datetime.fromisoformat(dt_string.replace('Z', '+00:00'))
+        
+        # If timezone-naive, assume it's already in CDT
+        if dt.tzinfo is None:
+            return dt
+        
+        # If timezone-aware, convert to CDT and make naive
+        cdt = ZoneInfo('America/Chicago')
+        return dt.astimezone(cdt).replace(tzinfo=None)
+    
     return None
 
 def sync_data_from_json(json_file='conference_data.json'):
@@ -52,7 +63,7 @@ def sync_data_from_json(json_file='conference_data.json'):
                 title=event_data['title'],
                 description=event_data.get('description') or None,
                 start_time=parse_datetime(event_data['start_time']),
-                end_time=parse_datetime(event_data['end_time']) if event_data.get('end_time') else None,
+                end_time=parse_datetime(event_data['end_time']),
                 location=event_data.get('location') or None,
                 category=event_data.get('category', 'MAIN'),
                 is_qa_active=bool(event_data.get('is_qa_active'))
