@@ -1,6 +1,7 @@
 from passlib.context import CryptContext
 from fasthtml.common import RedirectResponse
 from functools import wraps
+import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Optional
@@ -35,27 +36,37 @@ def is_moderator(sess):
 def require_moderator(f):
     """Decorator to require moderator authentication"""
     @wraps(f)
-    async def wrapper(req, sess, *args, **kwargs):
+    async def async_wrapper(req, sess, *args, **kwargs):
         if not is_moderator(sess):
             return admin_login_redir(req.url.path)
-        return await f(req, sess, *args, **kwargs)
-    return wrapper
+        
+        if asyncio.iscoroutinefunction(f):
+            return await f(req, sess, *args, **kwargs)
+        else:
+            return f(req, sess, *args, **kwargs)
+    
+    return async_wrapper
 
-async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
+async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = False) -> Optional[User]:
     """
     Get user by email address
     
     Args:
         db: Async database session
         email: User's email address
-        
+        require_admin: If True, only return admin users
+
     Returns:
         User object if found and active, None otherwise
     """
-    result = await db.execute(
-        select(User).where(
+    result = select(User).where(
             User.email == email,
             User.is_active == True
         )
-    )
+
+    # Add role filter only if require_admin is True
+    if require_admin:
+        result = result.where(User.role == 'admin')
+    
+    result = await db.execute(result)
     return result.scalar_one_or_none()

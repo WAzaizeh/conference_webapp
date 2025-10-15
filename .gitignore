@@ -24,3 +24,6 @@ single_page_routing/
 __pycache__/
 *.pyc
 app/**/*.pyc
+
+# test output
+*/tests/output/

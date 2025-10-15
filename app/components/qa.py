@@ -32,7 +32,8 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
                 Span(
                     I(cls="fas fa-check-circle text-success ml-2"),
                     " Answered",
-                    cls="text-sm text-success ml-2"
+                    cls="text-sm text-success ml-2 question-answered-badge",
+                    data_answered="true"
                 ) if question.is_answered else None,
                 Span(
                     I(cls="fas fa-eye-slash text-warning ml-2"),
@@ -43,7 +44,7 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
             ),
             
             # Question text
-            P(question.question_text, cls="mb-4"),
+            P(question.question_text, cls="mb-4 question-text"),
             
             # Actions row
             Div(
@@ -98,7 +99,8 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
             cls="card-body"
         ),
         cls=card_classes,
-        id=f"question-{question_id}"
+        id=f"question-{question_id}",
+        data_question_id=question_id  # Add this for easy querying in tests
     )
 
 def QuestionForm(event_id: int, initial_nickname="Anonymous"):

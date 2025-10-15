@@ -155,3 +155,23 @@ def get(sess):
     sess.pop('admin_auth', None)
     sess.pop('user_id', None)
     return RedirectResponse('/', status_code=303)
+
+@rt('/admin/test_login')
+async def post(sess, username: str, password: str):
+    """TEST ONLY: Bypass authentication workflow for load testing"""
+    
+    # Authenticate user normally
+    async with db_manager.AsyncSessionLocal() as db:
+        user = await get_user_by_email(db, username, require_admin=True)
+        if not user:
+            return Response("User not found", status_code=404)
+        
+        if not verify_password(password, user.password_hash):
+            return Response("Invalid password", status_code=401)
+    
+    # Set session
+    sess['admin_auth'] = True
+    sess['user_id'] = str(user.id)
+    
+    print(f"✅ TEST LOGIN: {username} authenticated via test endpoint")
+    return Response("OK", status_code=200)
