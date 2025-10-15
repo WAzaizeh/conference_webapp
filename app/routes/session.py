@@ -25,10 +25,7 @@ async def get(req, sess):
                     event.speakers_data.append(speaker)
     return AppContainer(
             Div(
-                Div(
-                H1('Agenda', cls='flex-1 text-black font-medium text-center text-base'),
-                    cls='flex justify-center items-center p-4',
-                ),
+                TopNav('Agenda'),
                 H1('Saturday 18th October', cls='text-center font-medium text-base'),
                 agenda_timeline(events),
                 id='page-content',

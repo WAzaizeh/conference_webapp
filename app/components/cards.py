@@ -39,7 +39,6 @@ def brief_speaker_card(speaker: Speaker) -> A:
 
 def speaker_page(speaker: Speaker) -> Div:
     return Div(
-            TopNav('Speaker Profile'),
             Figure(
                 Img(
                     src=speaker.image_url,
@@ -97,7 +96,6 @@ def brief_sponsor_card(sponsor: Sponsor) -> Div:
 
 def sponsor_page(sponsor: Sponsor) -> Div:
     return Div(
-            TopNav('Sponsor Details'),
             Figure(
                 Img(
                         src=f'{sponsor.image_url}',

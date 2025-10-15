@@ -6,6 +6,7 @@ from crud.sponsor import get_sponsors, get_sponsor
 from db.connection import db_manager
 from core.app import rt
 from utils.auth import is_moderator
+from components.navigation import TopNav
 
 
 # @rt('/sponsors')
@@ -14,6 +15,7 @@ from utils.auth import is_moderator
 #         sponsors = await get_sponsors(db_session)
 #     return AppContainer(
 #             Div(
+#                 TopNav('Sponsors'),
 #                 Div(
 #                     H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
 #                     cls='flex justify-center items-center p-4',
@@ -30,6 +32,7 @@ from utils.auth import is_moderator
 async def get(req, sess):
     return AppContainer(
             Div(
+                TopNav('Sponsors'),
                 Div(
                     H1('Sponsors', cls='flex-1 text-black font-medium text-center text-base'),
                     cls='flex justify-center items-center p-4',
@@ -49,9 +52,10 @@ async def get(req, sess, sponsor_id: int):
     if sponsor:
         return AppContainer(
             Div(
-            sponsor_page(sponsor),
-            id='page-content',
-            ),
+                TopNav('Sponsor Details', cls='blue-background'),
+                sponsor_page(sponsor),
+                id='page-content',
+                ),
             active_button_index=4,
             is_moderator=is_moderator(sess)
         )

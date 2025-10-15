@@ -11,7 +11,7 @@ def BottomNav(active_button_index: int = None) -> Div:
     )
 
 def BackButton(**kwargs) -> Button:
-    cls = 'btn btn-ghost' + kwargs.get('cls', '')
+    cls = 'btn btn-ghost z-10 ' + kwargs.get('cls', '')
     return Button(
         Icon('chevron-left'),
         cls=cls,
@@ -19,13 +19,13 @@ def BackButton(**kwargs) -> Button:
         **kwargs
         )
 
-def TopNav(title: int = None) -> Div:
+def TopNav(title: int = None, **kwargs) -> Div:
+    cls = 'flex justify-center items-center p-4 top-nav ' + kwargs.get('cls', '')
     return  Div(
                 BackButton(),
                 H1(
                     title,
-                    onclick='goBack()',
                     cls='flex-1 text-black font-medium text-center text-base top-nav-title'
                     ),
-                cls='flex justify-center items-center p-4 top-nav',
+                cls=cls,
             ),

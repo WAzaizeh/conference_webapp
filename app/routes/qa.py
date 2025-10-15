@@ -18,6 +18,7 @@ from utils.auth import is_moderator, require_moderator
 from core.app import rt
 import asyncio
 from utils.session import get_or_create_session_id
+from components.navigation import TopNav
 
 def get_nickname_from_cookie(request):
     """Get stored nickname from cookie"""
@@ -79,8 +80,9 @@ async def get(request, sess):
         return AppContainer(
             Div(
                 # Header
+                TopNav('Q&A Sessions'),
                 Div(
-                    H1("Q&A Sessions", cls="text-4xl font-bold mb-2"),
+                    
                     P(
                         "Select a session to view or ask questions",
                         cls="text-base-content/70"
@@ -132,12 +134,7 @@ async def get(request, sess, event_id: int):
         Div(
             # Header
             Div(
-                A(
-                    I(cls="fas fa-arrow-left mr-2"),
-                    "Back to Sessions",
-                    href="/qa",
-                    cls="btn btn-ghost mb-4"
-                ),
+                TopNav('Q&A Session'),
                 Div(
                     H1(event.title, cls="text-3xl font-bold mb-2"),
                     P(
@@ -401,12 +398,7 @@ async def get(req, sess, event_id: int):
         Div(
             # Header
             Div(
-                A(
-                    I(cls="fas fa-arrow-left mr-2"),
-                    "Back to Sessions",
-                    href="/qa/moderator",
-                    cls="btn btn-ghost mb-4"
-                ),
+                TopNav('Q&A Session'),
                 Div(
                     Div(
                         Span("Moderator View", cls="badge badge-secondary mb-2 mr-2"),
@@ -584,8 +576,7 @@ async def get(req, sess):
             Div(
                 # Header
                 Div(
-                    Span("Moderator Panel", cls="badge badge-secondary badge-lg mb-4"),
-                    H1("Q&A Session Management", cls="text-4xl font-bold mb-2"),
+                    TopNav("Q&A Session Management"),
                     P(
                         "Select a session to moderate questions and control Q&A activation",
                         cls="text-base-content/70"

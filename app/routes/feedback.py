@@ -11,6 +11,7 @@ from sqlalchemy import func
 from db.models import FeedbackSubmission
 from core.app import rt
 from utils.session import get_or_create_session_id
+from components.navigation import TopNav
 
 @rt('/feedback')
 async def get(request, sess):
@@ -25,6 +26,7 @@ async def get(request, sess):
         
     if has_recent:
         return AppContainer(
+            TopNav('Feedback'),
             FeedbackMessage(
                 icon_class="fas fa-check-circle",
                 title="Already Submitted",
@@ -40,7 +42,7 @@ async def get(request, sess):
         Div(
             # Header
             Div(
-                H1("Conference Feedback Survey", cls="text-4xl font-bold text-center mb-2"),
+                TopNav('Conference Feedback Survey'),
                 P(
                     "Help us improve future events by sharing your experience!",
                     cls="text-center text-base-content/70 mb-8"
@@ -78,7 +80,7 @@ async def get(request, sess):
         Div(
             # Header
             Div(
-                Span("Edit Mode", cls="badge badge-warning badge-lg mb-4"),
+                TopNav('Edit Feedback'),
                 H1("Edit Your Feedback", cls="text-4xl font-bold text-center mb-2"),
                 P(
                     "Update your feedback submission",
@@ -124,6 +126,7 @@ async def post(request, sess):
     
     # Show success message
     return AppContainer(
+        TopNav('Feedback'),
         FeedbackMessage(
             icon_class="fas fa-check-circle",
             title="Thank You!",
@@ -150,8 +153,7 @@ async def get(req, sess):
         Div(
             # Header
             Div(
-                Span("Moderator Panel", cls="badge badge-secondary badge-lg mb-4"),
-                H1("Feedback Submissions", cls="text-4xl font-bold mb-2"),
+                TopNav('Feedback Submissions'),
                 P(
                     "Total number of submitted feedback forms",
                     cls="text-base-content/70"
