@@ -85,9 +85,10 @@ def require_conference_day(f):
     @wraps(f)
     async def async_wrapper(req, sess, *args, **kwargs):
         if not is_conference_day():
-            # Return 204 No Content - HTMX will do nothing
-            from fasthtml.common import Response
-            return Response(status_code=204)
+            # Redirect to the current page (stay where you are)
+            from fasthtml.common import RedirectResponse
+            current_path = req.url.path
+            return RedirectResponse(current_path, status_code=303)
         
         if asyncio.iscoroutinefunction(f):
             return await f(req, sess, *args, **kwargs)
