@@ -54,7 +54,8 @@ async def get(request, sess):
             # Feedback Form
             FeedbackForm(),
             
-            cls="container mx-auto px-4 py-8"
+            id="page-content",
+            cls="blue-background"
         ),
         is_moderator=is_moderator(sess),
         request=request  # Pass request to show moderator login on select pages

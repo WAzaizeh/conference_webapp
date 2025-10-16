@@ -20,6 +20,7 @@ def AppContainer(content: Div, active_button_index: int = None, is_moderator: bo
     if request:
         path = request.url.path
         show_login = path == '/' or path.startswith('/qa') or path.startswith('/feedback')
+        
     
     # Auth button/link in top-right corner (only on home and qa routes)
     auth_element = None
@@ -47,7 +48,7 @@ def AppContainer(content: Div, active_button_index: int = None, is_moderator: bo
                     data_tip="Admin Login"
                 ),
                 onclick="document.getElementById('login-modal').showModal()",
-                cls="btn btn-circle btn-sm btn-accent"
+                style="color: var(--primary-color);"
             )
     
     return CustomTitled(

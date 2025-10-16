@@ -42,7 +42,7 @@ async def get(request, sess):
             # Format time
             time_str = event.start_time.strftime("%I:%M %p")
             
-            card_class = "card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
+            card_class = "timeline-box p-6 flex flex-col justify-evenly"
             if is_active:
                 card_class += " border-2 border-primary"
             
@@ -51,16 +51,17 @@ async def get(request, sess):
                     Div(
                         Div(
                             Div(
-                                H3(event.title, cls="card-title text-lg"),
+                                H3(event.title, cls="text-base font-medium"),
                                 Span(
                                     I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
                                     "Q&A Active",
                                     cls="badge badge-primary"
                                 ) if is_active else Span(
                                     "Q&A Closed",
-                                    cls="badge badge-ghost"
+                                    cls="badge badge-ghost",
+                                    style="white-space: nowrap;"
                                 ),
-                                cls="flex justify-between items-start"
+                                cls="flex justify-between gap-4 items-start"
                             ),
                             P(
                                 I(cls="far fa-clock mr-2"),
@@ -69,7 +70,6 @@ async def get(request, sess):
                                 event.location or "TBA",
                                 cls="text-sm text-base-content/70 mt-2"
                             ),
-                            cls="card-body"
                         ),
                         cls=card_class
                     ),
@@ -85,7 +85,7 @@ async def get(request, sess):
                     
                     P(
                         "Select a session to view or ask questions",
-                        cls="text-base-content/70"
+                        cls="text-sm"
                     ),
                     cls="text-center mb-8"
                 ),
@@ -96,13 +96,13 @@ async def get(request, sess):
                         Div(
                             I(cls="fas fa-inbox text-4xl text-base-content/30 mb-4"),
                             P("No Q&A sessions available", cls="text-base-content/60"),
-                            cls="text-center py-12"
+                            cls="timeline-box"
                         )
                     ],
-                    cls="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    cls="flex flex-col gap-4"
                 ),
-                
-                cls="container mx-auto px-4 py-8"
+                id='page-content',
+                cls='container mx-auto px-4 py-8 blue-background'
             ),
             is_moderator=is_moderator(sess),
             request=request  # Pass request to show moderator login on select pages
@@ -137,7 +137,7 @@ async def get(request, sess, event_id: int):
             Div(
                 TopNav('Q&A Session'),
                 Div(
-                    H1(event.title, cls="text-3xl font-bold mb-2"),
+                    H1(event.title, cls="text-lg font-bold mb-2"),
                     P(
                         I(cls="far fa-clock mr-2"),
                         event.start_time.strftime("%I:%M %p"),
@@ -154,41 +154,38 @@ async def get(request, sess, event_id: int):
                         "Q&A Closed - View Only",
                         cls="badge badge-ghost badge-lg mt-2"
                     ),
-                    cls="mb-6"
+                    cls="px-6 mb-6"
                 ),
                 cls="mb-8"
             ),
             
             # Question submission form (only if active)
-            QuestionForm(event_id, initial_nickname=stored_nickname) if is_active else Div(
-                Div(
-                    I(cls="fas fa-info-circle text-info text-2xl mb-2"),
-                    P("Question submissions are currently closed for this session.", cls="font-semibold"),
-                    cls="alert alert-info flex flex-col items-center mb-6"
-                )
-            ),
+            # TODO: Disable form if not active
+            QuestionForm(event_id, initial_nickname=stored_nickname, is_active=is_active),
             
             # Tabs for Recent/Popular
             Div(
                 Div(
                     A(
                         "Recent",
-                        cls="tab tab-bordered tab-active",
+                        cls="rounded-none px-4 border-b-2 font-semibold",
                         id="recent-tab",
                         hx_get=f"/qa/event/{event_id}/questions?sort=recent",
                         hx_target="#questions-list",
-                        hx_swap="outerHTML"
+                        hx_swap="outerHTML",
+                        style="border-color: var(--primary-color);"
                     ),
                     A(
                         "Popular",
-                        cls="tab tab-bordered",
+                        cls="rounded-none px-4 text-base-content/70",
                         id="popular-tab",
                         hx_get=f"/qa/event/{event_id}/questions?sort=popular",
                         hx_target="#questions-list",
-                        hx_swap="outerHTML"
+                        hx_swap="outerHTML",
                     ),
-                    cls="tabs tabs-boxed mb-6"
+                    cls="flex justify-start mb-4 border-b border-base-300"
                 ),
+                cls="px-6",
             ),
             
             # Questions list
@@ -219,8 +216,8 @@ async def get(request, sess, event_id: int):
                     }});
                 }}
             """),
-            
-            cls="container mx-auto px-4 py-8 max-w-4xl"
+            id='page-content',
+            cls='white-background'
         ),
         is_moderator=is_moderator(sess),
         request=request,  # Pass request to show moderator login on select pages

@@ -121,12 +121,12 @@ def FeedbackForm(initial_values: dict = None, is_edit: bool = False):
                 Button(
                     submit_text,
                     type="submit",
-                    cls="btn btn-primary btn-lg w-full sm:w-auto px-12"
+                    cls="btn btn-primary px-6 py-2",
+                    style="background-color: var(--primary-color); border-color: var(--primary-color); color: white;"
                 ),
-                cls="flex justify-center mt-8"
+                cls="flex mb-2 align-center justify-center"
             ),
-            
             method="POST",
             action="/feedback/submit",
-            cls="max-w-3xl mx-auto"
+            cls="max-w-3xl mb mx-auto flex flex-col gap-4 px-6"
         )

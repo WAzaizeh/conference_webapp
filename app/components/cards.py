@@ -129,7 +129,7 @@ def session_speaker_card(session: Event, speakers: List[Speaker]) -> Div:
     return Div(
         Div(
             # Title in top row
-            H2(session.title, cls='text-base mb-3 font-medium'),
+            H2(session.title, cls='text-lg mb-3 font-medium'),
             # Bottom row: avatars left, names right
             Div(
                 # Avatar group - overlapping circular images on left
@@ -162,8 +162,8 @@ def session_speaker_card(session: Event, speakers: List[Speaker]) -> Div:
             cls='card-body p-4'
         ),
         Div(
-            Span(Icon('clock', solid=False), f"{session.start_time.strftime('%I:%M %p')} - {session.end_time.strftime('%I:%M %p')}", cls='session-detail'),
-            Span(Icon('calendar', solid=False), session.start_time.strftime('%b %d, %Y'), cls='session-detail'),
+            Span(Icon('clock', solid=False), f"{session.start_time.strftime('%I:%M %p')} - {session.end_time.strftime('%I:%M %p')}", cls='text-sm session-detail'),
+            Span(Icon('calendar', solid=False), session.start_time.strftime('%b %d, %Y'), cls='text-sm session-detail'),
             cls='flex items-center text-xs p-4 justify-between'
         ),
         cls='card session-detail-view'

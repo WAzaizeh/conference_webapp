@@ -33,7 +33,7 @@ def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
                     cls='avatar-group -space-x-3'
                 ),
                 # Comma-separated speaker names
-                H4(f'By {speaker_names}', cls='text-xs ml-2'),
+                H4(f'By {speaker_names}', cls='text-sm ml-2'),
                 cls='flex flex-row items-center justify-start',
             )
         ]
@@ -47,7 +47,7 @@ def agenda_timeline(events: List[Event]):
     return Ul(
         *[Li(
             Div(
-                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-xs text-primary ml-4'),
+                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-sm text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(
@@ -58,7 +58,7 @@ def agenda_timeline(events: List[Event]):
             Div(
                 A(
                     Div(
-                        H3(event.title, cls='text-sm'), 
+                        H3(event.title, cls='text-base font-medium'), 
                         *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),
@@ -74,7 +74,7 @@ def agenda_timeline_2(events: List[Event]):
     return Ul(
         *[Li(
             Div(
-                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-xs text-primary ml-4'),
+                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-sm text-primary ml-4'),
                 cls='timeline-start'
             ),
             Div(
@@ -85,7 +85,7 @@ def agenda_timeline_2(events: List[Event]):
             Div(
                 A(
                     Div(
-                        H3(event.title, cls='text-sm'), 
+                        H3(event.title, cls='text-base'), 
                         *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
                     ),

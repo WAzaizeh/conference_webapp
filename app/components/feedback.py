@@ -20,9 +20,10 @@ def SingleSelectQuestion(question: str, name: str, options: list[str], required:
                         type="radio",
                         name=name,
                         value=option,
-                        cls="radio radio-primary",
+                        cls="radio",
                         required=required if i == 0 else False,
-                        checked=(option == selected_value)
+                        checked=(option == selected_value),
+                        style={"accent-color": "var(--primary-color)"}
                     ),
                     Span(option, cls="ml-3"),
                     cls="label cursor-pointer justify-start gap-2 py-2"
@@ -31,7 +32,7 @@ def SingleSelectQuestion(question: str, name: str, options: list[str], required:
             ],
             cls="form-control"
         ),
-        cls="card bg-base-100 shadow-md p-6 mb-4"
+        cls="timeline-box bg-base-100 shadow-md p-6"
     )
 
 
@@ -58,7 +59,8 @@ def MultiSelectQuestion(question: str, name: str, options: list[str], required: 
                         type="checkbox",
                         name=f"{name}[]",
                         value=option,
-                        cls="checkbox checkbox-primary",
+                        cls="checkbox",
+                        style={"accent-color": "var(--primary-color)"},
                         checked=(option in selected_values)
                     ),
                     Span(option, cls="ml-3"),
@@ -68,7 +70,7 @@ def MultiSelectQuestion(question: str, name: str, options: list[str], required: 
             ],
             cls="form-control"
         ),
-        cls="card bg-base-100 shadow-md p-6 mb-4"
+        cls="timeline-box bg-base-100 shadow-md p-6"
     )
 
 
@@ -89,7 +91,7 @@ def TextInputQuestion(question: str, name: str, placeholder: str = "", required:
             value,
             name=name,
             placeholder=placeholder,
-            cls="textarea textarea-bordered textarea-primary w-full h-32",
+            cls="textarea text-base textarea-bordered rounded-sm w-full",
             required=required
         ) if multiline else
         Input(
@@ -97,18 +99,18 @@ def TextInputQuestion(question: str, name: str, placeholder: str = "", required:
             name=name,
             value=value,
             placeholder=placeholder,
-            cls="input input-bordered input-primary w-full",
+            cls="input text-base input-bordered rounded-sm w-full",
             required=required
         )
     )
     
     return Div(
-        H3(question, cls="text-lg font-semibold mb-3"),
+        H3(question, cls="text-base font-semibold mb-3"),
         Div(
             input_field,
             cls="form-control"
         ),
-        cls="card bg-base-100 shadow-md p-6 mb-4"
+        cls="timeline-box bg-base-100 shadow-md p-6"
     )
 
 
@@ -124,7 +126,7 @@ def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool
         selected_rating: The currently selected rating (for editing)
     """
     return Div(
-        H3(question, cls="text-lg font-semibold mb-3"),
+        H3(question, cls="text-base font-semibold mb-3"),
         Div(
             Div(
                 *[
@@ -142,5 +144,5 @@ def RatingQuestion(question: str, name: str, max_rating: int = 5, required: bool
             ),
             cls="form-control"
         ),
-        cls="card bg-base-100 shadow-md p-6 mb-4"
+        cls="timeline-box bg-base-100 shadow-md p-6"
     )

@@ -103,39 +103,49 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
         data_question_id=question_id  # Add this for easy querying in tests
     )
 
-def QuestionForm(event_id: int, initial_nickname="Anonymous"):
+def QuestionForm(event_id: int, initial_nickname="Anonymous", is_active=True):
     """Form to submit a new question"""
+    btnclass = "btn btn-primary px-6 py-2"
+    if not is_active:
+        btnclass += " btn-disabled"
+    btnstyle = "background-color: var(--primary-color); border-color: var(--primary-color); color: white;"
+    if not is_active:
+        btnstyle += " opacity: 0.5; cursor: not-allowed;"
     return Div(
-        H3("Ask a Question", cls="text-2xl font-bold mb-4"),
         Form(
             Div(
-                Label("Your Nickname", htmlFor="nickname", cls="label"),
                 Input(
                     type="text",
+                    placeholder="Your nickname (optional)",
                     name="nickname",
                     id="nickname",
-                    placeholder="Anonymous",
-                    value=initial_nickname,
-                    cls="input input-bordered w-full"
+                    hx_disable="true" if not is_active else "false",
+                    cls="input input-bordered rounded-sm w-full"
                 ),
                 cls="form-control mb-4"
             ),
             Div(
-                Label("Your Question", htmlFor="question_text", cls="label"),
                 Textarea(
                     name="question_text",
                     id="question_text",
-                    placeholder="What would you like to ask?",
+                    placeholder="Type your question here...",
                     required=True,
                     rows="3",
-                    cls="textarea textarea-bordered w-full"
+                    hx_disable="true" if not is_active else "false",
+                    cls="textarea textarea-bordered rounded-sm w-full",
+                    style="font-size: 1rem;"
                 ),
                 cls="form-control mb-4"
             ),
-            Button(
-                "Submit Question",
-                type="submit",
-                cls="btn btn-primary w-full"
+            Div(
+                Button(
+                    "Submit",
+                    type="submit",
+                    hx_disable="true" if not is_active else "false",
+                    cls=btnclass,
+                    style=btnstyle
+                ),
+                cls="flex align-end justify-end"
             ),
             method="POST",
             action=f"/qa/event/{event_id}/submit",
@@ -143,8 +153,8 @@ def QuestionForm(event_id: int, initial_nickname="Anonymous"):
             hx_target="#question-form",
             hx_swap="outerHTML"
         ),
-        cls="card bg-base-100 shadow-xl p-6 mb-6",
-        id="question-form"
+        id="question-form",
+        cls="px-6"
     )
 
 def QuestionsListContainer(questions, show_admin_controls=False, user_likes=None):

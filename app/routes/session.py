@@ -65,8 +65,8 @@ async def get(req, sess, session_id: int):
                     Div (
                         session_speaker_card(session, getattr(session, 'speakers', [])),
                         Div (
-                            H3('Description', cls='text-sm font-semibold mb-2'),
-                            P(session.description, cls='text-sm'),
+                            H3('Description', cls='text-base font-semibold mb-2'),
+                            P(session.description, cls='text-base'),
                             cls='white-background p-6 flex-1'
                         ),
                         cls='flex flex-col flex-1'
