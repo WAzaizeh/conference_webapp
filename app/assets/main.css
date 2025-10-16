@@ -3,12 +3,26 @@
 :root {
     --primary-color: #004EA3;
     --secondary-color: #C7C7CC;
+    --green: #00A651;
+    --red: #D32F2F; 
     --fallback-b1: rgba(255, 255, 255, 1);
     --fallback-s: var(--secondary-color);
 }
 
 .text-primary {
     color: var(--primary-color);
+}
+
+.text-red {
+    color: var(--red);
+}
+
+.text-inactive {
+    color: var(--secondary-color);
+}
+
+.text-green {
+    color: var(--green);
 }
 
 .text-secondary {

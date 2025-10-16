@@ -20,7 +20,7 @@ def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
         speaker_names = ', '.join([speaker.name for speaker in speakers_data])
         
         return [
-            Hr(cls='bg-secondary mt-4 mb-4 max-h-px'),
+            Hr(cls='bg-secondary', style='height:1px;'),
             Div(
                 # Avatar group - overlapping circular images
                 Div(
@@ -58,11 +58,14 @@ def agenda_timeline(events: List[Event]):
             Div(
                 A(
                     Div(
-                        Span("Panel Discussion", cls="badge badge-accent badge-sm") if event.category == "PANEL DISCUSSION" else None,
-                        Span("Workshop", cls="badge badge-neutral badge-sm") if event.category == "WORKSHOP" else None,
-                        H3(event.title, cls='text-base font-medium'), 
+                        Div(
+                            Span("Panel Discussion", cls="badge badge-sm text-white", style="background-color: var(--primary-color)") if event.category == "PANEL DISCUSSION" else None,
+                            Span("Workshop", cls="badge badge-sm text-white", style="background-color: var(--secondary-color)") if event.category == "WORKSHOP" else None,
+                            H3(event.title, cls='text-base font-medium'), 
+                            cls="flex flex-col gap-2"
+                        ),
                         *SpeakerCardBody(getattr(event, 'speakers_data', [])),
-                        cls="timeline-box p-4 flex flex-col justify-evenly"
+                        cls="timeline-box p-4 flex flex-col gap-4"
                     ),
                     href=f'/session/{event.id}' if event.description else None,
                 ),

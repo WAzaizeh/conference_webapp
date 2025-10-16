@@ -52,7 +52,7 @@ def AppContainer(content: Div, active_button_index: int = None, is_moderator: bo
             )
     
     return CustomTitled(
-        'MAS CYP Conference 2024',
+        'MAS CYP Conference 2025',
         Html(data_theme='cupcake'),
         
         # Fixed position auth indicator (only show if needed)

@@ -19,15 +19,14 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
         time_ago = "just now"
     
     # Build the card
-    card_classes = "card bg-base-100 shadow-md mb-4"
+    card_classes = "timeline-box"
     if not question.is_visible and show_admin_controls:
         card_classes += " border-2 border-warning"
     
     return Div(
-        Div(
             # Question header
             Div(
-                Span(question.nickname, cls="font-semibold text-primary"),
+                Span(question.nickname, cls="font-semibold text-black"),
                 Span(f" • {time_ago}", cls="text-sm text-base-content/60"),
                 Span(
                     I(cls="fas fa-check-circle text-success ml-2"),
@@ -44,15 +43,16 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
             ),
             
             # Question text
-            P(question.question_text, cls="mb-4 question-text"),
+            P(question.question_text, cls="mb-4 question-text text-black"),
             
             # Actions row
             Div(
                 # Like button
                 Button(
-                    I(cls=f"fas fa-heart {'text-error' if user_liked else ''}"),
+                    I(cls=f"fas fa-heart {'text-red' if user_liked else ''}"),
                     Span(str(question.likes_count), cls="ml-2", id=f"likes-{question_id}"),
-                    cls=f"btn btn-sm {'btn-error' if user_liked else 'btn-ghost'}",
+                    cls=f"btn btn-sm text-primary",
+                    style="background: none; border: 1px solid var(--primary-color);",
                     hx_post=f"/qa/question/{question_id}/like",
                     hx_target=f"#question-{question_id}",
                     hx_swap="outerHTML",
@@ -95,21 +95,62 @@ def QuestionCard(question, show_admin_controls=False, user_liked=False):
                 
                 cls="flex justify-between items-center"
             ),
-            
-            cls="card-body"
-        ),
         cls=card_classes,
+        style="padding: 16px;",
         id=f"question-{question_id}",
         data_question_id=question_id  # Add this for easy querying in tests
     )
 
-def QuestionForm(event_id: int, initial_nickname="Anonymous", is_active=True):
+def SessionStatusTag(is_active: bool, text_cls="text-sm"):
+    """Tag to show session status"""
+    if is_active:
+        return Div(
+            I(cls="fas fa-circle text-green"),
+            P(
+                "Active",
+                cls="text-green",
+            ),
+            cls= text_cls + " flex items-center gap-2"
+        )
+    else:
+        return Div(
+            I(cls="fas fa-circle text-inactive"),
+            P(
+                "Inactive",
+                cls="text-inactive",
+            ),
+            cls= text_cls + " flex items-center gap-2"
+        )
+
+def SuccessNotification():
+    """Success notification modal that auto-closes after 4 seconds"""
+    return Div(
+            I(cls="fas fa-check-circle text-green text-lg"),
+            P("Your question has been submitted!", cls="text-green font-semibold"),
+            # Auto-close after 4 seconds
+            Script("""
+                setTimeout(() => {
+                    const modal = document.getElementById('success-message');
+
+                    if (modal) {
+                        modal.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                        setTimeout(() => {
+                            modal.close();
+                            backdrop.remove();
+                        }, 500);
+                    }
+                }, 4000);
+            """),
+            id="success-message",
+            cls="flex flex-row gap-2 items-center"
+        )
+
+def QuestionForm(event_id: int, initial_nickname="Anonymous", is_active=True, show_success=False):
     """Form to submit a new question"""
     btnclass = "btn btn-primary px-6 py-2"
-    if not is_active:
-        btnclass += " btn-disabled"
     btnstyle = "background-color: var(--primary-color); border-color: var(--primary-color); color: white;"
     if not is_active:
+        btnclass += " btn-disabled"
         btnstyle += " opacity: 0.5; cursor: not-allowed;"
     return Div(
         Form(
@@ -138,6 +179,7 @@ def QuestionForm(event_id: int, initial_nickname="Anonymous", is_active=True):
                 cls="form-control mb-4"
             ),
             Div(
+                SuccessNotification() if show_success else None,
                 Button(
                     "Submit",
                     type="submit",
@@ -145,7 +187,7 @@ def QuestionForm(event_id: int, initial_nickname="Anonymous", is_active=True):
                     cls=btnclass,
                     style=btnstyle
                 ),
-                cls="flex align-end justify-end"
+                cls= "flex flex-row items-center justify-between" if show_success else "flex align-end justify-end"
             ),
             method="POST",
             action=f"/qa/event/{event_id}/submit",
@@ -168,10 +210,14 @@ def QuestionsListContainer(questions, show_admin_controls=False, user_likes=None
                 P("No questions yet. Be the first to ask!", cls="text-base-content/60"),
                 cls="text-center py-12"
             ),
-            id="questions-list"
+            id="questions-list",
+            style="height: 100%;",
+            cls="blue-background p-4",
         )
     
     return Div(
         *[QuestionCard(q, show_admin_controls, str(q.id) in user_likes) for q in questions],
-        id="questions-list"
+        id="questions-list",
+        style="height: 100%;",
+        cls="blue-background p-4",
     )
