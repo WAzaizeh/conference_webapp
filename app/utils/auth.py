@@ -8,6 +8,7 @@ from typing import Optional
 from db.models import User
 from datetime import datetime, date
 from zoneinfo import ZoneInfo
+import os
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -75,6 +76,10 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
 
 def is_conference_day():
     """Check if current date is conference day (Oct 18, 2025 CDT)"""
+    # Allow bypass for testing
+    if os.getenv('ENVIRONMENT') != 'development':
+        return True
+    
     cdt = ZoneInfo('America/Chicago')
     current_date = datetime.now(cdt).date()
     conference_date = date(2025, 10, 18)
@@ -85,10 +90,47 @@ def require_conference_day(f):
     @wraps(f)
     async def async_wrapper(req, sess, *args, **kwargs):
         if not is_conference_day():
-            # Redirect to the current page (stay where you are)
-            from fasthtml.common import RedirectResponse
-            current_path = req.url.path
-            return RedirectResponse(current_path, status_code=303)
+            # Calculate time until conference
+            from fasthtml.components import Div
+            from components.page import AppContainer
+            from components.feedback_message import FeedbackMessage
+            from components.navigation import TopNav
+            
+            cdt = ZoneInfo('America/Chicago')
+            now = datetime.now(cdt)
+            conference_datetime = datetime(2025, 10, 18, 0, 0, 0, tzinfo=cdt)
+            time_delta = conference_datetime - now
+            
+            # Calculate days and hours
+            total_hours = int(time_delta.total_seconds() / 3600)
+            days = total_hours // 24
+            hours = total_hours % 24
+            
+            # Build the time message
+            if days > 0 and hours > 0:
+                time_msg = f"That's {days} day{'s' if days > 1 else ''} and {hours} hour{'s' if hours != 1 else ''} away."
+            elif days > 0:
+                time_msg = f"That's {days} day{'s' if days > 1 else ''} away."
+            elif hours > 0:
+                time_msg = f"That's {hours} hour{'s' if hours != 1 else ''} away."
+            else:
+                time_msg = "The conference starts very soon!"
+            
+            return AppContainer(
+                Div(
+                    TopNav('Coming Soon'),
+                    FeedbackMessage(
+                        icon_class="fas fa-calendar-day text-primary",
+                        title="See You Soon!",
+                        message=f"Available on conference day. {time_msg}",
+                        button_text="Return to Home",
+                        button_href="/",
+                        icon_color="text-primary"
+                    ),
+                ),
+                is_moderator=False,
+                request=req
+            )
         
         if asyncio.iscoroutinefunction(f):
             return await f(req, sess, *args, **kwargs)
