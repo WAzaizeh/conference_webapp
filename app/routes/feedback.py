@@ -12,8 +12,10 @@ from db.models import FeedbackSubmission
 from core.app import rt
 from utils.session import get_or_create_session_id
 from components.navigation import TopNav
+from utils.auth import require_conference_day
 
 @rt('/feedback')
+@require_conference_day
 async def get(request, sess):
     """Display the feedback survey form - check if already submitted"""
     
@@ -62,6 +64,7 @@ async def get(request, sess):
     )
 
 @rt('/feedback/edit')
+@require_conference_day
 async def get(request, sess):
     """Display the feedback form with existing values for editing"""
     
@@ -102,6 +105,7 @@ async def get(request, sess):
     )
 
 @rt('/feedback/submit')
+@require_conference_day
 async def post(request, sess):
     """Handle feedback form submission (both new and edit)"""
     

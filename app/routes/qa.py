@@ -19,12 +19,14 @@ from core.app import rt
 import asyncio
 from utils.session import get_or_create_session_id
 from components.navigation import TopNav
+from utils.auth import require_conference_day
 
 def get_nickname_from_cookie(request):
     """Get stored nickname from cookie"""
     return request.cookies.get('qa_nickname', 'Anonymous')
 
 @rt('/qa')
+@require_conference_day
 async def get(request, sess):
     """Q&A main page - select session (accessible to everyone)"""
     async with db_manager.AsyncSessionLocal() as db:
@@ -109,6 +111,7 @@ async def get(request, sess):
         )
 
 @rt('/qa/event/{event_id}')
+@require_conference_day
 async def get(request, sess, event_id: int):
     """Q&A page for a specific event (accessible to everyone)"""
     session_id = get_or_create_session_id(request)
@@ -224,6 +227,7 @@ async def get(request, sess, event_id: int):
     ), cookie('qa_session_id', session_id, max_age=86400*30)  # 30 days
 
 @rt('/qa/event/{event_id}/questions')
+@require_conference_day
 async def get(request, event_id: int, sort: str = "recent"):
     """Get questions list (for tab switching) - accessible to everyone"""
     session_id = get_or_create_session_id(request)
@@ -247,6 +251,7 @@ async def get(request, event_id: int, sort: str = "recent"):
     )
 
 @rt('/qa/event/{event_id}/submit')
+@require_conference_day
 async def post(request, event_id: int):
     """Submit a new question - only if Q&A is active"""
     form_data = await request.form()
@@ -316,6 +321,7 @@ async def post(request, event_id: int):
     )
 
 @rt('/qa/question/{question_id}/like')
+@require_conference_day
 async def post(request, question_id: str):
     """Toggle like on a question - accessible to everyone"""
     session_id = get_or_create_session_id(request)
@@ -348,6 +354,7 @@ async def post(request, question_id: str):
     )
 
 @rt('/qa/event/{event_id}/stream')
+@require_conference_day
 async def get(request, event_id: int):
     """SSE endpoint for live updates - accessible to everyone"""
     async def event_stream():
@@ -382,6 +389,7 @@ async def get(request, event_id: int):
 
 # Moderator routes - require authentication via decorator
 @rt('/qa/moderator/event/{event_id}')
+@require_conference_day
 @require_moderator
 async def get(req, sess, event_id: int):
     """Moderator view for Q&A"""
@@ -500,6 +508,7 @@ async def get(req, sess, event_id: int):
     )
 
 @rt('/qa/moderator')
+@require_conference_day
 @require_moderator
 async def get(req, sess):
     """Moderator main page - select session to moderate"""
@@ -603,6 +612,7 @@ async def get(req, sess):
         )
 
 @rt('/qa/moderator/event/{event_id}/toggle-qa')
+@require_conference_day
 @require_moderator
 async def post(req, sess, event_id: int):
     """Toggle Q&A activation status"""
@@ -615,6 +625,7 @@ async def post(req, sess, event_id: int):
     return Response("OK")
 
 @rt('/qa/moderator/question/{question_id}/toggle-visibility')
+@require_conference_day
 @require_moderator
 async def post(req, sess, question_id: str):
     """Toggle question visibility"""
@@ -640,6 +651,7 @@ async def post(req, sess, question_id: str):
     return QuestionCard(question, show_admin_controls=True)
 
 @rt('/qa/moderator/question/{question_id}/toggle-answered')
+@require_conference_day
 @require_moderator
 async def post(req, sess, question_id: str):
     """Toggle question answered status"""
@@ -665,6 +677,7 @@ async def post(req, sess, question_id: str):
     return QuestionCard(question, show_admin_controls=True)
 
 @rt('/qa/moderator/question/{question_id}')
+@require_conference_day
 @require_moderator
 async def delete(req, sess, question_id: str):
     """Delete a question"""

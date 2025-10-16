@@ -6,6 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Optional
 from db.models import User
+from datetime import datetime, date
+from zoneinfo import ZoneInfo
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -70,3 +72,26 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
     
     result = await db.execute(result)
     return result.scalar_one_or_none()
+
+def is_conference_day():
+    """Check if current date is conference day (Oct 18, 2025 CDT)"""
+    cdt = ZoneInfo('America/Chicago')
+    current_date = datetime.now(cdt).date()
+    conference_date = date(2025, 10, 18)
+    return current_date == conference_date
+
+def require_conference_day(f):
+    """Decorator to require access only on conference day"""
+    @wraps(f)
+    async def async_wrapper(req, sess, *args, **kwargs):
+        if not is_conference_day():
+            # Return 204 No Content - HTMX will do nothing
+            from fasthtml.common import Response
+            return Response(status_code=204)
+        
+        if asyncio.iscoroutinefunction(f):
+            return await f(req, sess, *args, **kwargs)
+        else:
+            return f(req, sess, *args, **kwargs)
+    
+    return async_wrapper
