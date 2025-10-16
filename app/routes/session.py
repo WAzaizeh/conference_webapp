@@ -26,6 +26,7 @@ async def get(req, sess):
     return AppContainer(
             Div(
                 TopNav('Agenda'),
+                H1('3rd Annual CYP Conf, 2025', cls='text-center font-medium text-base'),
                 H1('Saturday 18th October', cls='text-center font-medium text-base'),
                 agenda_timeline(events),
                 id='page-content',
