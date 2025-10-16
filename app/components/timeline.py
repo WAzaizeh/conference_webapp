@@ -58,6 +58,8 @@ def agenda_timeline(events: List[Event]):
             Div(
                 A(
                     Div(
+                        Span("Panel Discussion", cls="badge badge-accent badge-sm") if event.category == "PANEL DISCUSSION" else None,
+                        Span("Workshop", cls="badge badge-neutral badge-sm") if event.category == "WORKSHOP" else None,
                         H3(event.title, cls='text-base font-medium'), 
                         *SpeakerCardBody(getattr(event, 'speakers_data', [])),
                         cls="timeline-box p-4 flex flex-col justify-evenly"
