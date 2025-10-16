@@ -1,6 +1,6 @@
 from fasthtml.common import *
 from components.page import AppContainer
-from components.qa import QuestionCard, QuestionForm, QuestionsListContainer
+from components.qa import QuestionCard, QuestionForm, QuestionsListContainer, SessionStatusTag
 from db.connection import db_manager
 from db.schemas import QuestionCreate, QuestionUpdate
 from crud.question import (
@@ -52,15 +52,7 @@ async def get(request, sess):
                         Div(
                             Div(
                                 H3(event.title, cls="text-base font-medium"),
-                                Span(
-                                    I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
-                                    "Q&A Active",
-                                    cls="badge badge-primary"
-                                ) if is_active else Span(
-                                    "Q&A Closed",
-                                    cls="badge badge-ghost",
-                                    style="white-space: nowrap;"
-                                ),
+                                SessionStatusTag(is_active, text_cls="text-xs"),
                                 cls="flex justify-between gap-4 items-start"
                             ),
                             P(
@@ -137,26 +129,21 @@ async def get(request, sess, event_id: int):
             Div(
                 TopNav('Q&A Session'),
                 Div(
-                    H1(event.title, cls="text-lg font-bold mb-2"),
-                    P(
-                        I(cls="far fa-clock mr-2"),
-                        event.start_time.strftime("%I:%M %p"),
-                        " • ",
-                        event.location or "TBA",
-                        cls="text-base-content/70"
+                    H1(event.title, cls="text-lg font-bold"),
+                    Div(
+                        I(cls="far fa-clock text-base-content/70"),
+                        P(
+                            event.start_time.strftime("%I:%M %p"),
+                            " • ",
+                            event.location or "TBA",
+                            cls="text-base-content/70",
+                        ),
+                        cls="flex items-center gap-2",
                     ),
-                    Span(
-                        I(cls="fas fa-circle text-primary mr-2 animate-pulse"),
-                        "Q&A Active - Submit Questions",
-                        cls="badge badge-primary badge-lg mt-2"
-                    ) if is_active else Span(
-                        I(cls="fas fa-lock mr-2"),
-                        "Q&A Closed - View Only",
-                        cls="badge badge-ghost badge-lg mt-2"
-                    ),
-                    cls="px-6 mb-6"
+                    SessionStatusTag(is_active),
+                    cls="flex flex-col gap-2 px-6"
                 ),
-                cls="mb-8"
+                cls="mb-4"
             ),
             
             # Question submission form (only if active)
@@ -183,7 +170,7 @@ async def get(request, sess, event_id: int):
                         hx_target="#questions-list",
                         hx_swap="outerHTML",
                     ),
-                    cls="flex justify-start mb-4 border-b border-base-300"
+                    cls="flex justify-start border-b border-base-300"
                 ),
                 cls="px-6",
             ),
@@ -303,12 +290,8 @@ async def post(request, event_id: int):
     # Return success message and reset form
     return (
         Div(
-            Div(
-                I(cls="fas fa-check-circle text-success text-2xl mb-2"),
-                P("Question submitted! It will appear after moderator approval.", cls="font-semibold"),
-                cls="alert alert-success mb-4 flex flex-col items-center"
-            ),
-            QuestionForm(event_id, initial_nickname=nickname),
+            
+            QuestionForm(event_id, initial_nickname=nickname, show_success=True),
             id="question-form"
         ),
         cookie('qa_nickname', nickname, max_age=86400*365),  # Remember nickname for 1 year

@@ -24,7 +24,8 @@ materialLink = Link(
 )
 htmxScript = Script(src='https://unpkg.com/htmx.org@1.9.10')
 static_fils_hdrs = fetch_static_files()
+favicon_link = Link(rel='icon', type='image/x-icon', href='/assets/favicon.ico'),
 
-app = FastHTML(hdrs=[tlink, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs])
+app = FastHTML(hdrs=[tlink, favicon_link, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs])
 
 rt = app.route

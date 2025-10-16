@@ -130,14 +130,16 @@ async def post(request, sess):
     
     # Show success message
     return AppContainer(
-        TopNav('Feedback'),
-        FeedbackMessage(
-            icon_class="fas fa-check-circle",
-            title="Thank You!",
-            message="Your feedback has been submitted successfully. We appreciate you taking the time to help us improve!",
-            button_text="Return to Home",
-            button_href="/",
-            icon_color="text-success"
+        Div(
+            TopNav('Feedback'),
+            FeedbackMessage(
+                icon_class="fas fa-check-circle text-success",
+                title="Thank You!",
+                message="Your feedback has been submitted successfully. We appreciate you taking the time to help us improve!",
+                button_text="Return to Home",
+                button_href="/",
+                icon_color="text-success"
+            ),
         ),
         is_moderator=is_moderator(sess),
         request=request  # Pass request to show moderator login on select pages

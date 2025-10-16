@@ -3,6 +3,8 @@ from .icon import Icon
 
 def LoginModal():
     """Login modal dialog - responsive (bottom on mobile, center on desktop)"""
+    btnclass = "btn btn-primary px-6 py-2"
+    btnstyle = "background-color: var(--primary-color); border-color: var(--primary-color); color: white;"
     return Dialog(
         Div(
             # Close button in top-right corner
@@ -18,36 +20,31 @@ def LoginModal():
             # Modal content container with height control
             Div(
                 # Modal content
-                H3("Admin Login", cls="font-bold text-lg mb-4"),
+                H3("Moderator Sign in", cls="text-lg text-semibold text-center mb-4"),
                 
                 # Login form
                 Form(
-                    Label(
-                        Icon('user', cls='h-4 w-4 opacity-70'),
+                    Div(
                         Input(
                             placeholder='Username', 
                             name='username', 
                             type='text', 
-                            cls='grow',
+                            cls='input input-bordered rounded-sm w-full',
                             required=True
                         ),
-                        cls='input input-bordered flex items-center gap-2 mb-3',
-                    ),
-                    Label(
-                        Icon('key', cls='h-4 w-4 opacity-70'),
                         Input(
                             placeholder='Password', 
                             name='password', 
                             type='password', 
-                            cls='grow',
+                            cls='input input-bordered rounded-sm w-full',
                             required=True
                         ),
-                        cls='input input-bordered flex items-center gap-2 mb-4',
+                        cls='form-control gap-4 mb-4',
                     ),
                     Div(
                         id='login-error-container'  # Error messages will appear here
                     ),
-                    Button('Login', type='submit', cls='btn btn-primary w-full'),
+                    Button('Sign in', type='submit', cls=btnclass, style=btnstyle,),
                     hx_post='/admin/login',
                     hx_target='#login-error-container',
                     hx_swap='innerHTML',
