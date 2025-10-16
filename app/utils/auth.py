@@ -77,7 +77,7 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
 def is_conference_day():
     """Check if current date is conference day (Oct 18, 2025 CDT)"""
     # Allow bypass for testing
-    if os.getenv('ENVIRONMENT') != 'development':
+    if os.getenv('ENVIRONMENT') == 'development':
         return True
     
     cdt = ZoneInfo('America/Chicago')
