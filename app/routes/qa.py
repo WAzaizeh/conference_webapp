@@ -1,6 +1,13 @@
 from fasthtml.common import *
 from components.page import AppContainer
-from components.qa import QuestionCard, QuestionForm, QuestionsListContainer, SessionStatusTag
+from components.qa import (
+    QuestionCard,
+    QuestionForm,
+    QuestionsListContainer,
+    SessionStatusTag,
+    SessionCard,
+    SessionStatusToggle
+)
 from db.connection import db_manager
 from db.schemas import QuestionCreate, QuestionUpdate
 from crud.question import (
@@ -35,56 +42,19 @@ async def get(request, sess):
         # Sort events by start time
         events = sorted(events, key=lambda e: e.start_time)
         
-        # Build event cards
-        event_cards = []
-        for event in events:
-            # Check if QA is active
-            is_active = event.is_qa_active
-            
-            # Format time
-            time_str = event.start_time.strftime("%I:%M %p")
-            
-            card_class = "timeline-box p-6 flex flex-col justify-evenly"
-            if is_active:
-                card_class += " border-2 border-primary"
-            
-            event_cards.append(
-                A(
-                    Div(
-                        Div(
-                            Div(
-                                H3(event.title, cls="text-base font-medium"),
-                                SessionStatusTag(is_active, text_cls="text-xs"),
-                                cls="flex justify-between gap-4 items-start"
-                            ),
-                            P(
-                                I(cls="far fa-clock mr-2"),
-                                time_str,
-                                " • ",
-                                event.location or "TBA",
-                                cls="text-sm text-base-content/70 mt-2"
-                            ),
-                        ),
-                        cls=card_class
-                    ),
-                    href=f"/qa/event/{event.id}"
-                )
-            )
+        # Build event cards - guest view
+        event_cards = [SessionCard(event, is_moderator=False) for event in events]
         
         return AppContainer(
             Div(
-                # Header
                 TopNav('Q&A Sessions'),
                 Div(
-                    
                     P(
                         "Select a session to view or ask questions",
                         cls="text-sm"
                     ),
                     cls="text-center mb-8"
                 ),
-                
-                # Events grid
                 Div(
                     *event_cards if event_cards else [
                         Div(
@@ -99,7 +69,7 @@ async def get(request, sess):
                 cls='container mx-auto px-4 py-8 blue-background'
             ),
             is_moderator=is_moderator(sess),
-            request=request  # Pass request to show moderator login on select pages
+            request=request
         )
 
 @rt('/qa/event/{event_id}')
@@ -388,20 +358,20 @@ async def get(req, sess, event_id: int):
         Div(
             # Header
             Div(
-                TopNav('Q&A Session'),
+                TopNav('Q&A Moderator'),
                 Div(
                     Div(
-                        Span("Moderator View", cls="badge badge-secondary mb-2 mr-2"),
                         A(
                             I(cls="fas fa-eye mr-2"),
                             "Guest View",
                             href=f"/qa/event/{event_id}",
-                            cls="btn btn-sm btn-outline",
+                            cls="btn btn-sm",
+                            style="background-color: var(--primary-color); border-color: var(--primary-color); color: white;",
                             target="_blank"
                         ),
                         cls="flex items-center gap-2 mb-2"
                     ),
-                    H1(event.title, cls="text-3xl font-bold mb-2"),
+                    H1(event.title, cls="text-lg font-bold mb-2"),
                     P(
                         I(cls="far fa-clock mr-2"),
                         event.start_time.strftime("%I:%M %p"),
@@ -410,27 +380,8 @@ async def get(req, sess, event_id: int):
                         cls="text-base-content/70 mb-2"
                     ),
                     # Q&A Activation Toggle
-                    Div(
-                        Button(
-                            I(cls=f"fas fa-{'unlock' if event.is_qa_active else 'lock'} mr-2"),
-                            "Deactivate Q&A" if event.is_qa_active else "Activate Q&A",
-                            cls=f"btn btn-{'error' if event.is_qa_active else 'success'}",
-                            hx_post=f"/qa/moderator/event/{event_id}/toggle-qa",
-                            hx_swap="none",
-                            onclick="setTimeout(() => location.reload(), 500)"
-                        ),
-                        Span(
-                            I(cls="fas fa-circle text-success mr-2 animate-pulse"),
-                            "Q&A Active",
-                            cls="badge badge-success ml-2"
-                        ) if event.is_qa_active else Span(
-                            I(cls="fas fa-circle text-error mr-2"),
-                            "Q&A Closed",
-                            cls="badge badge-error ml-2"
-                        ),
-                        cls="flex items-center gap-2"
-                    ),
-                    cls="mb-6"
+                    SessionStatusToggle(event_id, event.is_qa_active),
+                    cls="mb-6 px-6"
                 ),
                 cls="mb-8"
             ),
@@ -444,21 +395,24 @@ async def get(req, sess, event_id: int):
                         cls="stat"
                     ),
                     Div(
-                        Span(str(sum(1 for q in questions if q.is_visible)), cls="text-3xl font-bold text-success"),
+                        Span(str(sum(1 for q in questions if q.is_visible)), cls="text-3xl font-bold"),
                         Span("Visible", cls="text-sm text-base-content/70"),
-                        cls="stat"
+                        cls="stat",
+                        style="color: #00A651;"
                     ),
                     Div(
-                        Span(str(sum(1 for q in questions if q.is_answered)), cls="text-3xl font-bold text-primary"),
+                        Span(str(sum(1 for q in questions if q.is_answered)), cls="text-3xl font-bold"),
                         Span("Answered", cls="text-sm text-base-content/70"),
-                        cls="stat"
+                        cls="stat",
+                        style="color: var(--primary-color);"
                     ),
                     cls="stats shadow mb-6"
                 ),
+                cls="px-6"
             ),
             
             # Questions list
-            H2("All Questions", cls="text-2xl font-bold mb-4"),
+            H2("All Questions", cls="text-xl font-bold mb-4 px-6"),
             QuestionsListContainer(questions, show_admin_controls=True),
             
             # SSE connection for live updates
@@ -484,10 +438,11 @@ async def get(req, sess, event_id: int):
                 }}
             """),
             
-            cls="container mx-auto px-4 py-8 max-w-4xl"
+            id='page-content',
+            cls='white-background'
         ),
         is_moderator=is_moderator(sess),
-        request=req  # Pass request to show moderator login on select pages
+        request=req
     )
 
 @rt('/qa/moderator')
@@ -501,97 +456,34 @@ async def get(req, sess):
         # Sort events by start time
         events = sorted(events, key=lambda e: e.start_time)
         
-        # Build event cards with question counts
-        event_cards = []
-        for event in events:
-            # Get question count for this event
-            questions = await get_questions_by_event(db, event.id, visible_only=False)
-            total_questions = len(questions)
-            hidden_questions = sum(1 for q in questions if not q.is_visible)
-            
-            # Check if QA is active
-            is_active = event.is_qa_active
-            
-            # Format time
-            time_str = event.start_time.strftime("%I:%M %p")
-            
-            card_class = "card bg-base-100 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-            if is_active:
-                card_class += " border-2 border-success"
-            
-            event_cards.append(
-                A(
-                    Div(
-                        Div(
-                            Div(
-                                H3(event.title, cls="card-title text-lg"),
-                                Div(
-                                    Span(
-                                        I(cls="fas fa-circle text-success mr-2 animate-pulse"),
-                                        "Active",
-                                        cls="badge badge-success badge-sm"
-                                    ) if is_active else Span(
-                                        I(cls="fas fa-circle text-error mr-2"),
-                                        "Closed",
-                                        cls="badge badge-error badge-sm"
-                                    ),
-                                    Span(
-                                        I(cls="fas fa-question-circle mr-1"),
-                                        str(total_questions),
-                                        cls="badge badge-ghost badge-sm ml-2"
-                                    ),
-                                    Span(
-                                        I(cls="fas fa-eye-slash mr-1"),
-                                        str(hidden_questions),
-                                        cls="badge badge-warning badge-sm ml-2"
-                                    ) if hidden_questions > 0 else None,
-                                    cls="flex gap-2"
-                                ),
-                                cls="flex justify-between items-start flex-wrap gap-2"
-                            ),
-                            P(
-                                I(cls="far fa-clock mr-2"),
-                                time_str,
-                                " • ",
-                                event.location or "TBA",
-                                cls="text-sm text-base-content/70 mt-2"
-                            ),
-                            cls="card-body"
-                        ),
-                        cls=card_class
-                    ),
-                    href=f"/qa/moderator/event/{event.id}"
-                )
-            )
+        # Build event cards - moderator view (same appearance, different href)
+        event_cards = [SessionCard(event, is_moderator=True) for event in events]
         
         return AppContainer(
             Div(
-                # Header
+                TopNav("Q&A Sessions"),
                 Div(
-                    TopNav("Q&A Session Management"),
                     P(
-                        "Select a session to moderate questions and control Q&A activation",
-                        cls="text-base-content/70"
+                        "Select a session to view or ask questions",
+                        cls="text-sm"
                     ),
                     cls="text-center mb-8"
                 ),
-                
-                # Events grid
                 Div(
                     *event_cards if event_cards else [
                         Div(
                             I(cls="fas fa-inbox text-4xl text-base-content/30 mb-4"),
-                            P("No events available", cls="text-base-content/60"),
-                            cls="text-center py-12 col-span-full"
+                            P("No Q&A sessions available", cls="text-base-content/60"),
+                            cls="timeline-box"
                         )
                     ],
-                    cls="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+                    cls="flex flex-col gap-4"
                 ),
-                
-                cls="container mx-auto px-4 py-8"
+                id='page-content',
+                cls='container mx-auto px-4 py-8 blue-background'
             ),
             is_moderator=is_moderator(sess),
-            request=req  # Pass request to show moderator login on select pages
+            request=req
         )
 
 @rt('/qa/moderator/event/{event_id}/toggle-qa')

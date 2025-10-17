@@ -1,4 +1,5 @@
 from fasthtml.common import *
+from db.models import Event
 
 def QuestionCard(question, show_admin_controls=False, user_liked=False):
     """Display a single question card"""
@@ -220,4 +221,54 @@ def QuestionsListContainer(questions, show_admin_controls=False, user_likes=None
         id="questions-list",
         style="height: 100%;",
         cls="blue-background p-4",
+    )
+
+def SessionCard(event : Event, is_moderator: bool = False, total_questions: int = None, hidden_questions: int = None):
+    """
+    Session card component for Q&A sessions
+    
+    Args:
+        event: Event object with title, start_time, location, is_qa_active
+        is_moderator: Whether to route to moderator view (only affects href)
+        total_questions: Not used (kept for backwards compatibility)
+        hidden_questions: Not used (kept for backwards compatibility)
+    """
+
+    # Build card class with active border
+    card_class = "timeline-box p-6 flex flex-col justify-evenly"
+    if event.is_qa_active:
+        card_class += " border-2 border-primary"
+    
+    return A(
+        Div(
+            Div(
+                Div(
+                    H3(event.title, cls="text-base font-medium"),
+                    SessionStatusTag(event.is_qa_active, text_cls="text-xs"),
+                    cls="flex justify-between gap-4 items-start"
+                ),
+                P(
+                    I(cls="far fa-clock mr-2"),
+                    event.start_time.strftime("%I:%M %p"),
+                    " • ",
+                    event.location or "TBA",
+                    cls="text-sm text-base-content/70 mt-2"
+                ),
+            ),
+            cls=card_class
+        ),
+        href=f"/qa/moderator/event/{event.id}" if is_moderator else f"/qa/event/{event.id}"
+    )
+
+def SessionStatusToggle(event_id: int, is_active: bool):
+    """Toggle button for Q&A session activation status"""
+    return Button(
+        I(cls=f"fas {'fa-lock' if is_active else 'fa-unlock'} mr-2 {'animate-pulse' if is_active else ''}"),
+        "Deactivate" if is_active else "Activate",
+        cls="btn btn-sm",
+        style=f"background-color: {'var(--red)' if is_active else 'var(--green)'}; border-color: {'var(--red)' if is_active else 'var(--green)'}; color: white;",
+        hx_post=f"/qa/moderator/event/{event_id}/toggle-qa",
+        hx_swap="none",
+        onclick="setTimeout(() => location.reload(), 500)",
+        title=f"Click to {'deactivate' if is_active else 'activate'} Q&A"
     )
