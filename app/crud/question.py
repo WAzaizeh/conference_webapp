@@ -34,7 +34,7 @@ async def get_questions_by_event(
     db: AsyncSession, 
     event_id: int,
     visible_only: bool = True,
-    sort_by: str = "recent"  # "recent" or "popular"
+    sort_by: str = "popular"  # "recent" or "popular"
 ) -> List[Question]:
     """Get all questions for an event"""
     query = select(Question).where(Question.event_id == event_id)

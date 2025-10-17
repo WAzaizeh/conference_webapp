@@ -220,7 +220,7 @@ def QuestionsListContainer(questions, show_admin_controls=False, user_likes=None
         *[QuestionCard(q, show_admin_controls, str(q.id) in user_likes) for q in questions],
         id="questions-list",
         style="height: 100%;",
-        cls="blue-background p-4",
+        cls="blue-background p-4 flex flex-col gap-4 mb-8",
     )
 
 def SessionCard(event : Event, is_moderator: bool = False, total_questions: int = None, hidden_questions: int = None):

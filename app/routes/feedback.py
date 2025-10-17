@@ -201,7 +201,7 @@ async def get(req, sess):
                 cls="text-center"
             ),
             
-            cls="container mx-auto px-4 py-8"
+            cls="container mx-auto px-4 py-8 h-full"
         ),
         is_moderator=is_moderator(sess),
         request=req  # Pass request to show moderator login on select pages

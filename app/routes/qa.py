@@ -85,7 +85,7 @@ async def get(request, sess, event_id: int):
             return Response("Event not found", status_code=404)
         
         # Get questions (default to recent)
-        questions = await get_questions_by_event(db, event_id, visible_only=True, sort_by="recent")
+        questions = await get_questions_by_event(db, event_id, visible_only=True, sort_by="popular")
         
         # Check which questions user has liked
         user_likes = set()
@@ -119,33 +119,34 @@ async def get(request, sess, event_id: int):
                 cls="mb-4"
             ),
             
-            # Question submission form (only if active)
-            # TODO: Disable form if not active
+            # Question submission form
             QuestionForm(event_id, initial_nickname=stored_nickname, is_active=is_active),
             
             # Tabs for Recent/Popular
             Div(
                 Div(
                     A(
-                        "Recent",
-                        cls="rounded-none px-4 border-b-2 font-semibold",
-                        id="recent-tab",
-                        hx_get=f"/qa/event/{event_id}/questions?sort=recent",
-                        hx_target="#questions-list",
-                        hx_swap="outerHTML",
-                        style="border-color: var(--primary-color);"
-                    ),
-                    A(
                         "Popular",
-                        cls="rounded-none px-4 text-base-content/70",
+                        role="tab",
+                        cls="tab tab-active [--tab-bg:#D6ECF6] [--tab-hover:bg:#D6ECF6]",
                         id="popular-tab",
                         hx_get=f"/qa/event/{event_id}/questions?sort=popular",
                         hx_target="#questions-list",
-                        hx_swap="outerHTML",
+                        hx_swap="outerHTML"
                     ),
-                    cls="flex justify-start border-b border-base-300"
+                    A(
+                        "Recent",
+                        role="tab",
+                        cls="tab",
+                        id="recent-tab",
+                        hx_get=f"/qa/event/{event_id}/questions?sort=recent",
+                        hx_target="#questions-list",
+                        hx_swap="outerHTML"
+                    ),
+                    role="tablist",
+                    cls="tabs tabs-lifted"
                 ),
-                cls="px-6",
+                cls="px-6"
             ),
             
             # Questions list
@@ -180,8 +181,8 @@ async def get(request, sess, event_id: int):
             cls='white-background'
         ),
         is_moderator=is_moderator(sess),
-        request=request,  # Pass request to show moderator login on select pages
-    ), cookie('qa_session_id', session_id, max_age=86400*30)  # 30 days
+        request=request,
+    ), cookie('qa_session_id', session_id, max_age=86400*30)
 
 @rt('/qa/event/{event_id}/questions')
 @require_conference_day
@@ -202,8 +203,21 @@ async def get(request, event_id: int, sort: str = "recent"):
     return (
         QuestionsListContainer(questions, user_likes=user_likes),
         Script(f"""
-            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('tab-active'));
-            document.getElementById('{sort}-tab').classList.add('tab-active');
+            (function() {{
+                // Update tab active states and custom colors
+                document.querySelectorAll('.tab').forEach(tab => {{
+                    tab.classList.remove('tab-active');
+                    tab.style.setProperty('--tab-bg', '');
+                    tab.style.setProperty('--tab-hover', '');
+                }});
+                
+                const activeTab = document.getElementById('{sort}-tab');
+                if (activeTab) {{
+                    activeTab.classList.add('tab-active');
+                    activeTab.style.setProperty('--tab-bg', '#D6ECF6');
+                    activeTab.style.setProperty('--tab-hover', '#D6ECF6');
+                }}
+            }})();
         """)
     )
 
@@ -352,7 +366,7 @@ async def get(req, sess, event_id: int):
             return Response("Event not found", status_code=404)
         
         # Get ALL questions (including hidden)
-        questions = await get_questions_by_event(db, event_id, visible_only=False, sort_by="recent")
+        questions = await get_questions_by_event(db, event_id, visible_only=False, sort_by="popular")
     
     return AppContainer(
         Div(
@@ -411,8 +425,34 @@ async def get(req, sess, event_id: int):
                 cls="px-6"
             ),
             
+            # Tabs for Recent/Popular
+            Div(
+                Div(
+                    A(
+                        "Popular",
+                        role="tab",
+                        cls="tab tab-active [--tab-bg:#D6ECF6] [--tab-hover:bg:#D6ECF6]",
+                        id="popular-tab",
+                        hx_get=f"/qa/moderator/event/{event_id}/questions?sort=popular",
+                        hx_target="#questions-list",
+                        hx_swap="outerHTML"
+                    ),
+                    A(
+                        "Recent",
+                        role="tab",
+                        cls="tab",
+                        id="recent-tab",
+                        hx_get=f"/qa/moderator/event/{event_id}/questions?sort=recent",
+                        hx_target="#questions-list",
+                        hx_swap="outerHTML"
+                    ),
+                    role="tablist",
+                    cls="tabs tabs-lifted"
+                ),
+                cls="px-6"
+            ),
+
             # Questions list
-            H2("All Questions", cls="text-xl font-bold mb-4 px-6"),
             QuestionsListContainer(questions, show_admin_controls=True),
             
             # SSE connection for live updates
@@ -443,6 +483,37 @@ async def get(req, sess, event_id: int):
         ),
         is_moderator=is_moderator(sess),
         request=req
+    )
+
+@rt('/qa/moderator/event/{event_id}/questions')
+@require_conference_day
+@require_moderator
+async def get(req, sess, event_id: int, sort: str = "recent"):
+    """Get questions list for moderator (for tab switching) - includes hidden questions"""
+    async with db_manager.AsyncSessionLocal() as db:
+        # Get ALL questions (including hidden)
+        questions = await get_questions_by_event(db, event_id, visible_only=False, sort_by=sort)
+    
+    # Update tab active state and return components directly
+    return (
+        QuestionsListContainer(questions, show_admin_controls=True),
+        Script(f"""
+            (function() {{
+                // Update tab active states and custom colors
+                document.querySelectorAll('.tab').forEach(tab => {{
+                    tab.classList.remove('tab-active');
+                    tab.style.setProperty('--tab-bg', '');
+                    tab.style.setProperty('--tab-hover', '');
+                }});
+                
+                const activeTab = document.getElementById('{sort}-tab');
+                if (activeTab) {{
+                    activeTab.classList.add('tab-active');
+                    activeTab.style.setProperty('--tab-bg', '#D6ECF6');
+                    activeTab.style.setProperty('--tab-hover', '#D6ECF6');
+                }}
+            }})();
+        """)
     )
 
 @rt('/qa/moderator')
