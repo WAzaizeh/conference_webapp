@@ -98,7 +98,7 @@ def require_conference_day(f):
             
             cdt = ZoneInfo('America/Chicago')
             now = datetime.now(cdt)
-            conference_datetime = datetime(2025, 10, 18, 0, 0, 0, tzinfo=cdt)
+            conference_datetime = datetime(2025, 10, 18, 10, 0, 0, tzinfo=cdt)
             time_delta = conference_datetime - now
             
             # Calculate days and hours
