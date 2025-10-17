@@ -203,7 +203,7 @@ main.container {
 }
 
 .hero-image {
-    background: url(banner_2.png);
+    background: url(banner_3.png);
     background-size: contain;
     background-position: top;
     width: 100%;
@@ -212,7 +212,6 @@ main.container {
 }
 
 .hero-image.cropped{
-    aspect-ratio: 2.2;
     background-size: cover;
     background-position: center;
 }
