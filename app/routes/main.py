@@ -113,7 +113,7 @@ def get(req, sess):
                     *[Li(point) for point in bulletPoints],
                     cls='text-sm about-list'
                 ),
-                cls='p-8',
+                cls='p-8 pt-0',
                 ),
             id='page-content',
         ),
