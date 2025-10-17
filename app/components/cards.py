@@ -1,9 +1,8 @@
 from typing import List
 from .icon import Icon, BrandIcon
 from db.schemas import Speaker, Event, PrayerTime, Sponsor
-from components.navigation import TopNav
-from fasthtml.components import Div, Span, Figure, Img, H2, H1, P, Button, A, Hr
-
+from fasthtml.components import Div, Span, Figure, Img, H2, P, Button, A
+from datetime import datetime
 
 def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool = False, **kwargs) -> A:
     custom_cls = kwargs.pop('cls', '')  # Remove 'cls' from kwargs if present
@@ -55,15 +54,24 @@ def speaker_page(speaker: Speaker) -> Div:
         )
 
 def prayer_time_card(prayer : PrayerTime) -> Div:
+
+    # Parse and format prayer time
+    prayer_time_obj = datetime.strptime(prayer.time, '%H:%M')
+    prayer_time_12h = prayer_time_obj.strftime('%I:%M %p')
+    
+    # Parse and format iqama time
+    iqama_time_obj = datetime.strptime(prayer.iqama, '%H:%M')
+    iqama_time_12h = iqama_time_obj.strftime('%I:%M %p')
+
     return Div(
             Div(
                 P(prayer.name),
-                P(prayer.time),
+                P(prayer_time_12h),
                 cls='flex items-center justify-between',
                 ),
             Div(
                 A('Iqama'),
-                A(prayer.iqama),
+                A(iqama_time_12h),
                 cls='flex items-center justify-between text-primary',
                 ),
             cls='prayer-card'

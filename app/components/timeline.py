@@ -52,7 +52,6 @@ def agenda_timeline(events: List[Event]):
             ),
             Div(
                 Icon('circle', cls='text-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'text-primary'),
-                
                 cls='timeline-middle'
             ),
             Div(
@@ -64,7 +63,7 @@ def agenda_timeline(events: List[Event]):
                             H3(event.title, cls='text-base font-medium'), 
                             cls="flex flex-col gap-2"
                         ),
-                        *SpeakerCardBody(getattr(event, 'speakers_data', [])),
+                        *SpeakerCardBody(event.speakers),
                         cls="timeline-box p-4 flex flex-col gap-4"
                     ),
                     href=f'/session/{event.id}' if event.description else None,

@@ -16,13 +16,6 @@ async def get(req, sess):
         events = await get_events(db_session)
         # sort by start_time
         events.sort(key=lambda e: e.start_time)
-        # Fetch and attach speaker data for each event
-        for event in events:
-            event.speakers_data = []
-            for speaker in event.speakers:
-                speaker = await get_speaker(db_session, speaker.id)
-                if speaker:
-                    event.speakers_data.append(speaker)
     return AppContainer(
             Div(
                 TopNav('Agenda'),
