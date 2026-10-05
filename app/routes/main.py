@@ -92,7 +92,7 @@ def get(req, sess):
 
 @rt('/coming-soon')
 def get():
-    return Title('Coming Soon · Him & Her'), ComingSoon()
+    return Title('CYP conference 2026 - coming soon'), ComingSoon()
 
 @rt('/about')
 def get(req, sess):
