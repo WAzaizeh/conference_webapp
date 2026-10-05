@@ -24,7 +24,7 @@ __TOKENS__
 .home-inner {
     max-width: 560px;
     margin: 0 auto;
-    padding: 16px 20px 20px;
+    padding: 16px 20px 32px;
 }
 /* Leave room for the fixed Moderator / Logout badges */
 .home-inner.with-auth-badge { padding-top: 52px; }
@@ -43,10 +43,10 @@ __TOKENS__
     opacity: 0;
     animation: cs-fade-down .8s ease-out .1s forwards;
 }
-.home-brand img { width: 32px; height: 32px; }
+.home-brand img { width: 40px; height: 40px; }
 
 .home-eyebrow {
-    margin-top: 12px;
+    margin-top: 22px;
     font-weight: 600;
     font-size: 14px;
     letter-spacing: .22em;
@@ -59,7 +59,7 @@ __TOKENS__
 .home-title {
     font-family: 'Anton', 'Oswald', sans-serif;
     font-weight: 400;
-    font-size: clamp(60px, 19vw, 112px);
+    font-size: clamp(72px, 24vw, 132px);
     line-height: .9;
     margin: 4px 0 2px;
     display: flex;
@@ -88,8 +88,8 @@ __TOKENS__
 }
 
 .home-info {
-    margin: 14px auto 0;
-    padding: 8px 0;
+    margin: 22px auto 0;
+    padding: 12px 0;
     border-top: 2px solid var(--cs-navy);
     border-bottom: 2px solid var(--cs-navy);
     display: flex;
@@ -109,8 +109,8 @@ __TOKENS__
 .home-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-    margin-top: 18px;
+    gap: 16px;
+    margin-top: 28px;
 }
 
 .home-26 .custom-card {
@@ -119,8 +119,8 @@ __TOKENS__
     border-radius: 14px;
     box-shadow: 0 6px 18px rgba(70, 48, 22, .15);
     backdrop-filter: blur(2px);
-    padding: 12px 10px;
-    gap: 6px;
+    padding: 18px 12px;
+    gap: 10px;
     justify-content: center;
     transition: transform .2s, background-color .2s, box-shadow .2s;
     opacity: 0;
@@ -140,7 +140,7 @@ __TOKENS__
     color: var(--cs-navy);
     text-align: center;
 }
-.home-26 .custom-card img { width: 32px; height: 32px; }
+.home-26 .custom-card img { width: 40px; height: 40px; }
 .home-26 .custom-card.border-2 { border: 2px solid var(--cs-navy); }
 .home-26 .custom-card.home-register {
     grid-column: 1 / -1;
