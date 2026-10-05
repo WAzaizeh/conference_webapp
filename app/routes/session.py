@@ -20,8 +20,8 @@ async def get(req, sess):
     return AppContainer(
             Div(
                 TopNav('Agenda'),
-                H1('3rd Annual CYP Conf, 2025', cls='text-center font-medium text-base'),
-                H1('Saturday 18th October', cls='text-center font-medium text-base'),
+                H1('4th Annual CYP Conference', cls='page-eyebrow'),
+                H1('Saturday · October 24, 2026', cls='page-eyebrow opacity-70'),
                 A(Icon('pen', cls='mr-1'), 'Edit Agenda', href='/admin/agenda', cls='btn btn-sm btn-primary mx-auto mt-4 flex w-fit') if is_moderator(sess) else None,
                 agenda_timeline(events),
                 id='page-content',

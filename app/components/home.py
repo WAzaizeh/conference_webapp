@@ -187,3 +187,14 @@ def HomeHeader() -> Div:
         ),
         cls='home-header',
     )
+
+
+def HimHerBanner() -> Div:
+    """Compact Him & Her banner for inner pages (e.g. About)"""
+    return Div(
+        Style(_CSS),
+        P('4th Annual CYP Conference', cls='home-eyebrow mt-0'),
+        H1(*title_letters('HIM & HER', start_delay=.1, step=.05), cls='home-title', aria_label='Him & Her', style='font-size: clamp(64px, 20vw, 110px)'),
+        P('Building Success at Every Stage', cls='home-tagline', style='animation-delay: .6s'),
+        cls='home-header px-6 pt-2 pb-6',
+    )

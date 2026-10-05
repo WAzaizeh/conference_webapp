@@ -2,7 +2,7 @@ from components.navigation import TopNav
 from components.page import AppContainer
 from components.cards import homepage_card
 from components.coming_soon import ComingSoon
-from components.home import HomeHeader
+from components.home import HimHerBanner, HomeHeader
 from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
 from db.connection import db_manager
@@ -76,7 +76,7 @@ def get(req, sess):
     return AppContainer(
         Div(
             TopNav('About',),
-            Div(alt='Conference banner_2', cls='hero-image'),
+            HimHerBanner(),
             Div(
                 H2('Description' , cls='font-bold pb-2'),
                 P(*paragraphs, cls='text-sm mb-4'),
@@ -99,7 +99,7 @@ async def get(req, sess):
     return AppContainer(
             Div(
                 TopNav('Prayer Times'),
-                H1('Saturday 18th October', cls='text-black font-medium text-center text-sm'),
+                H1('Saturday · October 24, 2026', cls='page-eyebrow pt-2'),
                 prayer_times_page(prayer_times),
                 id='page-content',
                 cls='white-background'
