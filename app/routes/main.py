@@ -1,11 +1,12 @@
 from components.navigation import TopNav
 from components.page import AppContainer
 from components.cards import homepage_card
+from components.coming_soon import ComingSoon
 from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
 from db.connection import db_manager
 from crud.prayer_time import get_prayer_times
-from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li
+from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li, Title
 from core.app import rt
 from utils.auth import is_moderator
 
@@ -88,6 +89,10 @@ def get(req, sess):
         is_moderator=user_is_moderator,
         request=req  # Pass request to show moderator login on select pages
     )
+
+@rt('/coming-soon')
+def get():
+    return Title('CYP conference 2026 - coming soon'), ComingSoon()
 
 @rt('/about')
 def get(req, sess):
