@@ -5,10 +5,11 @@ WORKDIR /app
 
 ENV HOST=0.0.0.0
 
-COPY pyproject.toml .
+# Install the exact versions from uv.lock so builds are reproducible
+COPY pyproject.toml uv.lock ./
 
-RUN uv sync
+RUN uv sync --frozen
 
 COPY app/ .
 
-CMD ["uv", "run", "python", "main.py"]
+CMD ["uv", "run", "--frozen", "python", "main.py"]
