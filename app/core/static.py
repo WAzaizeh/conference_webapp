@@ -10,7 +10,8 @@ def fetch_static_files() -> list:
     assets_dir = current_dir.parent / 'assets'
 
     static_files = []
-    for path in assets_dir.rglob('*'):
+    # Sorted so stylesheets load in a stable order (main.css before theme-26.css, which overrides it)
+    for path in sorted(assets_dir.rglob('*')):
         if path.is_file():
             # Get path relative to assets directory
             relative_path = path.relative_to(assets_dir)

@@ -1,5 +1,5 @@
 /* 2026 "Him & Her" theme: parchment backgrounds, navy type, cream cards.
-   Rules are prefixed with [data-theme] so they win over main.css regardless of load order. */
+   Loaded after main.css (static files are included in sorted order), so these rules override it. */
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&display=swap');
 
 :root {
@@ -26,8 +26,8 @@
 }
 
 /* Page background */
-[data-theme] #page-content,
-[data-theme] .blue-background {
+#page-content,
+.blue-background {
     background:
         url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .45 0 0 0 0 .30 0 0 0 0 .12 0 0 0 .3 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
         radial-gradient(ellipse at 50% 0%, rgba(246, 234, 207, .95) 0%, rgba(232, 214, 177, .5) 45%, transparent 75%),
@@ -36,32 +36,32 @@
     background-blend-mode: multiply, normal, normal, normal;
     color: #1f2a3d;
 }
-[data-theme] .white-background,
-[data-theme] .bg-aliceblue {
+.white-background,
+.bg-aliceblue {
     background: rgba(255, 250, 240, .72);
 }
 
 /* Headings */
-[data-theme] #page-content h1:not(.home-title),
-[data-theme] #page-content h2,
-[data-theme] #page-content h3,
-[data-theme] .top-nav-title {
+#page-content h1:not(.home-title),
+#page-content h2,
+#page-content h3,
+.top-nav-title {
     font-family: 'Oswald', sans-serif;
     color: var(--cs-navy);
 }
-[data-theme] .top-nav {
+.top-nav {
     background: transparent;
 }
-[data-theme] .top-nav-title {
+.top-nav-title {
     font-weight: 600;
     font-size: 16px;
     letter-spacing: .16em;
     text-transform: uppercase;
 }
-[data-theme] .top-nav .btn-ghost {
+.top-nav .btn-ghost {
     color: var(--cs-navy);
 }
-[data-theme] .page-eyebrow {
+.page-eyebrow {
     font-family: 'Oswald', sans-serif;
     font-weight: 600;
     font-size: 13px;
@@ -72,41 +72,41 @@
 }
 
 /* Cards */
-[data-theme] .timeline-box,
-[data-theme] .speaker-card,
-[data-theme] .sponsor-card,
-[data-theme] #page-content .card:not(.card-side) {
+.timeline-box,
+.speaker-card,
+.sponsor-card,
+#page-content .card:not(.card-side) {
     background: var(--cs-card);
     border: 1px solid var(--cs-card-border);
     box-shadow: var(--cs-card-shadow);
     border-radius: 12px;
 }
-[data-theme] .speaker-card .speaker-name,
-[data-theme] .sponsor-card .sponsor-name,
-[data-theme] .card .speaker-name,
-[data-theme] .card .sponsor-name {
+.speaker-card .speaker-name,
+.sponsor-card .sponsor-name,
+.card .speaker-name,
+.card .sponsor-name {
     color: var(--cs-navy);
     font-family: 'Oswald', sans-serif;
     font-weight: 500;
     letter-spacing: .02em;
 }
-[data-theme] .speaker-detail-view .speaker-detail-body,
-[data-theme] .sponsor-detail-view .sponsor-detail-body {
+.speaker-detail-view .speaker-detail-body,
+.sponsor-detail-view .sponsor-detail-body {
     background: rgba(255, 250, 240, .78);
 }
-[data-theme] .prayer-card {
+.prayer-card {
     border-bottom-color: rgba(28, 55, 101, .2);
 }
 
 /* Agenda timeline */
-[data-theme] .timeline .text-primary,
-[data-theme] .timeline-start span {
+.timeline .text-primary,
+.timeline-start span {
     font-family: 'Oswald', sans-serif;
     letter-spacing: .04em;
 }
 
 /* Buttons */
-[data-theme] .btn-glass {
+.btn-glass {
     background: var(--cs-card);
     border: 1px solid var(--cs-card-border);
     color: var(--cs-navy);
@@ -114,31 +114,31 @@
     letter-spacing: .08em;
     text-transform: uppercase;
 }
-[data-theme] .btn-glass.btn-primary {
+.btn-glass.btn-primary {
     background: var(--cs-navy);
     border-color: var(--cs-navy);
     color: var(--cs-cream);
 }
 
 /* Bottom navigation */
-[data-theme] .btm-nav {
+.btm-nav {
     background: #f6ecd8;
     border-top: 1px solid rgba(28, 55, 101, .25);
 }
-[data-theme] .btm-nav .nav-item {
+.btm-nav .nav-item {
     color: #8a7a5c;
     font-family: 'Oswald', sans-serif;
     letter-spacing: .08em;
     text-transform: uppercase;
 }
-[data-theme] .btm-nav .nav-item:hover,
-[data-theme] .btm-nav .nav-item.active {
+.btm-nav .nav-item:hover,
+.btm-nav .nav-item.active {
     color: var(--cs-navy);
     background: transparent;
 }
 
 /* Q&A tabs */
-[data-theme] .tab.tab-active {
+.tab.tab-active {
     --tab-bg: rgba(255, 250, 240, .85) !important;
     --tab-border-color: var(--cs-card-border);
     color: var(--cs-navy);
@@ -146,13 +146,13 @@
 }
 
 /* Speaker / sponsor list chevrons */
-[data-theme] .speaker-btn,
-[data-theme] .sponsor-btn {
+.speaker-card .speaker-btn,
+.sponsor-card .sponsor-btn {
     color: rgba(28, 55, 101, .55);
 }
 
 /* Prayer times as cards */
-[data-theme] .prayer-card {
+.prayer-card {
     background: var(--cs-card);
     border: 1px solid var(--cs-card-border);
     box-shadow: var(--cs-card-shadow);
@@ -160,8 +160,8 @@
     margin: 16px 24px 0;
     padding: 20px 24px;
 }
-[data-theme] .prayer-card p:first-child,
-[data-theme] .prayer-card span:first-child {
+.prayer-card p:first-child,
+.prayer-card span:first-child {
     font-family: 'Oswald', sans-serif;
     letter-spacing: .08em;
 }

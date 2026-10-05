@@ -46,7 +46,7 @@ def get(req, sess):
                     homepage_card(icon_name='registration.svg', title='Registration', card_color='blue', href='/registration', cls='home-register'),
                     cls='home-grid',
                 ),
-                cls='home-inner',
+                cls='home-inner with-auth-badge' if user_is_moderator else 'home-inner',
             ),
             cls='home-26',
             id='page-content',

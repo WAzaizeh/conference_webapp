@@ -24,8 +24,10 @@ __TOKENS__
 .home-inner {
     max-width: 560px;
     margin: 0 auto;
-    padding: 64px 20px 32px;
+    padding: 16px 20px 20px;
 }
+/* Leave room for the fixed Moderator / Logout badges */
+.home-inner.with-auth-badge { padding-top: 52px; }
 
 .home-header { text-align: center; }
 
@@ -41,10 +43,10 @@ __TOKENS__
     opacity: 0;
     animation: cs-fade-down .8s ease-out .1s forwards;
 }
-.home-brand img { width: 40px; height: 40px; }
+.home-brand img { width: 32px; height: 32px; }
 
 .home-eyebrow {
-    margin-top: 22px;
+    margin-top: 12px;
     font-weight: 600;
     font-size: 14px;
     letter-spacing: .22em;
@@ -57,7 +59,7 @@ __TOKENS__
 .home-title {
     font-family: 'Anton', 'Oswald', sans-serif;
     font-weight: 400;
-    font-size: clamp(72px, 24vw, 132px);
+    font-size: clamp(60px, 19vw, 112px);
     line-height: .9;
     margin: 4px 0 2px;
     display: flex;
@@ -86,8 +88,8 @@ __TOKENS__
 }
 
 .home-info {
-    margin: 22px auto 0;
-    padding: 12px 0;
+    margin: 14px auto 0;
+    padding: 8px 0;
     border-top: 2px solid var(--cs-navy);
     border-bottom: 2px solid var(--cs-navy);
     display: flex;
@@ -107,8 +109,8 @@ __TOKENS__
 .home-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-    margin-top: 28px;
+    gap: 12px;
+    margin-top: 18px;
 }
 
 .home-26 .custom-card {
@@ -117,8 +119,8 @@ __TOKENS__
     border-radius: 14px;
     box-shadow: 0 6px 18px rgba(70, 48, 22, .15);
     backdrop-filter: blur(2px);
-    padding: 18px 12px;
-    gap: 10px;
+    padding: 12px 10px;
+    gap: 6px;
     justify-content: center;
     transition: transform .2s, background-color .2s, box-shadow .2s;
     opacity: 0;
@@ -138,7 +140,7 @@ __TOKENS__
     color: var(--cs-navy);
     text-align: center;
 }
-.home-26 .custom-card img { width: 40px; height: 40px; }
+.home-26 .custom-card img { width: 32px; height: 32px; }
 .home-26 .custom-card.border-2 { border: 2px solid var(--cs-navy); }
 .home-26 .custom-card.home-register {
     grid-column: 1 / -1;
@@ -148,6 +150,12 @@ __TOKENS__
     border-color: var(--cs-navy);
 }
 .home-26 .custom-card.home-register:hover { background: var(--cs-navy-deep); }
+/* With an odd number of cards, Registration fills the empty slot instead of adding a row */
+.home-26 .home-grid > .custom-card.home-register:nth-child(even) {
+    grid-column: auto;
+    flex-direction: column;
+    gap: 6px;
+}
 .home-26 .custom-card.home-register p { color: #f6ead0; font-size: 16px; }
 .home-26 .custom-card.home-register img { filter: brightness(0) invert(.93) sepia(.3); width: 32px; height: 32px; }
 
