@@ -2,6 +2,7 @@ from components.navigation import TopNav
 from components.page import AppContainer
 from components.cards import homepage_card
 from components.coming_soon import ComingSoon
+from components.home import HomeHeader
 from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
 from db.connection import db_manager
@@ -28,6 +29,7 @@ def get(req, sess):
             homepage_card(icon_name='chat.svg', title='Q&A (Moderator)', card_color='pink', href='/qa/moderator', cls='full-card', bold_style=True),
             homepage_card(icon_name='survey.svg', title='Feedback (Guest)', card_color='pink', href='/feedback', cls='full-card'),
             homepage_card(icon_name='survey.svg', title='Feedback (Moderator)', card_color='pink', href='/feedback/moderator', cls='full-card', bold_style=True),
+            homepage_card(icon_name='edit-agenda.svg', title='Edit Agenda', card_color='blue', href='/admin/agenda', cls='full-card', bold_style=True),
         ])
     else:
         cards.extend([
@@ -38,51 +40,15 @@ def get(req, sess):
     return AppContainer(
         Div(
             Div(
-                Div(alt='Conference banner_2', cls='hero-image cropped'),
+                HomeHeader(),
                 Div(
-                    Div(
-                        Img(src='mas-logo-square.png', alt='MAS Logo', cls='logo'),
-                        Div( 
-                            H1('3rd Annual CYP Conference', cls='h3'),
-                            P('Weathering the Storm: Faith, Resilience & Action'),
-                            cls='logo-text-text'  
-                        ),
-                        cls='card card-side logo-text'
-                    ),
-                    Div(
-                        Span(
-                            A(
-                                Img(src='location.png', alt='location icon', cls='hero-icon'),
-                                P('Crystal Banquet, Plano'),
-                                href='https://www.google.com/maps/search/?api=1&query=Crystal+Banquet+Hall+Plano+TX',
-                                target='_blank',
-                                cls='flex items-center justify-between hover:text-primary transition-colors',
-                            ),
-                            cls='flex items-center justify-between',
-                        ),
-                        Span(
-                            Img(src='calendar.png', alt='calendar icon', cls='hero-icon'),
-                            P('Oct 18, 2025'),
-                            cls='flex items-center justify-between',
-                        ),
-                        cls='flex items-center justify-between location-date'
-                    ),
-                    cls='conference-info'
-                ),
-                Grid(
                     *cards,  # Spread conditional cards
-                    cls='grid card-grid mb-7 home-page-content'
+                    homepage_card(icon_name='registration.svg', title='Registration', card_color='blue', href='/registration', cls='home-register'),
+                    cls='home-grid',
                 ),
-                homepage_card(
-                    icon_name='registration.svg', 
-                    title='Registration', 
-                    card_color='blue', 
-                    href='/registration',
-                    cls='mx-6 mt-4'
-                ),
-                cls='mb-8',
+                cls='home-inner',
             ),
-            cls='container mx-auto',
+            cls='home-26',
             id='page-content',
         ),
         active_button_index=1,

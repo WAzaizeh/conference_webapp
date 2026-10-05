@@ -1,23 +1,11 @@
 from fasthtml.common import Div, H1, P, Span, Img, Style
-
-# Parchment grain, generated in-browser so no extra image asset is needed
-_NOISE = (
-    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'>"
-    "<filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/>"
-    "<feColorMatrix values='0 0 0 0 .45 0 0 0 0 .30 0 0 0 0 .12 0 0 0 .5 0'/></filter>"
-    "<rect width='100%' height='100%' filter='url(%23n)'/></svg>"
-)
+from components.theme import FONTS_IMPORT, KEYFRAMES, NOISE, TOKENS, title_letters
 
 _CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;600&display=swap');
+__FONTS__
 
 .coming-soon {
-    --cs-navy: #1c3765;
-    --cs-navy-deep: #12264a;
-    --cs-sand: #e8d6b1;
-    --cs-tan: #c9a874;
-    --cs-umber: #4f3519;
-    position: fixed;
+__TOKENS__    position: fixed;
     inset: 0;
     overflow: hidden;
     display: flex;
@@ -225,18 +213,7 @@ _CSS = """
     color: var(--cs-umber);
 }
 
-@keyframes cs-rise {
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes cs-fade-down {
-    from { opacity: 0; transform: translateY(-12px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes cs-fade-up {
-    from { opacity: 0; transform: translateY(14px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes cs-line {
+__KEYFRAMES__@keyframes cs-line {
     to { width: 100%; }
 }
 @keyframes cs-shimmer {
@@ -265,21 +242,9 @@ _CSS = """
         animation-iteration-count: 1 !important;
     }
 }
-""".replace('__NOISE__', _NOISE)
-
-
-def _title_letters(text: str, start_delay: float = .55, step: float = .09):
-    """Split the headline into individually animated characters"""
-    letters = []
-    for i, ch in enumerate(text):
-        if ch == ' ':
-            continue
-        letters.append(Span(
-            ch,
-            cls='ch amp' if ch == '&' else 'ch',
-            style=f'animation-delay: {start_delay + i * step:.2f}s',
-        ))
-    return letters
+"""
+_CSS = (_CSS.replace('__FONTS__', FONTS_IMPORT).replace('__TOKENS__', TOKENS)
+        .replace('__KEYFRAMES__', KEYFRAMES).replace('__NOISE__', NOISE))
 
 
 def ComingSoon() -> Div:
@@ -297,7 +262,7 @@ def ComingSoon() -> Div:
                 cls='cs-brand',
             ),
             P('4th Annual CYP Conference', cls='cs-eyebrow'),
-            H1(*_title_letters('HIM & HER'), cls='cs-title', aria_label='Him & Her'),
+            H1(*title_letters('HIM & HER'), cls='cs-title', aria_label='Him & Her'),
             P('Building Success at Every Stage', cls='cs-tagline'),
             Div('Coming Soon', cls='cs-soon'),
             Div(
