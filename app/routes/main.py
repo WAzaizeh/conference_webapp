@@ -63,15 +63,15 @@ def get():
 @rt('/about')
 def get(req, sess):
     paragraphs = [
-        'In the wake of the recent ICE abductions targeting Muslim leaders in Dallas, our community once again finds itself in the heart of a storm — a test of faith, unity, and conviction. This comes while the Muslim Ummah continues to reel from the pain and anguish of two long years of genocide in Gaza — a wound that weighs heavily on every conscious heart.',
-        'In response to these realities, MAS Dallas and its College & Young Professionals (CYP) program have chosen to change the original theme of the 3rd Annual CYP Conference (October 18, 2025) to “Weathering the Storm: Faith, Resilience & Action.” This new direction calls not only CYP members, but our entire community, to meet this defining moment with clarity, courage, and divine purpose.',
-        'Storms are not unfamiliar to those who strive for truth. Throughout history, believers have faced waves of trials — each carrying divine wisdom within the ongoing “push and pull” between truth and falsehood. This conference invites college students and young professionals & the whole community  to reflect deeply on why we face such storms, how we remain steadfast through them, and what it means to emerge from them stronger and more united.',
-        'Through inspiring talks, interactive discussion circles, and a powerful panel on Faith, Resilience, and Collective Action, we will explore:',
+        'MAS Dallas College & Young Professionals (CYP) presents the 4th Annual CYP Conference — Him & Her: Building Success at Every Stage — on Saturday, October 24, 2026 (11 AM – 8 PM) at GEM Academy & Facility in Plano.',
+        'Redefine masculinity and womanhood through an Islamic lens. The conference introduces Allah’s complementary vision for men and women — not as competing paths, but as two halves of one shared purpose — and empowers young Muslim men and women to build success at every stage, from college and career to marriage and parenthood, through faith-rooted guidance, practical tools, and dedicated tracks that turn individual growth into resilient families and a thriving community.',
+        'Through keynotes, interactive workshops, small-group discussions, and parallel sessions, we will explore:',
     ]
     bulletPoints = [
-        'Faith: Grounding the heart in certainty of Allah’s plan — so that the losses of this world never shake the believer’s hope in the eternal reward.',
-        'Resilience: Preparing before the storm hits — drawing lessons from those who stood firm with courage, patience, and Tawakkul (trust in Allah).',
-        'Action: Moving beyond reaction — embodying goodness, organizing collectively, and serving as instruments of Allah’s mercy and justice on earth.',
+        'Masculinity Track: Leadership through responsibility — protecting, providing, emotional maturity, and spiritual leadership as a son, brother, husband, father, and community leader.',
+        'Womanhood Track: Strength through faith — confident identity, nurturing with purpose, balancing aspirations, and leadership as a daughter, sister, wife, mother, and community builder.',
+        'The Art of Good Relations: Marriage as real life, not reel life, and emotional intelligence for healthy relationships with family, friends, and beyond.',
+        'The Ripple Effect: The parenting challenges no one warns you about, and building a legacy that lives beyond your lifetime.',
     ]
     return AppContainer(
         Div(

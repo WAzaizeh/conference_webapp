@@ -14,10 +14,12 @@ async def create_prayer_time(db: AsyncSession, prayer_time: PrayerTimeCreate) ->
     await db.refresh(db_prayer_time)
     return db_prayer_time
 
+PRAYER_ORDER = ['FAJR', 'DHUHR', 'ASR', 'MAGHRIB', 'ISHA']
+
 async def get_prayer_times(db: AsyncSession) -> List[PrayerTime]:
-    """Get all prayer times"""
+    """Get all prayer times, in the order they occur during the day"""
     result = await db.execute(select(PrayerTime))
-    return result.scalars().all()
+    return sorted(result.scalars().all(), key=lambda p: PRAYER_ORDER.index(p.name) if p.name in PRAYER_ORDER else len(PRAYER_ORDER))
 
 async def update_prayer_time(db: AsyncSession, prayer_id: int, prayer_update: PrayerTimeUpdate) -> Optional[PrayerTime]:
     """Update a prayer time"""
