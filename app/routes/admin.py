@@ -39,8 +39,8 @@ def get_settings(sess):
     )
 
 @rt('/admin/login')
-async def post(request, sess, username: str, password: str):
-    """Handle login form submission from modal"""
+async def post(request, sess, username: str, password: str, redir: str = ''):
+    """Handle login form submission from modal or the login page"""
     async with db_manager.AsyncSessionLocal() as db:
         user = await get_user_by_email(db, username)
         
@@ -49,6 +49,10 @@ async def post(request, sess, username: str, password: str):
             sess['user_id'] = str(user.id)
             sess['admin_auth'] = True
             
+            # Send the user back to the protected page they came from (same-site paths only)
+            if redir.startswith('/') and not redir.startswith('//'):
+                return Response(headers={'HX-Redirect': redir})
+
             # Close modal and refresh page
             return Response(
                 headers={
@@ -74,7 +78,7 @@ def get(sess):
     return RedirectResponse('/', status_code=303)
 
 @rt('/admin_login') 
-def get(sess):
+def get(sess, redir: str = ''):
     """Direct access login page"""
     return AppContainer(
         Div(
@@ -90,6 +94,7 @@ def get(sess):
                     Input(placeholder='Password', name='password', type='password', cls='grow', required=True),
                     cls='input input-bordered flex items-center gap-2',
                 ),
+                Input(type='hidden', name='redir', value=redir),
                 Button('Login', type='submit', cls='btn btn-primary'),
                 hx_post='/admin/login',
                 method='post',
