@@ -122,7 +122,13 @@ def get(req, sess):
         cls='btn btn-block btn-glass btn-primary'
     )
     edit_speakers_btn = Button('Edit Speakers', hx_get='/edit-speakers', id='edit-speakers-btn', cls='btn btn-block btn-glass')
-    edit_events_btn = Button('Edit Events', hx_get='/edit-events', id='edit-events-btn', cls='btn btn-block btn-glass')
+    edit_events_btn = Button(
+        Icon('calendar-alt'),
+        ' Edit Agenda',
+        onclick="window.location.href='/admin/agenda'",
+        id='edit-events-btn',
+        cls='btn btn-block btn-glass btn-primary'
+    )
     edit_prayer_times_btn = Button('Edit Prayer Times', hx_get='/edit-prayer-times', id='edit-prayer-times-btn', cls='btn btn-block btn-glass')
     edit_sponsors_btn = Button('Edit Sponsors', hx_get='/edit-sponsors', id='edit-sponsors-btn', cls='btn btn-block btn-glass')
     edit_registration_link_btn = Button('Edit Registration Link', hx_get='/edit-registration-link', id='edit-registration-link-btn', cls='btn btn-block btn-glass')

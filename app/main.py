@@ -25,6 +25,7 @@ def get_static(fname:str, ext:str):
 # Import route modules - routes are registered on import
 import routes.main
 import routes.admin
+import routes.agenda_admin
 import routes.session
 import routes.speaker
 import routes.sponsor

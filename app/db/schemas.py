@@ -12,7 +12,7 @@ class EventBase(BaseModel):
     category: Optional[str] = "MAIN"
 
 class EventCreate(EventBase):
-    pass
+    speaker_ids: Optional[List[int]] = None
 
 class EventUpdate(BaseModel):
     title: Optional[str] = None
@@ -22,6 +22,7 @@ class EventUpdate(BaseModel):
     location: Optional[str] = None
     category: Optional[str] = None
     is_qa_active: Optional[bool] = None
+    speaker_ids: Optional[List[int]] = None
 
 class Event(EventBase):
     id: int

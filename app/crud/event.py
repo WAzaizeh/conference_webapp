@@ -2,7 +2,6 @@ from typing import List, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
-from sqlalchemy import delete
 from db.models import Event, Speaker
 from db.schemas import (
     EventCreate, EventUpdate,
@@ -51,7 +50,11 @@ async def get_events(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[
 
 async def update_event(db: AsyncSession, event_id: int, event_update: EventUpdate) -> Optional[Event]:
     """Update an event"""
-    db_event = await get_event(db, event_id)
+    # Load without _enrich_event_speakers so placeholder image URLs aren't persisted on commit
+    result = await db.execute(
+        select(Event).options(selectinload(Event.speakers)).where(Event.id == event_id)
+    )
+    db_event = result.scalar_one_or_none()
     if not db_event:
         return None
     
@@ -69,10 +72,13 @@ async def update_event(db: AsyncSession, event_id: int, event_update: EventUpdat
     return db_event
 
 async def delete_event(db: AsyncSession, event_id: int) -> bool:
-    """Delete an event"""
-    result = await db.execute(delete(Event).where(Event.id == event_id))
+    """Delete an event along with its speaker links and questions"""
+    db_event = await db.get(Event, event_id)
+    if not db_event:
+        return False
+    await db.delete(db_event)
     await db.commit()
-    return result.rowcount > 0
+    return True
 
 async def toggle_qa_active(db: AsyncSession, event_id: int) -> Optional[Event]:
     """Toggle Q&A active status for an event"""
