@@ -208,6 +208,16 @@
     font-family: 'Oswald', sans-serif;
     letter-spacing: .04em;
 }
-.timeline > li[hidden] {
+.timeline > li[hidden],
+.tag-clear[hidden] {
     display: none;
+}
+.tag-clear {
+    padding: 4px 10px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--cs-navy);
+    text-decoration: underline;
 }

@@ -1,43 +1,45 @@
-// Agenda tag filter: pills start all selected. The first click narrows to that tag; further clicks
-// add or remove tags; clearing every pill goes back to all. Sessions tagged "All" always stay visible.
-// Markup comes from TagFilter / agenda_timeline in components/timeline.py.
+// Agenda tag filter (markup from TagFilter / agenda_timeline in components/timeline.py).
+// No filter by default (every pill lit). Tapping a pill filters to it; more pills narrow further:
+// a session must have ALL selected tags. Sessions tagged "All" (for everyone) always stay visible.
 (function () {
     'use strict';
 
     const SHARED_TAG = 'All';
-    const STORAGE_KEY = 'agenda-filter';
+    const STORAGE_KEY = 'agenda-filter-and';
 
     function init() {
         const bar = document.getElementById('agenda-filter');
         if (!bar) return;
         const pills = [...bar.querySelectorAll('[data-tag]')];
-        const allTags = pills.map((p) => p.dataset.tag);
-        const sessions = [...document.querySelectorAll('li[data-tags]')];
+        const clear = bar.querySelector('.tag-clear');
+        const known = new Set(pills.map((p) => p.dataset.tag));
+        const sessions = [...document.querySelectorAll('li[data-tags]')].map((li) => ({ li, tags: JSON.parse(li.dataset.tags) }));
 
-        let selected = new Set(load().filter((t) => allTags.includes(t)));
-        if (!selected.size) selected = new Set(allTags);
+        let selected = new Set(load().filter((t) => known.has(t)));
 
         function render() {
-            const showAll = selected.size === allTags.length;
+            const filtering = selected.size > 0;
             pills.forEach((pill) => {
                 const on = selected.has(pill.dataset.tag);
-                pill.classList.toggle('active', on);
+                pill.classList.toggle('active', !filtering || on);
                 pill.setAttribute('aria-pressed', String(on));
             });
-            sessions.forEach((li) => {
-                const tags = JSON.parse(li.dataset.tags);
-                li.hidden = !(showAll || tags.includes(SHARED_TAG) || tags.some((t) => selected.has(t)));
+            clear.hidden = !filtering;
+            sessions.forEach(({ li, tags }) => {
+                li.hidden = !(tags.includes(SHARED_TAG) || [...selected].every((t) => tags.includes(t)));
             });
-            save(showAll ? [] : [...selected]);
+            save([...selected]);
         }
 
         bar.addEventListener('click', (e) => {
-            const tag = e.target.closest('[data-tag]')?.dataset.tag;
-            if (!tag) return;
-            if (selected.size === allTags.length) selected = new Set([tag]);
-            else if (selected.has(tag)) selected.delete(tag);
-            else selected.add(tag);
-            if (!selected.size) selected = new Set(allTags);
+            if (e.target.closest('.tag-clear')) {
+                selected.clear();
+            } else {
+                const tag = e.target.closest('[data-tag]')?.dataset.tag;
+                if (!tag) return;
+                if (selected.has(tag)) selected.delete(tag);
+                else selected.add(tag);
+            }
             render();
         });
 

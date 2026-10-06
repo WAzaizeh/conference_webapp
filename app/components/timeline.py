@@ -43,11 +43,13 @@ def TagBadges(tags: List[str]):
 
 
 def TagFilter(tags: List[str]):
-    """Filter pills above the agenda; all selected by default (behaviour in assets/agenda-filter.js)"""
+    """Filter pills above the agenda; tapping pills narrows to sessions with all of them
+    (behaviour in assets/agenda-filter.js)"""
     if not tags:
         return None
     return Div(
-        *[Button(t, type='button', cls='tag-pill active', data_tag=t, aria_pressed='true') for t in tags],
+        *[Button(t, type='button', cls='tag-pill active', data_tag=t, aria_pressed='false') for t in tags],
+        Button('Clear', type='button', cls='tag-clear', hidden=True),
         id='agenda-filter',
         role='group',
         aria_label='Filter sessions',
