@@ -1,6 +1,7 @@
 // Agenda tag filter (markup from TagFilter / agenda_timeline in components/timeline.py).
 // No filter by default (every pill lit). Tapping a pill filters to it; more pills narrow further:
-// a session must have ALL selected tags. Sessions tagged "All" (for everyone) always stay visible.
+// a session must have ALL selected tags. Sessions tagged "All" (for everyone) count as having the
+// audience tags (data-track-tags, e.g. Masculinity), but must match any other selected tag themselves.
 (function () {
     'use strict';
 
@@ -13,6 +14,7 @@
         const pills = [...bar.querySelectorAll('[data-tag]')];
         const clear = bar.querySelector('.tag-clear');
         const known = new Set(pills.map((p) => p.dataset.tag));
+        const tracks = new Set(JSON.parse(bar.dataset.trackTags || '[]'));
         const sessions = [...document.querySelectorAll('li[data-tags]')].map((li) => ({ li, tags: JSON.parse(li.dataset.tags) }));
 
         let selected = new Set(load().filter((t) => known.has(t)));
@@ -26,7 +28,8 @@
             });
             clear.hidden = !filtering;
             sessions.forEach(({ li, tags }) => {
-                li.hidden = !(tags.includes(SHARED_TAG) || [...selected].every((t) => tags.includes(t)));
+                const shared = tags.includes(SHARED_TAG);
+                li.hidden = ![...selected].every((t) => tags.includes(t) || (shared && tracks.has(t)));
             });
             save([...selected]);
         }

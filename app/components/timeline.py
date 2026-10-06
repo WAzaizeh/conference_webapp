@@ -4,7 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from db.schemas import Event, Speaker
 from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span, Button
-from utils.tags import SHARED_TAG
+from utils.tags import SHARED_TAG, TRACK_TAGS
 import json
 
 def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
@@ -51,6 +51,7 @@ def TagFilter(tags: List[str]):
         *[Button(t, type='button', cls='tag-pill active', data_tag=t, aria_pressed='false') for t in tags],
         Button('Clear', type='button', cls='tag-clear', hidden=True),
         id='agenda-filter',
+        data_track_tags=json.dumps(TRACK_TAGS),
         role='group',
         aria_label='Filter sessions',
     )

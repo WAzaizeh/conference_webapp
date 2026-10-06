@@ -1,7 +1,8 @@
 """Session tags: free-form labels used to filter the agenda (e.g. Masculinity, Workshop, Prayer).
 
-SHARED_TAG marks sessions for everyone (keynotes, prayers, breaks); they stay visible whatever
-filter is selected, so a filtered agenda is still a complete schedule for that attendee.
+SHARED_TAG marks sessions for everyone (keynotes, prayers, breaks). When filtering, they count as
+matching the audience tags (TRACK_TAGS), so "Masculinity" still shows the whole day for that attendee,
+while type filters such as "Prayer" apply to them like any other session.
 """
 from typing import Iterable, List
 
@@ -24,6 +25,9 @@ CATEGORY_TAGS = {
 }
 
 TRACK_PREFIXES = {'Masculinity Track': 'Masculinity', 'Womanhood Track': 'Womanhood'}
+
+# Audience tags: SHARED_TAG sessions count as matching these when filtering (they're for everyone)
+TRACK_TAGS = list(TRACK_PREFIXES.values())
 
 
 def normalize_tags(tags: Iterable[str]) -> List[str]:
