@@ -43,12 +43,20 @@ def TagBadges(tags: List[str]):
 
 
 def TagFilter(tags: List[str]):
-    """Filter pills above the agenda; tapping pills narrows to sessions with all of them
-    (behaviour in assets/agenda-filter.js)"""
+    """Filter pills above the agenda: audience pills, a divider, then session-type pills; one of each
+    can be selected (behaviour in assets/agenda-filter.js)"""
     if not tags:
         return None
+
+    def pill(tag):
+        return Button(tag, type='button', cls='tag-pill active', data_tag=tag, aria_pressed='false')
+
+    audience = [t for t in tags if t in TRACK_TAGS]
+    types = [t for t in tags if t not in TRACK_TAGS]
     return Div(
-        *[Button(t, type='button', cls='tag-pill active', data_tag=t, aria_pressed='false') for t in tags],
+        *map(pill, audience),
+        Span(cls='tag-divider', aria_hidden='true') if audience and types else None,
+        *map(pill, types),
         Button('Clear', type='button', cls='tag-clear', hidden=True),
         id='agenda-filter',
         data_track_tags=json.dumps(TRACK_TAGS),
