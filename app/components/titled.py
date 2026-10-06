@@ -1,6 +1,6 @@
 from fastcore.meta import delegates
 from fastcore.xml import FT
-from fasthtml.components import Title, Main, H1, ft_hx
+from fasthtml.components import Title, Main, ft_hx
 
 @delegates(ft_hx, keep=True)
 def CustomTitled(title:str="FastHTML app", *args, cls="container", **kwargs)->FT:

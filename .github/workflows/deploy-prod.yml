@@ -35,9 +35,12 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
+        # Live Q&A keeps a stream open per phone: allow long requests and many per instance
         gcloud run deploy ${{ secrets.GCP_RUN_NAME }} \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/mas-cyp-conference:${{ github.sha }} \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
-          --set-env-vars="ENVIRONMENT=production,DATABASE_URL=${{ secrets.DATABASE_URL_PROD }}"
+          --timeout=3600 \
+          --concurrency=500 \
+          --set-env-vars="ENVIRONMENT=production,DATABASE_URL=${{ secrets.DATABASE_URL_PROD }},SESSION_SECRET=${{ secrets.SESSION_SECRET_PROD }}"

@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
 from db.models import Speaker
-from db.schemas import SpeakerCreate, SpeakerUpdate
+from db.schemas import SpeakerCreate
 from utils.speaker_utils import get_speaker_image_url
 
 def _enrich_speaker_image(speaker: Speaker) -> Speaker:
@@ -37,30 +37,3 @@ async def get_speakers(db: AsyncSession, skip: int = 0, limit: int = 100) -> Lis
     )
     speakers = result.scalars().all()
     return [_enrich_speaker_image(s) for s in speakers]
-
-async def update_speaker(db: AsyncSession, speaker_id: int, speaker_update: SpeakerUpdate) -> Optional[Speaker]:
-    """Update a speaker"""
-    result = await db.execute(select(Speaker).where(Speaker.id == speaker_id))
-    db_speaker = result.scalar_one_or_none()
-    
-    if db_speaker:
-        update_data = speaker_update.dict(exclude_unset=True)
-        for field, value in update_data.items():
-            setattr(db_speaker, field, value)
-        
-        await db.commit()
-        await db.refresh(db_speaker)
-    
-    return db_speaker
-
-async def delete_speaker(db: AsyncSession, speaker_id: int) -> bool:
-    """Delete a speaker"""
-    result = await db.execute(select(Speaker).where(Speaker.id == speaker_id))
-    db_speaker = result.scalar_one_or_none()
-    
-    if db_speaker:
-        await db.delete(db_speaker)
-        await db.commit()
-        return True
-    
-    return False

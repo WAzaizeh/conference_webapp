@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, UUID4
+from pydantic import BaseModel, UUID4
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
@@ -43,11 +43,6 @@ class SpeakerBase(BaseModel):
 class SpeakerCreate(SpeakerBase):
     pass
 
-class SpeakerUpdate(BaseModel):
-    name: Optional[str] = None
-    image_url: Optional[str] = None
-    bio: Optional[str] = None
-
 class Speaker(SpeakerBase):
     id: int
     events: List['Event'] = []
@@ -58,14 +53,6 @@ class Speaker(SpeakerBase):
 # Prayer Time schemas
 class PrayerTimeBase(BaseModel):
     name: str
-    time: Optional[str] = None
-    iqama: Optional[str] = None
-
-class PrayerTimeCreate(PrayerTimeBase):
-    pass
-
-class PrayerTimeUpdate(BaseModel):
-    name: Optional[str] = None
     time: Optional[str] = None
     iqama: Optional[str] = None
 
@@ -85,18 +72,6 @@ class SponsorBase(BaseModel):
     instagram: Optional[str] = None
     twitter: Optional[str] = None
 
-class SponsorCreate(SponsorBase):
-    pass
-
-class SponsorUpdate(BaseModel):
-    name: Optional[str] = None
-    image_url: Optional[str] = None
-    description: Optional[str] = None
-    website: Optional[str] = None
-    facebook: Optional[str] = None
-    instagram: Optional[str] = None
-    twitter: Optional[str] = None
-
 class Sponsor(SponsorBase):
     id: int
     
@@ -107,14 +82,6 @@ class Sponsor(SponsorBase):
 class UserBase(BaseModel):
     email: str
     role: str
-
-class UserCreate(UserBase):
-    password: str
-
-class UserUpdate(BaseModel):
-    email: Optional[str] = None
-    role: Optional[str] = None
-    is_active: Optional[bool] = None
 
 class User(UserBase):
     id: UUID4
@@ -152,8 +119,6 @@ class Question(BaseModel):
         from_attributes = True
 
 # Feedback schemas
-class FeedbackSubmissionCreate(BaseModel):
-    submission_data: Dict[str, Any]
 
 class FeedbackSubmission(BaseModel):
     id: UUID4

@@ -36,8 +36,7 @@
     background-blend-mode: multiply, normal, normal, normal;
     color: #1f2a3d;
 }
-.white-background,
-.bg-aliceblue {
+.white-background {
     background: rgba(255, 250, 240, .72);
 }
 

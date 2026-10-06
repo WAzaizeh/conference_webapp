@@ -1,4 +1,5 @@
 """Load the 4th Annual CYP Conference (Oct 24, 2026) program: speakers, agenda, prayer times.
+Creates any missing tables first, so it also sets up a brand-new database.
 Safe to re-run: existing speakers (by name) and sessions (by title + start time) are skipped.
 Usage: python load_2026_program.py [--apply]   (dry run without --apply)
 """
@@ -65,6 +66,8 @@ PRAYERS = {'DHUHR': ('13:12', '14:10'), 'ASR': ('16:19', '17:30'), 'MAGHRIB': ('
 
 async def main():
     print(f'target database: {urlparse(db_manager.database_url).hostname}')
+    if APPLY:
+        await db_manager.create_tables()  # no-op for tables that already exist
     async with db_manager.AsyncSessionLocal() as db:
         # Speakers
         names = sorted({n for *_, sp, _ in AGENDA for n in sp})

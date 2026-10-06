@@ -7,15 +7,6 @@ from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span, Button
 from utils.tags import SHARED_TAG
 import json
 
-def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
-    return Div(
-            Div(
-                Img(src=src, alt=alt, cls='avatar circle'),
-                cls='w-10 rounded-full'
-                ),
-            cls='avatar' + ' ' + kwargs.get('cls', '')
-            )
-
 def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
     if speakers_data:
         # Get speaker names for comma-separated list
@@ -90,33 +81,6 @@ def agenda_timeline(events: List[Event]):
                 cls='timeline-end ml-4'),
             Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'border-primary'),
             data_tags=json.dumps(event.tags or []),
-        ) for i, event in enumerate(events)],
-        cls='timeline timeline-vertical timeline-compact p-8'    
-        )
-
-def agenda_timeline_2(events: List[Event]):
-    return Ul(
-        *[Li(
-            Div(
-                Span(f'{event.start_time.strftime("%I:%M %p")} - {event.end_time.strftime("%I:%M %p")}', cls='text-sm text-primary ml-4'),
-                cls='timeline-start'
-            ),
-            Div(
-                Icon('circle', cls='text-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.start_time.hour else 'text-secondary'),
-                
-                cls='timeline-middle'
-            ),
-            Div(
-                A(
-                    Div(
-                        H3(event.title, cls='text-base'), 
-                        *SpeakerCardBody(getattr(event, 'speakers_data', [])),
-                        cls="timeline-box p-4 flex flex-col justify-evenly"
-                    ),
-                    href=f'/session/{event.id}' if event.description else None,
-                ),
-                cls='timeline-end ml-4'),
-            Hr(cls='border-primary' if datetime.now(ZoneInfo('America/Chicago')).hour > event.end_time.hour else 'border-secondary'),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )

@@ -2,6 +2,9 @@
 *.env
 .env.*
 
+# session signing key (local fallback; deployed apps use SESSION_SECRET)
+.sesskey
+
 # ssl certificates
 certs/
 

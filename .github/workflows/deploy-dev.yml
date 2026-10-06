@@ -46,4 +46,4 @@ jobs:
           --allow-unauthenticated \
           --timeout=3600 \
           --concurrency=500 \
-          --set-env-vars="ENVIRONMENT=development,DATABASE_URL=${{ secrets.DATABASE_URL_DEV }}"
+          --set-env-vars="ENVIRONMENT=development,DATABASE_URL=${{ secrets.DATABASE_URL_DEV }},SESSION_SECRET=${{ secrets.SESSION_SECRET_DEV }}"

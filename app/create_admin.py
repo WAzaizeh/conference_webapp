@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from db.models import User, Base
+from db.models import User
 from utils.auth import hash_password
 import os
 from dotenv import load_dotenv

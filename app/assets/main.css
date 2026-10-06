@@ -13,10 +13,6 @@
     color: var(--primary-color);
 }
 
-.text-red {
-    color: var(--red);
-}
-
 .text-inactive {
     color: var(--secondary-color);
 }
@@ -27,10 +23,6 @@
 
 .text-secondary {
     color: var(--secondary-color);
-}
-
-.bg-primary {
-    background-color: var(--primary-color);
 }
 
 .prayer-card {
@@ -94,11 +86,6 @@
     margin-right: 24px;
 }
 
-.session-detail-view .session-card {
-    color: rgba(57, 57, 60, 1);
-
-}
-
 .speaker-detail-view .speaker-detail-body {
     background-color: var(--fallback-b1);
     margin-top: -100px;
@@ -126,10 +113,6 @@
     margin-right: 16px;
 }
 
-.h-20-vh {
-    height: 20vh;
-}
-
 .material-symbols-rounded {
   font-variation-settings:
   'FILL' 0,
@@ -145,15 +128,6 @@ body {
     box-sizing: border-box;
     color: #012B59;
 
-}
-
-.card-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-rows: repeat(2, 1fr);
-    grid-column-gap: 24px;
-    grid-row-gap: 24px;
-    padding: 0 24px;
-    margin-top: 30px;
 }
 .btm-nav {
     border-top: solid 1px rgba(0, 0, 0, 0.518);
@@ -177,9 +151,6 @@ body {
     width: 100%;
     height: 100%;
 }
-.filter-green{
-    filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
-}
 .blue-background {
     background: url(background.png);
     background-repeat: no-repeat;
@@ -202,21 +173,6 @@ main.container {
     height: 100%;
 }
 
-.hero-image {
-    background: url(banner_3.png);
-    background-size: contain;
-    background-position: top;
-    width: 100%;
-    background-repeat: no-repeat;
-    aspect-ratio: 1.6;
-}
-
-.hero-image.cropped{
-    aspect-ratio: 2.0;
-    background-size: cover;
-    background-position: center;
-}
-
 #page-content {
     flex: 1;
     overflow-y: auto;
@@ -237,19 +193,6 @@ main.container {
 .card-side {
     align-items: center;
 }
-.hero-icon {
-    margin-right: 6px;
-}
-
-.conference-info {
-    padding: 12px 42px 24px 42px;
-    display: grid;
-    grid-gap: 10px;
-}
-
-.home-page-content {
-    margin-top: 0;
-}
 
 .about-list {
     list-style: disc;
@@ -266,27 +209,6 @@ main.container {
 
 .top-nav-title {
     margin-left: -40px;
-}
-
-.location-date {
-    font-size: 12px;
-    font-weight: 500;
-    color: #012B59;
-    gap: 8px;
-}
-
-.h3 {
-    font-weight: 500;
-    font-size: 16px;
-}
-
-.logo-text {
-    font-size: 14px;
-    margin: 0;
-}
-
-.logo-text-text {
-    padding: 6px;
 }
 
 .custom-card {
@@ -316,24 +238,12 @@ main.container {
     color: #012B59;
 }
 
-.w-80-vw {
-    width: 80vw;
-}
-
 .h-35-vh {
     height: 35vh;
 }
 
 .h-70-vh {
     height: 70vh;
-}
-
-.bg-aliceblue {
-    background-color: aliceblue;
-}
-
-.color-light-blue {
-    color: #A5C7F3;
 }
 
 .border-primary {

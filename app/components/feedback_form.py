@@ -20,14 +20,7 @@ def FeedbackForm(initial_values: dict = None, is_edit: bool = False):
     def get_value(key, default=""):
         """Helper to get value from initial_values"""
         return initial_values.get(key, default)
-    
-    def is_checked(key, value):
-        """Helper to check if checkbox should be checked"""
-        field_value = initial_values.get(key)
-        if isinstance(field_value, list):
-            return value in field_value
-        return field_value == value
-    
+
     submit_text = "Update Feedback" if is_edit else "Submit Feedback"
     
     return Form(

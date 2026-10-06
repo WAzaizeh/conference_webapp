@@ -64,7 +64,7 @@ class PostgresBus:
         except asyncio.TimeoutError:
             log.warning('live: listener not ready; using local delivery only')
 
-    def _notified(self, connection, pid, channel, payload):
+    def _notified(self, _connection, _pid, _channel, payload):  # asyncpg listener signature
         self._inbox.put_nowait(payload)
 
     async def _consume(self):

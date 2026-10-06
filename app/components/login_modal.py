@@ -1,4 +1,4 @@
-from fasthtml.components import Div, Dialog, Form, Button, Label, Input, H3
+from fasthtml.components import Div, Dialog, Form, Button, Input, H3
 from .icon import Icon
 
 def LoginModal():

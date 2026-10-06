@@ -6,11 +6,7 @@ from db.schemas import QuestionCreate, QuestionUpdate
 from typing import Optional, List, Set, Tuple
 from datetime import datetime, timezone
 
-async def create_question(
-    db: AsyncSession, 
-    question: QuestionCreate, 
-    ip_address: Optional[str] = None
-) -> Question:
+async def create_question(db: AsyncSession, question: QuestionCreate) -> Question:
     """Create a new question"""
     db_question = Question(
         **question.model_dump(),

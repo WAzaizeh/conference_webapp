@@ -6,38 +6,6 @@ from core.app import rt
 from utils.auth import verify_password, require_moderator, get_user_by_email, is_moderator
 from db.connection import db_manager
 
-@rt('/settings')
-def get_settings(sess):
-    # Buttons for settings options
-    general_btn = Button('General Settings', disabled=True, cls='btn btn-block btn-glass')
-    privacy_btn = Button('Privacy', disabled=True, cls='btn btn-block btn-glass')
-    notifications_btn = Button('Notifications', disabled=True, cls='btn btn-block btn-glass')
-    admin_access_btn = Button(
-        'Admin Access',
-        hx_get='/admin_login',
-        hx_target='#page-content',
-        hx_swap='outerHTML',
-        id='admin-access-btn',
-        cls='btn btn-block btn-glass'
-    )
-
-    # Layout for the settings page
-    content = [
-        H1('Settings', cls='text-2xl font-bold mb-6 text-center'),
-        general_btn,
-        privacy_btn,
-        notifications_btn,
-        admin_access_btn
-    ]
-    return AppContainer(
-        Div(
-            *content,
-            id='page-content',
-            cls='flex flex-col items-center justify-evenly blue-background'
-        ),
-        is_moderator=is_moderator(sess)
-    )
-
 @rt('/admin/login')
 async def post(request, sess, username: str, password: str, redir: str = ''):
     """Handle login form submission from modal or the login page"""
@@ -126,7 +94,6 @@ def get(req, sess):
         id='moderate-feedback-btn',
         cls='btn btn-block btn-glass btn-primary'
     )
-    edit_speakers_btn = Button('Edit Speakers', hx_get='/edit-speakers', id='edit-speakers-btn', cls='btn btn-block btn-glass')
     edit_events_btn = Button(
         Icon('calendar-alt'),
         ' Edit Agenda',
@@ -134,20 +101,13 @@ def get(req, sess):
         id='edit-events-btn',
         cls='btn btn-block btn-glass btn-primary'
     )
-    edit_prayer_times_btn = Button('Edit Prayer Times', hx_get='/edit-prayer-times', id='edit-prayer-times-btn', cls='btn btn-block btn-glass')
-    edit_sponsors_btn = Button('Edit Sponsors', hx_get='/edit-sponsors', id='edit-sponsors-btn', cls='btn btn-block btn-glass')
-    edit_registration_link_btn = Button('Edit Registration Link', hx_get='/edit-registration-link', id='edit-registration-link-btn', cls='btn btn-block btn-glass')
 
     # Layout for the admin dashboard
     content = [
         H1('Admin Dashboard', cls='text-2xl font-bold mb-6 text-center'),
         moderate_qa_btn,
         moderate_feedback_btn,
-        edit_speakers_btn,
         edit_events_btn,
-        edit_prayer_times_btn,
-        edit_sponsors_btn,
-        edit_registration_link_btn,
     ]
 
     return AppContainer(

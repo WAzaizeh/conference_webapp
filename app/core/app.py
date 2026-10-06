@@ -1,3 +1,4 @@
+import os
 from fasthtml.common import *
 from core.static import fetch_static_files
 from core.visitor import VisitorMiddleware
@@ -28,7 +29,10 @@ htmxScript = Script(src='https://unpkg.com/htmx.org@1.9.10')
 static_fils_hdrs = fetch_static_files()
 favicon_link = Link(rel='icon', type='image/x-icon', href='/assets/favicon.ico'),
 
+# Session cookies are signed with SESSION_SECRET (set per environment in the deploy workflows).
+# Locally it falls back to a generated, git-ignored .sesskey file.
 app = FastHTML(
+    secret_key=os.getenv('SESSION_SECRET') or None,
     hdrs=[tlink, favicon_link, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs],
     middleware=[Middleware(VisitorMiddleware)],
 )

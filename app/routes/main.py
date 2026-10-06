@@ -7,7 +7,7 @@ from fasthtml.common import RedirectResponse
 from components.cards import prayer_times_page
 from db.connection import db_manager
 from crud.prayer_time import get_prayer_times
-from fasthtml.components import H1, H2, Div, Img, P, Span, Grid, A, Ul, Li, Title
+from fasthtml.components import H1, H2, Div, P, Ul, Li, Title
 from core.app import rt
 from utils.auth import is_moderator
 
@@ -108,47 +108,6 @@ async def get(req, sess):
             is_moderator=is_moderator(sess)
             )
 
-# @rt('/qa')
-# def get():
-#     return RedirectResponse('https://app.sli.do/event/cRE7CEK9iN7cR8Rg2UFZMk')
-#     # return AppContainer(
-#     #         Div(
-#     #             TopNav('Q&A'),
-#     #             H2('Coming soon...'),
-#     #             id='page-content',
-#     #             cls='blue-background'
-#     #             )
-#     #         )
-
-# @rt('/feedback-survey')
-# def get():
-#     return AppContainer(
-#             Div(
-#                 TopNav('Feedback Survey'),
-#                 H2('Coming soon...'),
-#                 id='page-content',
-#                 cls='blue-background'
-#                 ),
-#             active_button_index=1
-#             )
-
 @rt('/registration')
-def get(resq, sess):
+def get():
     return RedirectResponse('https://www.tickettailor.com/events/mascyp/1841794')
-    # return AppContainer(
-    #         Div(
-    #             TopNav('Registration'),
-    #             Div(
-    #                 H2('Get your tickets here!', cls='text-center text-primary p-4'),
-    #                 A(
-    #                     'Buy tickets',
-    #                     href='https://buytickets.at/mascyp/1359890',
-    #                     title='Buy tickets for Muslim American Society - CYP',  
-    #                     cls='btn bg-primary text-white flex justify-center',
-    #                 ),
-    #                 cls='flex flex-col justify-center items-center',
-    #             ),
-    #             id='page-content',
-    #             cls='blue-background flex flex-col'
-    #             )
-    #         )
