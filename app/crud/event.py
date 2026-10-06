@@ -82,7 +82,8 @@ async def delete_event(db: AsyncSession, event_id: int) -> bool:
 
 async def toggle_qa_active(db: AsyncSession, event_id: int) -> Optional[Event]:
     """Toggle Q&A active status for an event"""
-    db_event = await get_event(db, event_id)
+    # Plain get: get_event's placeholder speaker images must not be committed
+    db_event = await db.get(Event, event_id)
     if not db_event:
         return None
     

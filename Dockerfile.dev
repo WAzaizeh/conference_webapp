@@ -21,4 +21,4 @@ EXPOSE 8080
 
 # Change working directory to where the code is mounted and run
 WORKDIR /app/app
-CMD ["uv", "run", "--directory", "/app/app", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]
+CMD ["uv", "run", "--directory", "/app/app", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080", "--reload", "--timeout-graceful-shutdown", "3"]

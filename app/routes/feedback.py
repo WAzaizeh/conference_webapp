@@ -3,36 +3,27 @@ from components.page import AppContainer
 from components.feedback_form import FeedbackForm
 from components.feedback_message import FeedbackMessage
 from db.connection import db_manager
-from db.schemas import FeedbackSubmissionCreate
-from crud.feedback import create_feedback, check_recent_submission, get_user_feedback
-from utils.auth import is_moderator, require_moderator
-from sqlalchemy.future import select
-from sqlalchemy import func
-from db.models import FeedbackSubmission
+from crud.feedback import get_feedback_count, get_user_feedback, save_feedback
+from utils.auth import is_moderator, require_moderator, require_feedback_window
 from core.app import rt
-from utils.session import get_or_create_session_id
+from core.visitor import visitor_id
 from components.navigation import TopNav
-from utils.auth import require_conference_day
 
 @rt('/feedback')
-@require_conference_day
+@require_feedback_window
 async def get(request, sess):
     """Display the feedback survey form - check if already submitted"""
     
-    # Get session ID from cookie or create new one
-    session_id = get_or_create_session_id(request)
-    
     async with db_manager.AsyncSessionLocal() as db:
-        # Check if already submitted in last 24 hours
-        has_recent = await check_recent_submission(db, session_id=session_id, hours=24)
-        
-    if has_recent:
+        already_submitted = await get_user_feedback(db, visitor_id(request)) is not None
+
+    if already_submitted:
         return AppContainer(
             Div(
                 TopNav('Feedback'),
                 FeedbackMessage(
                     title="Already Submitted",
-                    message="You've already submitted feedback recently. Would you like to edit your submission?",
+                    message="You've already submitted feedback. Would you like to edit your submission?",
                     button_text="Edit Feedback",
                     button_href="/feedback/edit",
                     icon_color="text-success"
@@ -65,16 +56,12 @@ async def get(request, sess):
     )
 
 @rt('/feedback/edit')
-@require_conference_day
+@require_feedback_window
 async def get(request, sess):
     """Display the feedback form with existing values for editing"""
     
-    # Get session ID
-    session_id = get_or_create_session_id(request)
-    
     async with db_manager.AsyncSessionLocal() as db:
-        # Get existing feedback
-        existing_feedback = await get_user_feedback(db, session_id=session_id)
+        existing_feedback = await get_user_feedback(db, visitor_id(request))
         
         if not existing_feedback:
             # No feedback found, redirect to regular form
@@ -106,15 +93,12 @@ async def get(request, sess):
     )
 
 @rt('/feedback/submit')
-@require_conference_day
+@require_feedback_window
 async def post(request, sess):
     """Handle feedback form submission (both new and edit)"""
     
     # Get form data
     form_data = await request.form()
-    
-    # Get session ID from cookie or create new one
-    session_id = get_or_create_session_id(request)
     
     # Process form data
     submission_data = {}
@@ -129,9 +113,7 @@ async def post(request, sess):
             submission_data[key] = value
     
     async with db_manager.AsyncSessionLocal() as db:
-        # Create or update feedback submission
-        feedback_create = FeedbackSubmissionCreate(submission_data=submission_data)
-        await create_feedback(db, feedback_create, session_id)
+        await save_feedback(db, visitor_id(request), submission_data)
     
     # Show success message
     return AppContainer(
@@ -155,11 +137,7 @@ async def post(request, sess):
 async def get(req, sess):
     """Moderator view - simple submission count"""
     async with db_manager.AsyncSessionLocal() as db:
-        # Get total submission count
-        result = await db.execute(
-            select(func.count(FeedbackSubmission.id))
-        )
-        total_submissions = result.scalar() or 0
+        total_submissions = await get_feedback_count(db)
     
     return AppContainer(
         Div(

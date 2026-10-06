@@ -6,9 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import Optional
 from db.models import User
-from datetime import datetime, date
-from zoneinfo import ZoneInfo
-import os
+from core import conference
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -74,67 +72,56 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
     result = await db.execute(result)
     return result.scalar_one_or_none()
 
-def is_conference_day():
-    """Check if current date is conference day (Oct 18, 2025 CDT)"""
-    # Allow bypass for testing
-    if os.getenv('ENVIRONMENT') == 'development':
-        return True
-    
-    cdt = ZoneInfo('America/Chicago')
-    current_date = datetime.now(cdt).date()
-    conference_date = date(2025, 10, 18)
-    return current_date == conference_date
+def _closed_page(req, title: str, message: str):
+    """Shown when a date-limited page is accessed outside its window"""
+    from fasthtml.components import Div
+    from components.page import AppContainer
+    from components.feedback_message import FeedbackMessage
+    from components.navigation import TopNav
 
-def require_conference_day(f):
-    """Decorator to require access only on conference day"""
-    @wraps(f)
-    async def async_wrapper(req, sess, *args, **kwargs):
-        if not is_conference_day():
-            # Calculate time until conference
-            from fasthtml.components import Div
-            from components.page import AppContainer
-            from components.feedback_message import FeedbackMessage
-            from components.navigation import TopNav
-            
-            cdt = ZoneInfo('America/Chicago')
-            now = datetime.now(cdt)
-            conference_datetime = datetime(2025, 10, 18, 10, 0, 0, tzinfo=cdt)
-            time_delta = conference_datetime - now
-            
-            # Calculate days and hours
-            total_hours = int(time_delta.total_seconds() / 3600)
-            days = total_hours // 24
-            hours = total_hours % 24
-            
-            # Build the time message
-            if days > 0 and hours > 0:
-                time_msg = f"That's {days} day{'s' if days > 1 else ''} and {hours} hour{'s' if hours != 1 else ''} away."
-            elif days > 0:
-                time_msg = f"That's {days} day{'s' if days > 1 else ''} away."
-            elif hours > 0:
-                time_msg = f"That's {hours} hour{'s' if hours != 1 else ''} away."
-            else:
-                time_msg = "The conference starts very soon!"
-            
-            return AppContainer(
-                Div(
-                    TopNav('Coming Soon'),
-                    FeedbackMessage(
-                        icon_class="fas fa-calendar-day text-primary",
-                        title="See You Soon!",
-                        message=f"Available on conference day. {time_msg}",
-                        button_text="Return to Home",
-                        button_href="/",
-                        icon_color="text-primary"
-                    ),
-                ),
-                is_moderator=False,
-                request=req
-            )
-        
-        if asyncio.iscoroutinefunction(f):
-            return await f(req, sess, *args, **kwargs)
-        else:
-            return f(req, sess, *args, **kwargs)
-    
-    return async_wrapper
+    return AppContainer(
+        Div(
+            TopNav(title),
+            FeedbackMessage(
+                icon_class="fas fa-calendar-day text-primary",
+                title="See You Soon!" if conference.now() < conference.CONFERENCE_START else "Thank You!",
+                message=message,
+                button_text="Return to Home",
+                button_href="/",
+                icon_color="text-primary"
+            ),
+        ),
+        is_moderator=False,
+        request=req
+    )
+
+
+def _time_until_start() -> str:
+    hours = max(0, int((conference.CONFERENCE_START - conference.now()).total_seconds() // 3600))
+    days, hours = divmod(hours, 24)
+    parts = [f"{n} {unit}{'s' if n != 1 else ''}" for n, unit in ((days, 'day'), (hours, 'hour')) if n]
+    return f"That's {' and '.join(parts)} away." if parts else "The conference starts very soon!"
+
+
+def require_window(is_open, title: str, closed_message: str):
+    """Decorator factory: serve the route only while `is_open()` is true.
+    Arguments are passed through untouched; FastHTML supplies the request first."""
+    def decorator(f):
+        @wraps(f)
+        async def wrapper(*args, **kwargs):
+            if not is_open():
+                if conference.now() < conference.CONFERENCE_START:
+                    message = f"Available on conference day. {_time_until_start()}"
+                else:
+                    message = closed_message
+                return _closed_page(args[0] if args else None, title, message)
+            result = f(*args, **kwargs)
+            return await result if asyncio.iscoroutine(result) else result
+        return wrapper
+    return decorator
+
+
+# Kept for existing call sites; both are unrestricted unless RESTRICT_TO_CONFERENCE_DAY=true
+is_conference_day = conference.is_conference_day
+require_conference_day = require_window(conference.is_conference_day, 'Coming Soon', 'Q&A has closed for this year.')
+require_feedback_window = require_window(conference.is_feedback_open, 'Feedback', 'The feedback survey has closed.')

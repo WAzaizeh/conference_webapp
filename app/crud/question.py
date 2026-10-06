@@ -1,9 +1,9 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import and_, func
+from sqlalchemy import and_, func, update
 from db.models import Question, QuestionLike
 from db.schemas import QuestionCreate, QuestionUpdate
-from typing import Optional, List, Tuple
+from typing import Optional, List, Set, Tuple
 from datetime import datetime, timezone
 
 async def create_question(
@@ -87,15 +87,15 @@ async def delete_question(db: AsyncSession, question_id: str) -> bool:
     return False
 
 async def toggle_like(
-    db: AsyncSession, 
-    question_id: str, 
+    db: AsyncSession,
+    question_id: str,
     session_id: str
 ) -> Tuple[bool, int]:
     """
-    Toggle like for a question
-    Returns: (liked: bool, new_like_count: int)
+    Toggle the visitor's like on a question.
+    The count is recomputed from like rows in one UPDATE, so simultaneous likes are never lost.
+    Returns: (liked, new_like_count)
     """
-    # Check if user already liked
     result = await db.execute(
         select(QuestionLike).where(
             and_(
@@ -104,46 +104,35 @@ async def toggle_like(
             )
         )
     )
-    existing_like = result.scalar_one_or_none()
-    
-    # Get the question
-    question = await get_question(db, question_id)
-    if not question:
-        return False, 0
-    
-    if existing_like:
-        # Unlike: Remove like
-        await db.delete(existing_like)
-        question.likes_count = max(0, question.likes_count - 1)
-        liked = False
-    else:
-        # Like: Add like
-        new_like = QuestionLike(
-            question_id=question_id,
-            session_id=session_id
-        )
-        db.add(new_like)
-        question.likes_count += 1
-        liked = True
-    
-    await db.commit()
-    await db.refresh(question)
-    
-    return liked, question.likes_count
+    existing_like = result.scalars().first()
 
-async def check_user_liked(
-    db: AsyncSession, 
-    question_id: str, 
-    session_id: str
-) -> bool:
-    """Check if a user has liked a question"""
-    result = await db.execute(
-        select(func.count(QuestionLike.id)).where(
-            and_(
-                QuestionLike.question_id == question_id,
-                QuestionLike.session_id == session_id
-            )
-        )
+    if existing_like:
+        await db.delete(existing_like)
+    else:
+        db.add(QuestionLike(question_id=question_id, session_id=session_id))
+    await db.flush()
+
+    like_count = (
+        select(func.count(QuestionLike.id))
+        .where(QuestionLike.question_id == question_id)
+        .scalar_subquery()
     )
-    count = result.scalar()
-    return count > 0
+    result = await db.execute(
+        update(Question)
+        .where(Question.id == question_id)
+        .values(likes_count=like_count)
+        .returning(Question.likes_count)
+    )
+    likes = result.scalar_one()
+    await db.commit()
+    return not existing_like, likes
+
+
+async def get_liked_question_ids(db: AsyncSession, event_id: int, session_id: str) -> Set[str]:
+    """Ids of the questions in this session that the visitor has liked (one query)"""
+    result = await db.execute(
+        select(QuestionLike.question_id)
+        .join(Question, Question.id == QuestionLike.question_id)
+        .where(Question.event_id == event_id, QuestionLike.session_id == session_id)
+    )
+    return {str(question_id) for question_id in result.scalars()}

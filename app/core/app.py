@@ -1,6 +1,6 @@
 from fasthtml.common import *
 from core.static import fetch_static_files
-from core.coming_soon_gate import ComingSoonGate
+from core.visitor import VisitorMiddleware
 from starlette.middleware import Middleware
 
 tlink = (Script(src='https://unpkg.com/tailwindcss-cdn@3.4.3/tailwindcss.js'),)
@@ -30,7 +30,7 @@ favicon_link = Link(rel='icon', type='image/x-icon', href='/assets/favicon.ico')
 
 app = FastHTML(
     hdrs=[tlink, favicon_link, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs],
-    middleware=[Middleware(ComingSoonGate)],
+    middleware=[Middleware(VisitorMiddleware)],
 )
 
 rt = app.route

@@ -38,4 +38,5 @@ if __name__ == "__main__":
         app, 
         host=os.getenv('HOST', '0.0.0.0'),
         port=int(os.getenv('PORT', 8080)),
+        timeout_graceful_shutdown=5,  # end open live Q&A streams quickly on deploy/restart
     )
