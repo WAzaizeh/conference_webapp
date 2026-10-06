@@ -62,7 +62,7 @@ def test_db_create_event(session: Session) -> None:
         start_time=datetime(2024, 10, 21, 10, 0),
         end_time=datetime(2024, 10, 21, 12, 0),
         location='Colin College Conference Center',
-        category='main session'
+        tags=['Talk']
     )
     event = create_db_event(new_event, session)
     assert event.id == 1
@@ -70,7 +70,7 @@ def test_db_create_event(session: Session) -> None:
     assert event.start_time == datetime(2024, 10, 21, 10, 0)
     assert event.end_time == datetime(2024, 10, 21, 12, 0)
     assert event.location == 'Colin College Conference Center'
-    assert event.category == 'main session'
+    assert event.tags == ['Talk']
 
 
 def test_db_read_event(session: Session) -> None:
@@ -86,7 +86,7 @@ def test_db_read_event(session: Session) -> None:
     assert event.start_time == datetime(2024, 10, 21, 10, 0)
     assert event.end_time == datetime(2024, 10, 21, 21, 0)
     assert event.location == 'Colin College Conference Center'
-    assert event.category == 'main session'
+    assert event.tags == ['Talk']
     assert event.description == None
     assert event.speakers == []
 
@@ -97,7 +97,7 @@ def test_db_update_event(session: Session) -> None:
                     start_time=datetime(2024, 10, 21, 10, 0),
                     end_time=datetime(2024, 10, 21, 12, 0),
                     location='Colin College Conference Center',
-                    category='main session'
+                    tags=['Talk']
                     ),
                     session
     )

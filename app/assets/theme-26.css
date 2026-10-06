@@ -177,3 +177,38 @@
 .qa-flash {
     transition: opacity .5s;
 }
+
+/* Agenda tag filter pills and session tag badges */
+#agenda-filter {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px 0;
+}
+.tag-pill {
+    padding: 4px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--cs-navy);
+    background: rgba(255, 250, 240, .7);
+    color: var(--cs-navy);
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: background-color .15s, color .15s;
+}
+.tag-pill.active {
+    background: var(--cs-navy);
+    color: var(--cs-cream);
+}
+.tag-badge {
+    background: transparent;
+    border: 1px solid var(--cs-card-border);
+    color: var(--cs-navy);
+    font-family: 'Oswald', sans-serif;
+    letter-spacing: .04em;
+}
+.timeline > li[hidden] {
+    display: none;
+}

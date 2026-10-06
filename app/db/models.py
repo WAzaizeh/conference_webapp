@@ -25,7 +25,7 @@ class Event(Base):
     start_time = Column(DateTime(timezone=True), nullable=False)
     end_time = Column(DateTime(timezone=True), nullable=False)
     location = Column(String(255))
-    category = Column(String(50), default='MAIN')
+    tags = Column(JSON, nullable=False, default=list)  # e.g. ["Masculinity", "Workshop"]; see utils/tags.py
     is_qa_active = Column(Boolean, default=False) 
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))

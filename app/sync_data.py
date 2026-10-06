@@ -3,6 +3,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from db.sync_connection import get_db
 from db.models import Event, Speaker, PrayerTime, event_speakers
+from utils.tags import tags_from_category
 
 def parse_datetime(dt_string):
     """Parse ISO format datetime string and convert to CDT (naive)"""
@@ -65,7 +66,7 @@ def sync_data_from_json(json_file='conference_data.json'):
                 start_time=parse_datetime(event_data['start_time']),
                 end_time=parse_datetime(event_data['end_time']),
                 location=event_data.get('location') or None,
-                category=event_data.get('category', 'MAIN'),
+                tags=tags_from_category(event_data.get('category', 'MAIN'), event_data['title']),
                 is_qa_active=bool(event_data.get('is_qa_active'))
             )
             db.add(event)

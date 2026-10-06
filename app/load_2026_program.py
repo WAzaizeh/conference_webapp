@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 from db.connection import db_manager
 from db.models import Event, Speaker, PrayerTime, event_speakers
+from utils.tags import tags_from_category
 
 APPLY = '--apply' in sys.argv
 LOCATION = 'GEM Academy & Facility'
@@ -85,9 +86,9 @@ async def main():
             if (title, t(start)) in current:
                 print(f'session exists: {start} {title}')
                 continue
-            print(f'+ session: {start}-{end} [{cat}] {title}  {speakers or ""}')
+            print(f'+ session: {start}-{end} {tags_from_category(cat, title)} {title}  {speakers or ""}')
             if APPLY:
-                ev = Event(title=title, description=desc, start_time=t(start), end_time=t(end), location=LOCATION, category=cat)
+                ev = Event(title=title, description=desc, start_time=t(start), end_time=t(end), location=LOCATION, tags=tags_from_category(cat, title))
                 db.add(ev)
                 await db.flush()
                 for name in speakers:

@@ -3,7 +3,9 @@ from typing import List
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from db.schemas import Event, Speaker
-from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span
+from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span, Button
+from utils.tags import SHARED_TAG
+import json
 
 def AvatarCircle(src: str, alt: str, **kwargs) -> Div:
     return Div(
@@ -43,6 +45,24 @@ def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
             Div(cls='hidden'),
         ]
 
+def TagBadges(tags: List[str]):
+    """Small labels for a session's tags (the shared marker is not shown)"""
+    visible = [t for t in tags or [] if t != SHARED_TAG]
+    return Div(*[Span(t, cls='badge badge-sm tag-badge') for t in visible], cls='flex flex-wrap gap-1') if visible else None
+
+
+def TagFilter(tags: List[str]):
+    """Filter pills above the agenda; all selected by default (behaviour in assets/agenda-filter.js)"""
+    if not tags:
+        return None
+    return Div(
+        *[Button(t, type='button', cls='tag-pill active', data_tag=t, aria_pressed='true') for t in tags],
+        id='agenda-filter',
+        role='group',
+        aria_label='Filter sessions',
+    )
+
+
 def agenda_timeline(events: List[Event]):
     return Ul(
         *[Li(
@@ -58,9 +78,8 @@ def agenda_timeline(events: List[Event]):
                 A(
                     Div(
                         Div(
-                            Span("Panel Discussion", cls="badge badge-sm text-white", style="background-color: var(--primary-color)") if event.category == "PANEL DISCUSSION" else None,
-                            Span("Workshop", cls="badge badge-sm text-white", style="background-color: var(--secondary-color)") if event.category == "WORKSHOP" else None,
-                            H3(event.title, cls='text-base font-medium'), 
+                            TagBadges(event.tags),
+                            H3(event.title, cls='text-base font-medium'),
                             cls="flex flex-col gap-2"
                         ),
                         *SpeakerCardBody(event.speakers),
@@ -70,6 +89,7 @@ def agenda_timeline(events: List[Event]):
                 ),
                 cls='timeline-end ml-4'),
             Hr(cls='border-secondary' if datetime.now(ZoneInfo('America/Chicago')) > event.start_time else 'border-primary'),
+            data_tags=json.dumps(event.tags or []),
         ) for i, event in enumerate(events)],
         cls='timeline timeline-vertical timeline-compact p-8'    
         )

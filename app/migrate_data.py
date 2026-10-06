@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from db.models import Base, Event, Speaker, PrayerTime, Sponsor, event_speakers
+from utils.tags import tags_from_category
 
 
 # Create synchronous engine
@@ -55,7 +56,7 @@ def migrate_data():
                 start_time=event_data.start_time,
                 end_time=event_data.end_time,
                 location=event_data.location,
-                category=event_data.category.value
+                tags=tags_from_category(event_data.category.value, event_data.title)
             )
             session.add(event)
         session.commit()

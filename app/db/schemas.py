@@ -9,7 +9,7 @@ class EventBase(BaseModel):
     start_time: datetime
     end_time: datetime
     location: Optional[str] = None
-    category: Optional[str] = "MAIN"
+    tags: List[str] = []
 
 class EventCreate(EventBase):
     speaker_ids: Optional[List[int]] = None
@@ -20,7 +20,7 @@ class EventUpdate(BaseModel):
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None
     location: Optional[str] = None
-    category: Optional[str] = None
+    tags: Optional[List[str]] = None
     is_qa_active: Optional[bool] = None
     speaker_ids: Optional[List[int]] = None
 

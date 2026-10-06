@@ -4,21 +4,20 @@ from components.icon import Icon
 from components.navigation import TopNav
 from components.page import AppContainer
 from fasthtml.common import RedirectResponse, Response, Script, Style
-from fasthtml.components import A, Button, Dialog, Div, Form, H3, Img, Input, Label, Option, P, Select, Span, Textarea
+from fasthtml.components import A, Button, Dialog, Div, Form, H3, Img, Input, Label, P, Span, Textarea
 from core.app import rt
 from crud.event import create_event, delete_event, get_event, get_events, update_event
 from crud.speaker import create_speaker, get_speakers
 from db.connection import db_manager
 from db.models import Event, Speaker, event_speakers
 from db.schemas import EventCreate, EventUpdate, SpeakerCreate
+from utils.tags import SHARED_TAG, TAG_ORDER, normalize_tags
 from utils.auth import is_moderator, require_moderator
 
-CATEGORIES = ['MAIN', 'TALK', 'PANEL DISCUSSION', 'WORKSHOP', 'LIGHTNING_TALK', 'PRESENTATION', 'ACTIVITY', 'BREAK', 'PRAYER']
 DEFAULT_LOCATION = 'GEM Academy & Facility'
 DEFAULT_START = datetime(2026, 10, 24, 11, 0, tzinfo=timezone.utc)
 INPUT_DT_FORMAT = '%Y-%m-%dT%H:%M'
 INPUT_TIME_FORMAT = '%H:%M'
-INLINE_FIELDS = ('title', 'location', 'start_time', 'end_time', 'category', 'speakers')
 
 # Event times are stored as conference wall-clock time tagged as UTC (e.g. 11:00 AM -> 11:00+00:00),
 # which is how the agenda page displays them, so form values are converted without any tz shift.
@@ -28,8 +27,35 @@ def _to_input(dt: datetime) -> str:
 def _from_input(value: str) -> datetime:
     return datetime.strptime(value, INPUT_DT_FORMAT).replace(tzinfo=timezone.utc)
 
-def _category_label(category: Optional[str]) -> str:
-    return (category or 'MAIN').replace('_', ' ').title()
+def _tag_label(tag: str) -> str:
+    return 'Everyone (always shown)' if tag == SHARED_TAG else tag
+
+
+async def _known_tags(db) -> List[str]:
+    """Tags offered in editors: the standard set plus every tag already in use"""
+    events = await get_events(db)
+    return normalize_tags([SHARED_TAG, *TAG_ORDER, *(t for e in events for t in (e.tags or []))])
+
+
+def TagChecklist(selected: List[str], known: List[str]):
+    """Tag picker shared by the inline editor and the full form (read back with _tags_from_form)"""
+    chosen = {t.lower() for t in selected}
+    return Div(
+        Div(
+            *[Label(
+                Input(type='checkbox', name='tags', value=t, checked=t.lower() in chosen, cls='checkbox checkbox-xs checkbox-primary'),
+                Span(_tag_label(t), cls='text-sm'),
+                cls='flex items-center gap-2 cursor-pointer',
+            ) for t in normalize_tags([*known, *selected])],
+            cls='grid grid-cols-2 gap-x-4 gap-y-1',
+        ),
+        Input(name='new_tags', placeholder='New tags, comma separated', cls='input input-bordered input-sm w-full mt-2'),
+        Input(type='hidden', name='tags_field', value='1'),
+    )
+
+
+def _tags_from_form(form) -> List[str]:
+    return normalize_tags([*form.getlist('tags'), *(form.get('new_tags') or '').split(',')])
 
 
 ADMIN_CSS = """
@@ -107,7 +133,11 @@ def agenda_admin_card(event: Event, error: Optional[str] = None) -> Div:
                 _editable(event.end_time.strftime('%I:%M %p'), event.id, 'end_time', 'text-sm text-primary font-medium', 'Edit end time'),
                 cls='flex items-center',
             ),
-            _editable(_category_label(event.category), event.id, 'category', 'badge badge-outline badge-primary', 'Change category'),
+            _editable(
+                Div(*[Span('Everyone' if t == SHARED_TAG else t, cls='badge badge-outline badge-primary badge-sm') for t in event.tags or []]
+                    or [Span('Add tags', cls='text-sm')], cls='flex flex-wrap gap-1 justify-end'),
+                event.id, 'tags', '' if event.tags else 'empty', 'Edit tags',
+            ),
             cls='flex justify-between items-center gap-2 flex-wrap',
         ),
         H3(_editable(event.title, event.id, 'title', 'text-base font-semibold', 'Edit title')),
@@ -171,7 +201,20 @@ async def _list_response(errors: Optional[Dict[int, str]] = None) -> Div:
     return agenda_list(events, errors)
 
 
-def _field_editor(event: Event, field: str, all_speakers: List[Speaker]):
+def _panel_footer(*left):
+    """Cancel / Save row for the larger inline editors (speakers, tags)"""
+    return Div(
+        Div(*left),
+        Div(
+            Button('Cancel', type='button', onclick='cancelAgendaEdit()', cls='btn btn-xs btn-ghost'),
+            Button('Save', type='submit', cls='btn btn-xs btn-primary'),
+            cls='flex gap-1',
+        ),
+        cls='flex justify-between items-center border-t border-base-300 pt-2 mt-2',
+    )
+
+
+def _field_editor(event: Event, field: str, all_speakers: List[Speaker], known_tags: List[str]):
     if field in ('title', 'location'):
         return _inline_form(
             event.id,
@@ -188,17 +231,12 @@ def _field_editor(event: Event, field: str, all_speakers: List[Speaker]):
             *_save_cancel_buttons(),
             cls='inline-flex items-center gap-1',
         )
-    if field == 'category':
-        categories = CATEGORIES if event.category in CATEGORIES else [event.category or 'MAIN', *CATEGORIES]
+    if field == 'tags':
         return _inline_form(
             event.id,
-            Select(
-                *[Option(_category_label(c), value=c, selected=c == event.category) for c in categories],
-                name='category', autofocus=True, cls='select select-bordered select-sm inline-input',
-            ),
-            Button(Icon('xmark'), type='button', title='Cancel (Esc)', onclick='cancelAgendaEdit()', cls='btn btn-xs btn-ghost btn-square'),
-            trigger='change',
-            cls='inline-flex items-center gap-1',
+            TagChecklist(event.tags or [], known_tags),
+            _panel_footer(),
+            cls='w-full border border-base-300 rounded-lg p-2 bg-base-100',
         )
     if field == 'speakers':
         selected = {s.id for s in event.speakers}
@@ -214,15 +252,7 @@ def _field_editor(event: Event, field: str, all_speakers: List[Speaker]):
                 ) for s in sorted(all_speakers, key=lambda s: s.name)],
                 cls='flex flex-col max-h-56 overflow-y-auto',
             ),
-            Div(
-                A(Icon('user-plus', cls='mr-1'), 'Add new speaker', href=f'/admin/speakers/new?event_id={event.id}', cls='btn btn-xs btn-ghost text-primary'),
-                Div(
-                    Button('Cancel', type='button', onclick='cancelAgendaEdit()', cls='btn btn-xs btn-ghost'),
-                    Button('Save', type='submit', cls='btn btn-xs btn-primary'),
-                    cls='flex gap-1',
-                ),
-                cls='flex justify-between items-center border-t border-base-300 pt-2 mt-1',
-            ),
+            _panel_footer(A(Icon('user-plus', cls='mr-1'), 'Add new speaker', href=f'/admin/speakers/new?event_id={event.id}', cls='btn btn-xs btn-ghost text-primary')),
             cls='w-full border border-base-300 rounded-lg p-2 bg-base-100',
         )
     if field == 'description':
@@ -241,7 +271,7 @@ def _field_editor(event: Event, field: str, all_speakers: List[Speaker]):
     return None
 
 
-def agenda_form(action: str, speakers: List[Speaker], event: Optional[Event] = None,
+def agenda_form(action: str, speakers: List[Speaker], known_tags: List[str], event: Optional[Event] = None,
                 values: Optional[dict] = None, error: Optional[str] = None) -> Form:
     """Full add/edit session form. `values` holds submitted data when re-rendering after a validation error."""
     if values is None:
@@ -251,10 +281,9 @@ def agenda_form(action: str, speakers: List[Speaker], event: Optional[Event] = N
             'start_time': _to_input(event.start_time) if event else _to_input(DEFAULT_START),
             'end_time': _to_input(event.end_time) if event else _to_input(DEFAULT_START + timedelta(hours=1)),
             'location': (event.location or '') if event else DEFAULT_LOCATION,
-            'category': (event.category or 'MAIN') if event else 'MAIN',
+            'tags': (event.tags or []) if event else [],
             'speaker_ids': [s.id for s in event.speakers] if event else [],
         }
-    categories = CATEGORIES if values['category'] in CATEGORIES else [values['category'], *CATEGORIES]
 
     def field(label, control):
         return Label(Span(label, cls='label-text font-medium'), control, cls='form-control w-full gap-1')
@@ -267,14 +296,8 @@ def agenda_form(action: str, speakers: List[Speaker], event: Optional[Event] = N
             field('End', Input(name='end_time', type='datetime-local', value=values['end_time'], required=True, cls='input input-bordered w-full')),
             cls='grid grid-cols-1 sm:grid-cols-2 gap-4',
         ),
-        Div(
-            field('Location', Input(name='location', value=values['location'], cls='input input-bordered w-full')),
-            field('Category', Select(
-                *[Option(_category_label(c), value=c, selected=c == values['category']) for c in categories],
-                name='category', cls='select select-bordered w-full',
-            )),
-            cls='grid grid-cols-1 sm:grid-cols-2 gap-4',
-        ),
+        field('Location', Input(name='location', value=values['location'], cls='input input-bordered w-full')),
+        Div(Span('Tags', cls='label-text font-medium'), TagChecklist(values['tags'], known_tags), cls='flex flex-col gap-1'),
         field('Description', Textarea(values['description'], name='description', rows=5, cls='textarea textarea-bordered w-full')),
         Div(
             Span('Speakers', cls='label-text font-medium'),
@@ -310,7 +333,7 @@ async def _parse_form(req):
         'start_time': form.get('start_time') or '',
         'end_time': form.get('end_time') or '',
         'location': (form.get('location') or '').strip(),
-        'category': form.get('category') or 'MAIN',
+        'tags': _tags_from_form(form),
         'speaker_ids': [int(i) for i in form.getlist('speaker_ids')],
     }
     if not values['title']:
@@ -331,7 +354,7 @@ def _event_fields(values: dict) -> dict:
         start_time=_from_input(values['start_time']),
         end_time=_from_input(values['end_time']),
         location=values['location'] or None,
-        category=values['category'],
+        tags=values['tags'],
         speaker_ids=values['speaker_ids'],
     )
 
@@ -374,10 +397,11 @@ async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db:
         speakers = await get_speakers(db)
         events = await get_events(db)
+        known_tags = await _known_tags(db)
     # Default a new session to start when the last 2026 session ends
     start = max([DEFAULT_START, *(e.end_time for e in events)])
-    form = agenda_form('/admin/agenda/new', speakers, values={
-        'title': '', 'description': '', 'location': DEFAULT_LOCATION, 'category': 'MAIN', 'speaker_ids': [],
+    form = agenda_form('/admin/agenda/new', speakers, known_tags, values={
+        'title': '', 'description': '', 'location': DEFAULT_LOCATION, 'tags': [], 'speaker_ids': [],
         'start_time': _to_input(start), 'end_time': _to_input(start + timedelta(minutes=30)),
     })
     return _page('Add Session', form, sess)
@@ -389,7 +413,7 @@ async def post(req, sess):
     values, error = await _parse_form(req)
     async with db_manager.AsyncSessionLocal() as db:
         if error:
-            return _page('Add Session', agenda_form('/admin/agenda/new', await get_speakers(db), values=values, error=error), sess)
+            return _page('Add Session', agenda_form('/admin/agenda/new', await get_speakers(db), await _known_tags(db), values=values, error=error), sess)
         await create_event(db, EventCreate(**_event_fields(values)))
     return RedirectResponse('/admin/agenda', status_code=303)
 
@@ -401,7 +425,8 @@ async def get(req, sess, event_id: int, field: str):
     async with db_manager.AsyncSessionLocal() as db:
         event = await get_event(db, event_id)
         all_speakers = await get_speakers(db) if field == 'speakers' else []
-    editor = _field_editor(event, field, all_speakers) if event else None
+        known_tags = await _known_tags(db) if field == 'tags' else []
+    editor = _field_editor(event, field, all_speakers, known_tags) if event else None
     return editor if editor is not None else Response('Not found', status_code=404)
 
 
@@ -426,8 +451,8 @@ async def post(req, sess, event_id: int):
             changes['location'] = form['location'].strip() or None
         if 'description' in form:
             changes['description'] = form['description'].strip() or None
-        if 'category' in form:
-            changes['category'] = form['category']
+        if 'tags_field' in form:
+            changes['tags'] = _tags_from_form(form)
         if 'speakers' in form:
             changes['speaker_ids'] = [int(i) for i in form.getlist('speaker_ids')]
         for name in ('start_time', 'end_time'):
@@ -453,7 +478,8 @@ async def get(req, sess, event_id: int):
         if not event:
             return RedirectResponse('/admin/agenda', status_code=303)
         speakers = await get_speakers(db)
-    return _page('Edit Session', agenda_form(f'/admin/agenda/{event_id}', speakers, event=event), sess)
+        known_tags = await _known_tags(db)
+    return _page('Edit Session', agenda_form(f'/admin/agenda/{event_id}', speakers, known_tags, event=event), sess)
 
 
 @rt('/admin/agenda/{event_id}')
@@ -462,7 +488,7 @@ async def post(req, sess, event_id: int):
     values, error = await _parse_form(req)
     async with db_manager.AsyncSessionLocal() as db:
         if error:
-            return _page('Edit Session', agenda_form(f'/admin/agenda/{event_id}', await get_speakers(db), values=values, error=error), sess)
+            return _page('Edit Session', agenda_form(f'/admin/agenda/{event_id}', await get_speakers(db), await _known_tags(db), values=values, error=error), sess)
         if not await update_event(db, event_id, EventUpdate(**_event_fields(values))):
             return Response('Session not found', status_code=404)
     return RedirectResponse('/admin/agenda', status_code=303)
