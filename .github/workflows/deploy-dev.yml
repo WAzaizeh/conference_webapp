@@ -3,7 +3,10 @@ name: Deploy to Cloud Run (Development)
 on:
   push:
     branches:
-      - dev_2025
+      - dev_2026
+
+env:
+  SERVICE: dev-mascyp-conference-webapp  # serves dev.mascyp.org
 
 jobs:
   build-and-deploy:
@@ -35,9 +38,12 @@ jobs:
 
     - name: Deploy to Cloud Run
       run: |
-        gcloud run deploy ${{ secrets.GCP_RUN_NAME_DEV }} \
+        # Live Q&A keeps a stream open per phone: allow long requests and many per instance
+        gcloud run deploy $SERVICE \
           --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/mas-cyp-conference:${{ github.sha }} \
           --platform managed \
           --region ${{ secrets.GCP_REGION }} \
           --allow-unauthenticated \
+          --timeout=3600 \
+          --concurrency=500 \
           --set-env-vars="ENVIRONMENT=development,DATABASE_URL=${{ secrets.DATABASE_URL_DEV }}"
