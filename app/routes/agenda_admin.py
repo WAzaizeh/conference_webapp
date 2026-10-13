@@ -12,7 +12,7 @@ from db.connection import db_manager
 from db.models import Event, Speaker, event_speakers
 from db.schemas import EventCreate, EventUpdate, SpeakerCreate
 from utils.tags import SHARED_TAG, TAG_ORDER, normalize_tags
-from utils.auth import is_moderator, require_moderator
+from utils.auth import is_moderator, require_admin
 
 DEFAULT_LOCATION = 'GEM Academy & Facility'
 DEFAULT_START = datetime(2026, 10, 24, 11, 0, tzinfo=timezone.utc)
@@ -367,7 +367,7 @@ def _page(title: str, content, sess, *extra):
 
 
 @rt('/admin/agenda')
-@require_moderator
+@require_admin
 async def get(req, sess):
     """All sessions as cards; every field is editable in place"""
     return _page(
@@ -386,13 +386,13 @@ async def get(req, sess):
 
 
 @rt('/admin/agenda/list')
-@require_moderator
+@require_admin
 async def get(req, sess):
     return await _list_response()
 
 
 @rt('/admin/agenda/new')
-@require_moderator
+@require_admin
 async def get(req, sess):
     async with db_manager.AsyncSessionLocal() as db:
         speakers = await get_speakers(db)
@@ -408,7 +408,7 @@ async def get(req, sess):
 
 
 @rt('/admin/agenda/new')
-@require_moderator
+@require_admin
 async def post(req, sess):
     values, error = await _parse_form(req)
     async with db_manager.AsyncSessionLocal() as db:
@@ -419,7 +419,7 @@ async def post(req, sess):
 
 
 @rt('/admin/agenda/{event_id}/edit/{field}')
-@require_moderator
+@require_admin
 async def get(req, sess, event_id: int, field: str):
     """Inline editor for a single field of a session card"""
     async with db_manager.AsyncSessionLocal() as db:
@@ -431,7 +431,7 @@ async def get(req, sess, event_id: int, field: str):
 
 
 @rt('/admin/agenda/{event_id}/update')
-@require_moderator
+@require_admin
 async def post(req, sess, event_id: int):
     """Save whichever fields were submitted and return the re-rendered list"""
     form = await req.form()
@@ -471,7 +471,7 @@ async def post(req, sess, event_id: int):
 
 
 @rt('/admin/agenda/{event_id}')
-@require_moderator
+@require_admin
 async def get(req, sess, event_id: int):
     async with db_manager.AsyncSessionLocal() as db:
         event = await get_event(db, event_id)
@@ -483,7 +483,7 @@ async def get(req, sess, event_id: int):
 
 
 @rt('/admin/agenda/{event_id}')
-@require_moderator
+@require_admin
 async def post(req, sess, event_id: int):
     values, error = await _parse_form(req)
     async with db_manager.AsyncSessionLocal() as db:
@@ -495,7 +495,7 @@ async def post(req, sess, event_id: int):
 
 
 @rt('/admin/agenda/{event_id}/delete')
-@require_moderator
+@require_admin
 async def post(req, sess, event_id: int):
     async with db_manager.AsyncSessionLocal() as db:
         await delete_event(db, event_id)
@@ -527,7 +527,7 @@ def speaker_form(event: Optional[Event], values: dict, error: Optional[str] = No
 
 
 @rt('/admin/speakers/new')
-@require_moderator
+@require_admin
 async def get(req, sess, event_id: int = None):
     async with db_manager.AsyncSessionLocal() as db:
         event = await db.get(Event, event_id) if event_id else None
@@ -535,7 +535,7 @@ async def get(req, sess, event_id: int = None):
 
 
 @rt('/admin/speakers/new')
-@require_moderator
+@require_admin
 async def post(req, sess):
     """Create a speaker, optionally attaching them to the session they were added from"""
     form = await req.form()

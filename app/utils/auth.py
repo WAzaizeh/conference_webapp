@@ -30,9 +30,28 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         print(f"Password verification error: {e}")
         return False
 
+ADMIN_ROLE = 'admin'  # may edit the agenda; any other active account (e.g. 'moderator') moderates only
+
+
+def log_in(sess, user):
+    sess['admin_auth'] = True
+    sess['user_id'] = str(user.id)
+    sess['role'] = user.role
+
+
+def log_out(sess):
+    for key in ('admin_auth', 'user_id', 'role'):
+        sess.pop(key, None)
+
+
 def is_moderator(sess):
-    """Check if user is a moderator"""
+    """Logged in with any staff account"""
     return sess.get('admin_auth', False)
+
+
+def is_admin(sess):
+    """Logged in with an admin account"""
+    return is_moderator(sess) and sess.get('role') == ADMIN_ROLE
 
 def require_moderator(f):
     """Decorator to require moderator authentication"""
@@ -47,6 +66,19 @@ def require_moderator(f):
             return f(req, sess, *args, **kwargs)
     
     return async_wrapper
+
+
+def require_admin(f):
+    """Decorator: admins only; other staff see a message, visitors go to the login page"""
+    @wraps(f)
+    async def wrapper(req, sess, *args, **kwargs):
+        if not is_moderator(sess):
+            return admin_login_redir(req.url.path)
+        if not is_admin(sess):
+            return _message_page(req, 'Admins Only', 'Admins only', 'Only admin accounts can change the agenda.', 'fa-lock')
+        result = f(req, sess, *args, **kwargs)
+        return await result if asyncio.iscoroutine(result) else result
+    return wrapper
 
 async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = False) -> Optional[User]:
     """
@@ -67,13 +99,13 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
 
     # Add role filter only if require_admin is True
     if require_admin:
-        result = result.where(User.role == 'admin')
+        result = result.where(User.role == ADMIN_ROLE)
     
     result = await db.execute(result)
     return result.scalar_one_or_none()
 
-def _closed_page(req, title: str, message: str):
-    """Shown when a date-limited page is accessed outside its window"""
+def _message_page(req, nav_title: str, title: str, message: str, icon: str):
+    """Full page with a short message and a link home (closed windows, missing permissions)"""
     from fasthtml.components import Div
     from components.page import AppContainer
     from components.feedback_message import FeedbackMessage
@@ -81,10 +113,10 @@ def _closed_page(req, title: str, message: str):
 
     return AppContainer(
         Div(
-            TopNav(title),
+            TopNav(nav_title),
             FeedbackMessage(
-                icon_class="fas fa-calendar-day text-primary",
-                title="See You Soon!" if conference.now() < conference.CONFERENCE_START else "Thank You!",
+                icon_class=f"fas {icon} text-primary",
+                title=title,
                 message=message,
                 button_text="Return to Home",
                 button_href="/",
@@ -94,6 +126,12 @@ def _closed_page(req, title: str, message: str):
         is_moderator=False,
         request=req
     )
+
+
+def _closed_page(req, title: str, message: str):
+    """Shown when a date-limited page is accessed outside its window"""
+    heading = "See You Soon!" if conference.now() < conference.CONFERENCE_START else "Thank You!"
+    return _message_page(req, title, heading, message, 'fa-calendar-day')
 
 
 def _time_until_start() -> str:

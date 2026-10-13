@@ -9,7 +9,7 @@ from components.timeline import agenda_timeline, TagFilter
 from utils.tags import filter_tags
 from db.connection import db_manager
 from core.app import rt
-from utils.auth import is_moderator
+from utils.auth import is_admin, is_moderator
 
 @rt('/agenda')
 async def get(req, sess):
@@ -22,7 +22,7 @@ async def get(req, sess):
                 TopNav('Agenda'),
                 H1('4th Annual CYP Conference', cls='page-eyebrow'),
                 H1('Saturday · October 24, 2026', cls='page-eyebrow opacity-70'),
-                A(Icon('pen', cls='mr-1'), 'Edit Agenda', href='/admin/agenda', cls='btn btn-sm btn-primary mx-auto mt-4 flex w-fit') if is_moderator(sess) else None,
+                A(Icon('pen', cls='mr-1'), 'Edit Agenda', href='/admin/agenda', cls='btn btn-sm btn-primary mx-auto mt-4 flex w-fit') if is_admin(sess) else None,
                 TagFilter(filter_tags(events)),
                 agenda_timeline(events),
                 id='page-content',

@@ -114,4 +114,6 @@ async def main():
         else:
             print('dry run only (pass --apply to write)')
 
-asyncio.run(main())
+
+if __name__ == '__main__':
+    asyncio.run(main())

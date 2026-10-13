@@ -3,7 +3,7 @@ from components.page import AppContainer
 from fasthtml.common import RedirectResponse, Response
 from fasthtml.components import Button, H1, Div, Form, Label, Input, Span
 from core.app import rt
-from utils.auth import verify_password, require_moderator, get_user_by_email, is_moderator
+from utils.auth import verify_password, require_moderator, get_user_by_email, is_moderator, is_admin, log_in, log_out
 from db.connection import db_manager
 
 @rt('/admin/login')
@@ -13,10 +13,8 @@ async def post(request, sess, username: str, password: str, redir: str = ''):
         user = await get_user_by_email(db, username)
         
         if user and verify_password(password, user.password_hash):
-            # Set session
-            sess['user_id'] = str(user.id)
-            sess['admin_auth'] = True
-            
+            log_in(sess, user)
+
             # Send the user back to the protected page they came from (same-site paths only)
             if redir.startswith('/') and not redir.startswith('//'):
                 return Response(headers={'HX-Redirect': redir})
@@ -39,10 +37,8 @@ async def post(request, sess, username: str, password: str, redir: str = ''):
 
 @rt('/admin/logout')
 def get(sess):
-    """Logout and clear only admin session"""
-    # Only clear admin-related session keys
-    sess.pop('admin_auth', None)
-    sess.pop('user_id', None)
+    """Log out (only staff session keys are cleared)"""
+    log_out(sess)
     return RedirectResponse('/', status_code=303)
 
 @rt('/admin_login') 
@@ -107,7 +103,7 @@ def get(req, sess):
         H1('Admin Dashboard', cls='text-2xl font-bold mb-6 text-center'),
         moderate_qa_btn,
         moderate_feedback_btn,
-        edit_events_btn,
+        edit_events_btn if is_admin(sess) else None,
     ]
 
     return AppContainer(
@@ -122,9 +118,7 @@ def get(req, sess):
 @rt('/logout')
 def get(sess):
     """Logout route - alias for /admin/logout"""
-    # Only clear admin-related session keys
-    sess.pop('admin_auth', None)
-    sess.pop('user_id', None)
+    log_out(sess)
     return RedirectResponse('/', status_code=303)
 
 @rt('/admin/test_login')
@@ -140,9 +134,7 @@ async def post(sess, username: str, password: str):
         if not verify_password(password, user.password_hash):
             return Response("Invalid password", status_code=401)
     
-    # Set session
-    sess['admin_auth'] = True
-    sess['user_id'] = str(user.id)
+    log_in(sess, user)
     
     print(f"✅ TEST LOGIN: {username} authenticated via test endpoint")
     return Response("OK", status_code=200)

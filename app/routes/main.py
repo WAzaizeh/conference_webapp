@@ -9,7 +9,7 @@ from db.connection import db_manager
 from crud.prayer_time import get_prayer_times
 from fasthtml.components import H1, H2, Div, P, Ul, Li, Title
 from core.app import rt
-from utils.auth import is_moderator
+from utils.auth import is_admin, is_moderator
 
 @rt('/')
 def get(req, sess):
@@ -29,8 +29,9 @@ def get(req, sess):
             homepage_card(icon_name='chat.svg', title='Q&A (Moderator)', card_color='pink', href='/qa/moderator', cls='full-card', bold_style=True),
             homepage_card(icon_name='survey.svg', title='Feedback (Guest)', card_color='pink', href='/feedback', cls='full-card'),
             homepage_card(icon_name='survey.svg', title='Feedback (Moderator)', card_color='pink', href='/feedback/moderator', cls='full-card', bold_style=True),
-            homepage_card(icon_name='edit-agenda.svg', title='Edit Agenda', card_color='blue', href='/admin/agenda', cls='full-card', bold_style=True),
         ])
+        if is_admin(sess):
+            cards.append(homepage_card(icon_name='edit-agenda.svg', title='Edit Agenda', card_color='blue', href='/admin/agenda', cls='full-card', bold_style=True))
     else:
         cards.extend([
             homepage_card(icon_name='chat.svg', title='Q&A', card_color='pink', href='/qa', cls='full-card'),
