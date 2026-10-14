@@ -107,8 +107,8 @@ SPONSORS = {
         description='Islamic Development & Empowerment in America (formerly Islamic Relief USA), a humanitarian and development nonprofit.',
         website='https://development.org/'),
     'Mercy Without Limits': dict(
-        logo='sponsor_mercy-without-limits.svg',
-        source='https://mwl.org/wp-content/uploads/2025/10/logo-header.svg',  # colored version (logo-l.svg is white)
+        logo='sponsor_mercy-without-limits.png',  # edited by hand from mwl.org/wp-content/uploads/2025/10/logo-header.svg
+        source=None,
         description='Kansas-based 501(c)(3), established 2012, supporting orphans and widows in the Middle East and South Asia.',
         website='https://mwl.org/'),
     'Baitulmaal': dict(
