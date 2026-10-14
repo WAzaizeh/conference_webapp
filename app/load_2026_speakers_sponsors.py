@@ -41,17 +41,17 @@ SPEAKERS = {
         "counselor at his practice, OH Counseling, where he offers individual, couples and family counseling. He "
         "graduated from the University of Illinois at Chicago in Information Sciences, studied Arabic and Islamic "
         "sciences in Toronto, and completed a degree in Islamic Studies and Arabic from Al-Azhar University. He is a "
-        "doctoral candidate in Counselor Education and Supervision at UT San Antonio and an instructor with "
+        "holds a Ph.D. in Counselor Education and Supervision from UT San Antonio, and is an instructor with "
         "AlMaghrib Institute."),
     'Sr. Haleh Banani': (
         'https://halehbanani.com/wp-content/uploads/2019/12/haleh-website-portrait-0035.png',
         "Holds a master's in clinical psychology and has provided faith-based counseling to Muslim clients worldwide "
         "since 1998. She founded The Mindful Hearts Academy, a global mentorship program for women, and co-created "
         "the 5 Pillars of Marriage Program with her husband. She has hosted shows on Al-Fajr TV and Huda TV and been "
-        "a featured expert on Al Jazeera International. Her coaching combines cognitive behavioral exercises with "
+        "featured on Al Jazeera. Her coaching combines cognitive behavioral exercises with "
         "Islamic principles across anxiety, depression, marriage and parenting. She holds an ijaza in Quran recitation."),
     'Ustadh Morad Awad': (
-        'https://www.epicmasjid.org/wp-content/uploads/2022/11/Morad-Awad.jpg',
+        'https://dstworldtravel.com/wp-content/uploads/2022/01/Morad.jpg',
         "Youth Director at East Plano Islamic Center (EPIC) since 2019. Raised in New Jersey in a Palestinian family, "
         "he earned a B.S. in Civil Engineering from NJIT, where he began Islamic outreach and youth programs. He "
         "studied Islamic sciences in Riyadh and Madinah, taught English and Islamic Studies at King Saud University "
