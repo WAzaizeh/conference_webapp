@@ -20,8 +20,8 @@ Image fields always follow the files here. Text fields (bio, description, links)
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
 
 Sources are in the organizers' fill-ins doc (MASCYP 2026 Fill-ins). Known gaps: Sr. Mervat Farag has no
-public bio; OINUS's logo is cut from its social card and
-Baitulmaal's is small (150x115) — replace the files if HD versions come from the organizers.
+public bio. Sponsor logos without a source were prepared by hand; replace the files if official
+SVGs come from the organizers.
 """
 import asyncio
 import struct
@@ -112,12 +112,12 @@ SPONSORS = {
         description='Kansas-based 501(c)(3), established 2012, supporting orphans and widows in the Middle East and South Asia.',
         website='https://mwl.org/'),
     'Baitulmaal': dict(
-        logo='sponsor_baitulmaal.png',
-        source='https://baitulmaal.org/wp-content/uploads/2023/05/baitulmaal-black-white-WEB.png',
+        logo='sponsor_baitulmaal.png',  # replaced by hand with a larger transparent version
+        source=None,
         description='US nonprofit delivering humanitarian aid worldwide regardless of faith or nationality.',
         website='https://baitulmaal.org/'),
     'Orphans in Need USA': dict(
-        logo='sponsor_oinus.jpg',  # from the oinusa.org social card
+        logo='sponsor_oinus.png',  # edited by hand from the oinusa.org social card
         source=None,
         description='Dublin, CA based nonprofit supporting orphans and vulnerable children.',
         website='https://oinusa.org/'),
