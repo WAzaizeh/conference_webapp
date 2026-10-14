@@ -114,9 +114,10 @@ async def post(request, event_id: int, nickname: str = '', question_text: str = 
         if not event:
             return Div(P("Event not found", cls="text-error"), cls="alert alert-error")
         if not event.is_qa_active:
-            return QuestionForm(event_id, nickname, is_active=False)
+            return QuestionForm(event_id, nickname, is_active=False,
+                                error="Q&A is closed for this session, so your question was not sent.")
         if not question_text:
-            return QuestionForm(event_id, nickname)
+            return QuestionForm(event_id, nickname, error="Please type a question before submitting.")
         question = await create_question(db, QuestionCreate(event_id=event_id, nickname=nickname, question_text=question_text))
 
     await live.publish(event_id, live.CREATED, question.id)
