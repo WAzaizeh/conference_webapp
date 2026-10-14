@@ -252,8 +252,8 @@
     overflow: hidden;
 }
 .sponsor-logo img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;   /* fill the box: SVGs and small images scale up, every shape fits via contain */
+    height: 100%;
     object-fit: contain;
 }
 .sponsor-logo-sm {

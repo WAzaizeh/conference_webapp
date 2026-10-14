@@ -88,7 +88,7 @@ def SponsorLogo(sponsor: Sponsor, size: str = 'sm') -> Div:
     """Sponsor logo scaled to fit a fixed box without distortion; the sponsor's name if there's no logo file"""
     logo = available(sponsor.image_url)
     return Div(
-        Img(src=logo, alt=f'{sponsor.name} logo', loading='lazy') if logo
+        Img(src=logo, alt=f'{sponsor.name} logo') if logo
         else Span(sponsor.name, cls='sponsor-logo-fallback'),
         cls=f'sponsor-logo sponsor-logo-{size}',
     )
