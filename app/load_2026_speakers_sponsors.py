@@ -1,48 +1,40 @@
-"""Fill in the 2026 speaker photos/bios and the sponsor list, using image files kept in app/assets.
+"""Point the 2026 speakers and sponsors at their image files in app/assets, and fill in bios and sponsor details.
 Companion to load_2026_program.py (which creates the speakers by name but leaves photo and bio empty).
 
-Images live in the repo instead of being linked from other websites, so every page shows the same,
-consistently sized files. Steps:
+Images are files in the repo, named here:
+  - speaker photos: assets/speaker_XXXX.png, cropped/resized to 200x200 (square, face centred)
+  - sponsor logos:  assets/sponsor_<name>.<svg|png|jpg>, any shape (shown scaled to fit)
 
-  1. Download the source images (needs Pillow for this step only):
-         uv run --with pillow python load_2026_speakers_sponsors.py --download
-     Speaker photos are saved as assets/speaker_XXXX.png at their original size, sponsor logos as
-     assets/sponsor_<name>.<ext>. Files that already exist are never overwritten.
-  2. Optional, any time: crop speaker photos to 200x200 (square, face centred) and save as PNG under
-     the same name; trim or remove backgrounds from sponsor logos. Changes show on the next page load.
-  3. Update the database (dry run without --apply):
-         python load_2026_speakers_sponsors.py --apply [--overwrite]
-     Every speaker and sponsor listed here is pointed at its /assets file. Until a file exists, the
-     site shows the initials avatar (speakers) or the sponsor's name instead; adding the file later
-     needs no re-run.
+Usage (dry run without --apply):
+    python load_2026_speakers_sponsors.py --apply [--overwrite]
+
+Every speaker and sponsor listed here is pointed at its file, and the run flags any file that is missing
+(the site shows the initials avatar / sponsor name until it's added) and any photo that still needs
+resizing to 200x200. Replacing a file under the same name needs no re-run; a new file name does.
 
 Image fields always follow the files here. Text fields (bio, description, links) are only filled when
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
-
-Sources are in the organizers' fill-ins doc (MASCYP 2026 Fill-ins). Known gaps: Sr. Mervat Farag has no
-public bio. Sponsor logos without a source were prepared by hand; replace the files if official
-SVGs come from the organizers.
+Known gap: Sr. Mervat Farag has no public bio.
 """
 import asyncio
-import struct
 import sys
-import urllib.request
-from io import BytesIO
 from pathlib import Path
+from typing import Optional, Tuple
 from urllib.parse import urlparse
 
-ASSETS = Path(__file__).parent / 'assets'
+from PIL import Image
+
+from core.assets import ASSETS_DIR as ASSETS
+
 PHOTO_SIZE = (200, 200)
 
-DOWNLOAD = '--download' in sys.argv
 APPLY = '--apply' in sys.argv
 OVERWRITE = '--overwrite' in sys.argv
 
-# name -> photo number (file speaker_<number>.png), photo source, bio. Names must match load_2026_program.py.
+# name -> photo number (file speaker_<number>.png) and bio. Names must match load_2026_program.py.
 SPEAKERS = {
     'Sh. Yaser Birjas': dict(
         number=2601,
-        source='https://c7c8edde.delivery.rocketcdn.me/wp-content/uploads/YaserBirjas-1.jpg',
         bio="Imam of Valley Ranch Islamic Center in Irving, TX, and an instructor with AlMaghrib Institute. "
             "Originally from Palestine and born in Kuwait, he graduated valedictorian from the College of Shariah at the "
             "Islamic University of Madinah in 1996. He spent four years in Bosnia as a youth counselor and relief program "
@@ -51,7 +43,6 @@ SPEAKERS = {
             "offering pre-marital training, marriage coaching and conflict resolution. Father of four."),
     'Dr. Suzy Ismail': dict(
         number=2602,
-        source='https://s3.amazonaws.com/berkley-center/SuzyIsmail.jpg',
         bio="Founding Director of Cornerstone, a nonprofit faith-based communication and counseling organization serving "
             "youth, families, marriage, identity, socioemotional wellness and refugee resilience. Her research, writing "
             "and speaking focus on where education, faith, communication and culture meet. She holds an M.A. in "
@@ -60,7 +51,6 @@ SPEAKERS = {
             "other universities."),
     'Dr. Omar Husain': dict(
         number=2603,
-        source='https://cdn.yaqeeninstitute.org/wp-content/uploads/2020/04/omar-husain.jpg',
         bio="Senior Fellow at Yaqeen Institute, Religious Director of the McKinney Islamic Association, and a licensed "
             "counselor at his practice, OH Counseling, where he offers individual, couples and family counseling. He "
             "graduated from the University of Illinois at Chicago in Information Sciences, studied Arabic and Islamic "
@@ -69,7 +59,6 @@ SPEAKERS = {
             "AlMaghrib Institute."),
     'Sr. Haleh Banani': dict(
         number=2604,
-        source='https://halehbanani.com/wp-content/uploads/2019/12/haleh-website-portrait-0035.png',
         bio="Holds a master's in clinical psychology and has provided faith-based counseling to Muslim clients worldwide "
             "since 1998. She founded The Mindful Hearts Academy, a global mentorship program for women, and co-created "
             "the 5 Pillars of Marriage Program with her husband. She has hosted shows on Al-Fajr TV and Huda TV and been "
@@ -77,7 +66,6 @@ SPEAKERS = {
             "Islamic principles across anxiety, depression, marriage and parenting. She holds an ijaza in Quran recitation."),
     'Ustadh Morad Awad': dict(
         number=2605,
-        source='https://dstworldtravel.com/wp-content/uploads/2022/01/Morad.jpg',
         bio="Youth Director at East Plano Islamic Center (EPIC) since 2019. Raised in New Jersey in a Palestinian family, "
             "he earned a B.S. in Civil Engineering from NJIT, where he began Islamic outreach and youth programs. He "
             "studied Islamic sciences in Riyadh and Madinah, taught English and Islamic Studies at King Saud University "
@@ -85,7 +73,6 @@ SPEAKERS = {
             "enjoys martial arts, travel and cooking, and is known for his kunafa."),
     'Sr. Youssra Kandil': dict(
         number=2606,
-        source='https://cdn.yaqeeninstitute.org/wp-content/uploads/2023/03/IMG_4061-scaled-e1679857496935.jpeg',
         bio="Motivational speaker, Quran teacher and contributor at Yaqeen Institute, focused on the Quran and Sunnah. "
             "She spent her early years in Kenya and Zimbabwe, then in Egypt, where she worked with Amr Khaled and "
             "appeared on the weekly show \"Parables of the Quran\". After settling in the United States she taught "
@@ -94,36 +81,29 @@ SPEAKERS = {
             "everyone has a duty to pass on even a little knowledge."),
     'Sr. Mervat Farag': dict(
         number=2607,
-        source='https://baitulmaal.org/nitropack_static/mNaOYkwndABKrOlhekcrZgWGezLAAXtD/assets/images/optimized/'
-               'rev-85e2440/baitulmaal.org/wp-content/uploads/2024/09/Our-People-MF-copy.jpeg',
         bio=None),  # no public bio yet
 }
 
-# name -> logo file in assets, logo source (None: file provided by hand), and other Sponsor columns
+# name -> logo file in assets and the other Sponsor columns
 SPONSORS = {
     'IDEA': dict(
         logo='sponsor_idea.svg',
-        source='https://development.org/logo/IDEA_LOGO_HORIZONTAL_FULL.svg',
         description='Islamic Development & Empowerment in America (formerly Islamic Relief USA), a humanitarian and development nonprofit.',
         website='https://development.org/'),
     'Mercy Without Limits': dict(
         logo='sponsor_mercy-without-limits.png',  # edited by hand from mwl.org/wp-content/uploads/2025/10/logo-header.svg
-        source=None,
         description='Kansas-based 501(c)(3), established 2012, supporting orphans and widows in the Middle East and South Asia.',
         website='https://mwl.org/'),
     'Baitulmaal': dict(
         logo='sponsor_baitulmaal.png',  # replaced by hand with a larger transparent version
-        source=None,
         description='US nonprofit delivering humanitarian aid worldwide regardless of faith or nationality.',
         website='https://baitulmaal.org/'),
     'Orphans in Need USA': dict(
         logo='sponsor_oinus.png',  # edited by hand from the oinusa.org social card
-        source=None,
         description='Dublin, CA based nonprofit supporting orphans and vulnerable children.',
         website='https://oinusa.org/'),
     'Blue Fig International Market': dict(
         logo='sponsor_blue-fig.jpg',  # Facebook page profile picture
-        source=None,
         description='Muslim-owned halal international grocery, 4101 E Park Blvd Ste 135, Plano TX 75074.',
         website=None,
         facebook='https://www.facebook.com/BlueFigMarket/'),
@@ -134,60 +114,21 @@ def photo_file(info: dict) -> Path:
     return ASSETS / f"speaker_{info['number']}.png"
 
 
-def png_size(path: Path):
-    """(width, height) of a PNG file, or None if it is missing or not a PNG"""
+def image_problem(path: Path, required_size: Optional[Tuple[int, int]] = None) -> str:
+    """What's wrong with an image file ('' if it's fine): missing, unreadable, or not the required size"""
     if not path.exists():
-        return None
-    header = path.read_bytes()[:24]
-    if header[:8] != b'\x89PNG\r\n\x1a\n':
-        return None
-    return struct.unpack('>II', header[16:24])
+        return 'MISSING'
+    if path.suffix == '.svg':
+        return ''
+    try:
+        with Image.open(path) as image:
+            size = image.size
+    except Exception:
+        return 'UNREADABLE (not an image?)'
+    if required_size and size != required_size:
+        return f'RESIZE to {required_size[0]}x{required_size[1]} (now {size[0]}x{size[1]})'
+    return ''
 
-
-def photo_note(info: dict) -> str:
-    """Reminder shown next to a speaker when the photo file is missing or not yet cropped"""
-    path = photo_file(info)
-    if not path.exists():
-        return 'file missing, initials shown until added'
-    size = png_size(path)
-    if size is None:
-        return 'not a PNG'
-    return '' if size == PHOTO_SIZE else f'{size[0]}x{size[1]}, not cropped to 200x200 yet'
-
-
-# ---- Step 1: download ----
-
-def fetch(url: str) -> bytes:
-    request = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(request, timeout=30) as response:
-        return response.read()
-
-
-def download():
-    from PIL import Image  # only needed here: uv run --with pillow ...
-
-    def save_photo(data: bytes, target: Path) -> str:
-        image = Image.open(BytesIO(data))
-        image.convert('RGBA' if image.mode in ('RGBA', 'LA', 'P') else 'RGB').save(target, 'PNG')
-        return f'{image.width}x{image.height}, crop to 200x200'
-
-    def save_logo(data: bytes, target: Path) -> str:
-        target.write_bytes(data)
-        return 'logo'
-
-    jobs = [(name, photo_file(info), info['source'], save_photo) for name, info in SPEAKERS.items()]
-    jobs += [(name, ASSETS / info['logo'], info['source'], save_logo) for name, info in SPONSORS.items()]
-    for name, target, source, save in jobs:
-        if target.exists() or not source:
-            print(f"  skip {target.name} ({'exists' if target.exists() else 'no source, add by hand'}) — {name}")
-            continue
-        try:
-            print(f"+ {target.name} ({save(fetch(source), target)}) — {name}")
-        except Exception as exc:  # keep going; a broken link shouldn't stop the other downloads
-            print(f"! {target.name} failed ({exc}) — {name}: find another source or add the file by hand")
-
-
-# ---- Step 3: database ----
 
 async def apply():
     from sqlalchemy import select
@@ -195,6 +136,7 @@ async def apply():
     from db.models import Speaker, Sponsor
 
     print(f'target database: {urlparse(db_manager.database_url).hostname}')
+    problems = []
     async with db_manager.AsyncSessionLocal() as db:
         speakers = {s.name: s for s in (await db.execute(select(Speaker))).scalars()}
         for name, info in SPEAKERS.items():
@@ -203,12 +145,12 @@ async def apply():
                 print(f'! speaker not in database (run load_2026_program.py first): {name}')
                 continue
             photo = f'/assets/{photo_file(info).name}'
-            note = photo_note(info)
+            problem = image_problem(photo_file(info), PHOTO_SIZE)
+            if problem:
+                problems.append(f'{photo_file(info).name}: {problem} — {name}')
             if sp.image_url != photo:
-                print(f'+ photo {name}: {photo}' + (f'  ({note})' if note else ''))
+                print(f'+ photo {name}: {photo}')
                 sp.image_url = photo
-            elif note:
-                print(f'  photo {name}: {note}')
             if info['bio'] and (OVERWRITE or not sp.bio):
                 print(f'+ bio   {name}')
                 sp.bio = info['bio']
@@ -216,10 +158,11 @@ async def apply():
         sponsors = {s.name: s for s in (await db.execute(select(Sponsor))).scalars()}
         for name, info in SPONSORS.items():
             logo_path = ASSETS / info['logo']
-            fields = {k: v for k, v in info.items() if k not in ('logo', 'source')}
+            fields = {k: v for k, v in info.items() if k != 'logo'}
             fields['image_url'] = f"/assets/{info['logo']}"
-            if not logo_path.exists():
-                print(f"  logo {name}: {info['logo']} missing, name shown until added")
+            problem = image_problem(logo_path)
+            if problem:
+                problems.append(f"{info['logo']}: {problem} — {name}")
             sponsor = sponsors.get(name)
             if sponsor is None:
                 print(f'+ sponsor {name}')
@@ -239,9 +182,13 @@ async def apply():
             await db.rollback()
             print('dry run only (pass --apply to write)')
 
+    if problems:
+        print(f'\n⚠ {len(problems)} image(s) need attention (the site shows a fallback until fixed):')
+        for problem in problems:
+            print(f'  ⚠ {problem}')
+    else:
+        print('\n✓ all speaker photos and sponsor logos are in place')
+
 
 if __name__ == '__main__':
-    if DOWNLOAD:
-        download()
-    else:
-        asyncio.run(apply())
+    asyncio.run(apply())
