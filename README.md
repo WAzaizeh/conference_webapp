@@ -113,6 +113,7 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Task | Command |
 |---|---|
 | Set up a new database (tables + 2026 program) | `python load_2026_program.py --apply` |
+| Fill in 2026 speaker photos/bios and sponsors | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` to replace existing values) |
 | Convert an older database's categories to tags | `python migrate_event_tags.py --apply` |
 | Create a moderator/admin account | `python create_admin.py` |
 | Reset a password | `python reset_admin_password.py` |
