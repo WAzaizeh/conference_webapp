@@ -100,7 +100,7 @@
 }
 
 /* Agenda timeline */
-.timeline .text-primary,
+.timeline .text-primary:not(.fas),  /* skip the Font Awesome dots, which need their own font */
 .timeline-start span {
     font-family: 'Oswald', sans-serif;
     letter-spacing: .04em;
