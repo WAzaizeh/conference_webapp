@@ -19,7 +19,7 @@ Image fields always follow the files here. Text fields (bio, description, links)
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
 
 Sources are in the organizers' fill-ins doc (MASCYP 2026 Fill-ins). Known gaps: Sr. Mervat Farag has no
-public bio or photo (add assets/speaker_2607.png by hand); OINUS's logo is cut from its social card and
+public bio; OINUS's logo is cut from its social card and
 Baitulmaal's is small (150x115) — replace the files if HD versions come from the organizers.
 """
 import asyncio
@@ -92,7 +92,11 @@ SPEAKERS = {
             "Quranic studies and Islamic history at an Islamic school, completed the Uwaylim scholarship track with "
             "Shaykh Shadee El Masry, and is working on memorizing the Quran. Her lectures are driven by the belief that "
             "everyone has a duty to pass on even a little knowledge."),
-    'Sr. Mervat Farag': dict(number=2607, source=None, bio=None),  # no public photo or bio yet
+    'Sr. Mervat Farag': dict(
+        number=2607,
+        source='https://baitulmaal.org/nitropack_static/mNaOYkwndABKrOlhekcrZgWGezLAAXtD/assets/images/optimized/'
+               'rev-85e2440/baitulmaal.org/wp-content/uploads/2024/09/Our-People-MF-copy.jpeg',
+        bio=None),  # no public bio yet
 }
 
 # name -> logo file in assets, logo source (None: file provided by hand), and other Sponsor columns
