@@ -8,8 +8,10 @@ CONFERENCE_START = datetime(2026, 10, 24, 11, 0, tzinfo=CONFERENCE_TZ)
 CONFERENCE_END = datetime(2026, 10, 24, 20, 0, tzinfo=CONFERENCE_TZ)
 FEEDBACK_OPEN_DAYS = 7
 
-# Date windows are only enforced when explicitly enabled, so dev and testing always have access
-RESTRICT_DATES = os.getenv('RESTRICT_TO_CONFERENCE_DAY', 'false').lower() == 'true'
+# Date windows are enforced on production only, so dev and testing always have access.
+# RESTRICT_TO_CONFERENCE_DAY=true/false overrides this in any environment.
+IS_PRODUCTION = os.getenv('ENVIRONMENT', '').lower() == 'production'
+RESTRICT_DATES = os.getenv('RESTRICT_TO_CONFERENCE_DAY', str(IS_PRODUCTION)).lower() == 'true'
 
 
 def now() -> datetime:

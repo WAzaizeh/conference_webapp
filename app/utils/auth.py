@@ -159,7 +159,7 @@ def require_window(is_open, title: str, closed_message: str):
     return decorator
 
 
-# Kept for existing call sites; both are unrestricted unless RESTRICT_TO_CONFERENCE_DAY=true
+# Kept for existing call sites; both are unrestricted off production (see conference.RESTRICT_DATES)
 is_conference_day = conference.is_conference_day
 require_conference_day = require_window(conference.is_conference_day, 'Coming Soon', 'Q&A has closed for this year.')
 require_feedback_window = require_window(conference.is_feedback_open, 'Feedback', 'The feedback survey has closed.')

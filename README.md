@@ -68,6 +68,7 @@ app/
 │   └── speaker_utils.py     # Placeholder avatars
 ├── assets/                  # CSS, JS (qa-live.js, agenda-filter.js), images
 ├── load_2026_program.py     # Creates tables + loads the 2026 program
+├── sync_prod_from_dev.py    # Copies dev's content to prod
 ├── migrate_event_tags.py    # Converts old event categories to tags
 ├── create_admin.py          # Create a moderator/admin account
 └── reset_admin_password.py  # Reset an account's password
@@ -103,7 +104,8 @@ app/
 |---|---|
 | `DATABASE_URL_DIRECT` | Direct (non-pooler) Neon URL for live Q&A `LISTEN`. Defaults to `DATABASE_URL` with `-pooler` removed. |
 | `SESSION_SECRET` | Key that signs login cookies. Required on Cloud Run; locally a git-ignored `.sesskey` file is generated. |
-| `RESTRICT_TO_CONFERENCE_DAY` | `true` limits Q&A to conference day and feedback to conference day + 7 days. Off by default. Dates live in `core/conference.py`. |
+| `COMING_SOON` | `true` serves only the coming soon page (static assets stay reachable). Set in `deploy-prod.yml`; change it to `false` and push `production` to open the site. |
+| `RESTRICT_TO_CONFERENCE_DAY` | `true` limits Q&A to conference day and feedback to conference day + 7 days. On by default when `ENVIRONMENT=production`, off otherwise; set `false` to lift it on prod. Dates live in `core/conference.py`. |
 
 ## Database
 
@@ -115,6 +117,7 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Set up a new database (tables + 2026 program) | `python load_2026_program.py --apply` |
 | Link speaker photos (`assets/speaker_26NN.png`, 200×200) and sponsor logos (`assets/sponsor_<name>.*`), fill bios and sponsors; flags missing or unresized images | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` replaces existing text) |
 | Convert an older database's categories to tags | `python migrate_event_tags.py --apply` |
+| Make prod's content (sessions, speakers, sponsors, prayer times) match dev; replaces prod's copies (prod Q&A questions go with them), keeps accounts and feedback, backs up to `app/backups/` | `DEV_DATABASE_URL=… PROD_DATABASE_URL=… python sync_prod_from_dev.py --apply` |
 | Create a moderator/admin account | `python create_admin.py` |
 | Reset a password | `python reset_admin_password.py` |
 

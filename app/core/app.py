@@ -2,6 +2,7 @@ import os
 from fasthtml.common import *
 from core.static import fetch_static_files
 from core.visitor import VisitorMiddleware
+from core.coming_soon_gate import ComingSoonGate
 from starlette.middleware import Middleware
 
 tlink = (Script(src='https://unpkg.com/tailwindcss-cdn@3.4.3/tailwindcss.js'),)
@@ -34,7 +35,11 @@ favicon_link = Link(rel='icon', type='image/x-icon', href='/assets/favicon.ico')
 app = FastHTML(
     secret_key=os.getenv('SESSION_SECRET') or None,
     hdrs=[tlink, favicon_link, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs],
-    middleware=[Middleware(VisitorMiddleware)],
+    # COMING_SOON=true (set in deploy-prod.yml) serves only the coming soon page; the gate runs first
+    middleware=[
+        *([Middleware(ComingSoonGate)] if os.getenv('COMING_SOON', 'false').lower() == 'true' else []),
+        Middleware(VisitorMiddleware),
+    ],
 )
 
 rt = app.route
