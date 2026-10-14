@@ -50,7 +50,7 @@ def TagFilter(tags: List[str]):
         return None
 
     def pill(tag):
-        return Button(tag, type='button', cls='tag-pill active', data_tag=tag, aria_pressed='false')
+        return Button(tag, type='button', cls='tag-pill', data_tag=tag, aria_pressed='false')
 
     audience = [t for t in tags if t in TRACK_TAGS]
     types = [t for t in tags if t not in TRACK_TAGS]

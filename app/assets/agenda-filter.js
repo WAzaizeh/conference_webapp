@@ -1,5 +1,5 @@
 // Agenda tag filter (markup from TagFilter / agenda_timeline in components/timeline.py).
-// No filter by default (every pill lit). Pills form two single-select groups that combine:
+// No filter by default (no pill selected). Pills form two single-select groups that combine:
 // one audience (data-track-tags, e.g. Masculinity) and one session type (Talk, Workshop, Prayer...).
 // Picking another pill in the same group replaces it; tapping a selected pill clears it. A session must
 // have every selected tag; sessions tagged "All" (for everyone) count as having the audience tags.
@@ -24,7 +24,7 @@
             const filtering = selected.size > 0;
             pills.forEach((pill) => {
                 const on = selected.has(pill.dataset.tag);
-                pill.classList.toggle('active', !filtering || on);
+                pill.classList.toggle('active', on);
                 pill.setAttribute('aria-pressed', String(on));
             });
             clear.hidden = !filtering;
