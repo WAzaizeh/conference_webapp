@@ -24,7 +24,7 @@ async def get_speaker(db: AsyncSession, speaker_id: int) -> Optional[Speaker]:
 async def get_speakers(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[Speaker]:
     """Get all speakers with pagination"""
     result = await db.execute(
-        select(Speaker).options(selectinload(Speaker.events)).offset(skip).limit(limit)
+        select(Speaker).options(selectinload(Speaker.events)).order_by(Speaker.id).offset(skip).limit(limit)
     )
     speakers = result.scalars().all()
     return speakers

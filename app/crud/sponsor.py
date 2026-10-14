@@ -6,7 +6,7 @@ from db.models import Sponsor
 async def get_sponsors(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[Sponsor]:
     """Get all sponsors with pagination"""
     result = await db.execute(
-        select(Sponsor).offset(skip).limit(limit)
+        select(Sponsor).order_by(Sponsor.id).offset(skip).limit(limit)  # stable: in the order they were added
     )
     return result.scalars().all()
 
