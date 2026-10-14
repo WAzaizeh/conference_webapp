@@ -121,8 +121,9 @@ def SessionStatusToggle(event_id: int, is_active: bool):
     )
 
 
-def QuestionForm(event_id: int, initial_nickname="", is_active=True, message=None):
-    """Question submission form; disabled while the session's Q&A is closed"""
+def QuestionForm(event_id: int, initial_nickname="", is_active=True, message=None, error=None):
+    """Question submission form; disabled while the session's Q&A is closed.
+    `message` is a green success flash, `error` a red one (e.g. Q&A closed, empty question)."""
     disabled = not is_active
     return Div(
         Form(
@@ -140,7 +141,9 @@ def QuestionForm(event_id: int, initial_nickname="", is_active=True, message=Non
             ),
             Div(
                 Div(I(cls="fas fa-check-circle text-green text-lg"), P(message, cls="text-green font-semibold"),
-                    cls="qa-flash flex flex-row gap-2 items-center") if message else Span(),
+                    cls="qa-flash flex flex-row gap-2 items-center") if message else
+                Div(I(cls="fas fa-exclamation-circle text-error text-lg"), P(error, cls="text-error font-semibold"),
+                    cls="qa-flash flex flex-row gap-2 items-center") if error else Span(),
                 Button("Submit", type="submit", disabled=disabled, cls="btn btn-primary px-6 py-2"),
                 cls="flex flex-row items-center justify-between gap-4"
             ),
