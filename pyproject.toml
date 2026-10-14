@@ -26,6 +26,7 @@ dependencies = [
     "packaging==24.1",
     "pandas==2.2.3",
     "passlib==1.7.4",
+    "pillow>=12.3.0",
     "psycopg2-binary>=2.9.10",
     "pydantic==2.9.0",
     "pydantic-core==2.23.2",
