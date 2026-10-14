@@ -1,4 +1,4 @@
-from pathlib import Path
+from core.assets import ASSETS_DIR
 from datetime import datetime
 from fasthtml.common import Link, Script
 
@@ -6,8 +6,7 @@ def cache_busting():
     return datetime.now().strftime('%Y%m%d%H%M%S')
 
 def fetch_static_files() -> list:
-    current_dir = Path(__file__).parent
-    assets_dir = current_dir.parent / 'assets'
+    assets_dir = ASSETS_DIR
 
     static_files = []
     # Sorted so stylesheets load in a stable order (main.css before theme-26.css, which overrides it)

@@ -261,14 +261,16 @@
     height: 72px;
     padding: 8px;
 }
+/* Detail page: no box, so logos with transparent backgrounds sit directly on the page */
 .sponsor-logo-lg {
     position: relative;
     z-index: 1;
     width: min(300px, calc(100% - 48px));
     aspect-ratio: 3 / 2;
     margin: 24px auto 0;
-    padding: 20px;
-    box-shadow: var(--cs-card-shadow);
+    padding: 12px;
+    background: transparent;
+    border: none;
 }
 .sponsor-logo-fallback {
     font-family: 'Oswald', sans-serif;

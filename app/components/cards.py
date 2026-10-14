@@ -3,6 +3,7 @@ from .icon import Icon, BrandIcon
 from db.schemas import Speaker, Event, PrayerTime, Sponsor
 from fasthtml.components import Div, Span, Figure, Img, H2, P, Button, A
 from datetime import datetime
+from core.assets import available
 from utils.speaker_utils import speaker_photo
 
 def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool = False, **kwargs) -> A:
@@ -84,9 +85,10 @@ def prayer_times_page(prayers: List[PrayerTime]) -> Div:
         )
 
 def SponsorLogo(sponsor: Sponsor, size: str = 'sm') -> Div:
-    """Sponsor logo in a fixed white box (any shape of logo fits without distortion)"""
+    """Sponsor logo scaled to fit a fixed box without distortion; the sponsor's name if there's no logo file"""
+    logo = available(sponsor.image_url)
     return Div(
-        Img(src=sponsor.image_url, alt=f'{sponsor.name} logo', loading='lazy') if sponsor.image_url
+        Img(src=logo, alt=f'{sponsor.name} logo', loading='lazy') if logo
         else Span(sponsor.name, cls='sponsor-logo-fallback'),
         cls=f'sponsor-logo sponsor-logo-{size}',
     )

@@ -8,12 +8,13 @@ consistently sized files. Steps:
          uv run --with pillow python load_2026_speakers_sponsors.py --download
      Speaker photos are saved as assets/speaker_XXXX.png at their original size, sponsor logos as
      assets/sponsor_<name>.<ext>. Files that already exist are never overwritten.
-  2. Manual step: crop every speaker photo to exactly 200x200 (square, face centred) and save it as
-     PNG under the same name. Sponsor logos need no crop; they are shown in a fixed white box.
+  2. Optional, any time: crop speaker photos to 200x200 (square, face centred) and save as PNG under
+     the same name; trim or remove backgrounds from sponsor logos. Changes show on the next page load.
   3. Update the database (dry run without --apply):
          python load_2026_speakers_sponsors.py --apply [--overwrite]
-     A photo is linked only once its file is a 200x200 PNG; missing or uncropped ones are listed and
-     those speakers show the initials avatar until it's ready.
+     Every speaker and sponsor listed here is pointed at its /assets file. Until a file exists, the
+     site shows the initials avatar (speakers) or the sponsor's name instead; adding the file later
+     needs no re-run.
 
 Image fields always follow the files here. Text fields (bio, description, links) are only filled when
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
@@ -32,7 +33,6 @@ from urllib.parse import urlparse
 
 ASSETS = Path(__file__).parent / 'assets'
 PHOTO_SIZE = (200, 200)
-PLACEHOLDER_HOST = 'ui-avatars.com'  # generated initials avatars must never be stored
 
 DOWNLOAD = '--download' in sys.argv
 APPLY = '--apply' in sys.argv
@@ -144,13 +144,15 @@ def png_size(path: Path):
     return struct.unpack('>II', header[16:24])
 
 
-def photo_status(info: dict) -> str:
-    size = png_size(photo_file(info))
-    if not photo_file(info).exists():
-        return 'missing'
+def photo_note(info: dict) -> str:
+    """Reminder shown next to a speaker when the photo file is missing or not yet cropped"""
+    path = photo_file(info)
+    if not path.exists():
+        return 'file missing, initials shown until added'
+    size = png_size(path)
     if size is None:
         return 'not a PNG'
-    return 'ready' if size == PHOTO_SIZE else f'needs crop ({size[0]}x{size[1]})'
+    return '' if size == PHOTO_SIZE else f'{size[0]}x{size[1]}, not cropped to 200x200 yet'
 
 
 # ---- Step 1: download ----
@@ -187,11 +189,6 @@ def download():
 
 # ---- Step 3: database ----
 
-def is_managed_elsewhere(url) -> bool:
-    """True for values this script should replace: empty, linked from another site, or a generated avatar"""
-    return not url or not url.startswith('/assets/') or PLACEHOLDER_HOST in url
-
-
 async def apply():
     from sqlalchemy import select
     from db.connection import db_manager
@@ -205,16 +202,13 @@ async def apply():
             if not sp:
                 print(f'! speaker not in database (run load_2026_program.py first): {name}')
                 continue
-            status = photo_status(info)
             photo = f'/assets/{photo_file(info).name}'
-            if status == 'ready':
-                if sp.image_url != photo:
-                    print(f'+ photo {name}: {photo}')
-                    sp.image_url = photo
-            else:
-                print(f'! photo {name}: {photo_file(info).name} {status}; showing initials')
-                if sp.image_url and is_managed_elsewhere(sp.image_url):
-                    sp.image_url = None
+            note = photo_note(info)
+            if sp.image_url != photo:
+                print(f'+ photo {name}: {photo}' + (f'  ({note})' if note else ''))
+                sp.image_url = photo
+            elif note:
+                print(f'  photo {name}: {note}')
             if info['bio'] and (OVERWRITE or not sp.bio):
                 print(f'+ bio   {name}')
                 sp.bio = info['bio']
@@ -223,9 +217,9 @@ async def apply():
         for name, info in SPONSORS.items():
             logo_path = ASSETS / info['logo']
             fields = {k: v for k, v in info.items() if k not in ('logo', 'source')}
-            fields['image_url'] = f"/assets/{info['logo']}" if logo_path.exists() else None
+            fields['image_url'] = f"/assets/{info['logo']}"
             if not logo_path.exists():
-                print(f"! logo {name}: {info['logo']} missing")
+                print(f"  logo {name}: {info['logo']} missing, name shown until added")
             sponsor = sponsors.get(name)
             if sponsor is None:
                 print(f'+ sponsor {name}')

@@ -2,8 +2,7 @@ from fasthtml.common import *
 from core.app import app, rt
 import os, uvicorn
 
-# Get absolute path to assets directory
-assets_dir = Path(__file__).parent / 'assets'
+from core.assets import ASSETS_DIR as assets_dir
 
 # Static file routes - more specific pattern to avoid conflicts
 @rt('/assets/{fname:path}')

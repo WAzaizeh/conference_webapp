@@ -1,3 +1,6 @@
+from core.assets import available
+
+
 def get_speaker_image_url(speaker_id: int, name: str, image_url: str = None) -> str:
     """
     Get the appropriate image URL for a speaker.
@@ -60,6 +63,6 @@ def get_speaker_image_url(speaker_id: int, name: str, image_url: str = None) -> 
 
 
 def speaker_photo(speaker) -> str:
-    """URL to show for a speaker's photo: their image, or a generated initials avatar.
-    Computed at render time only — never assigned back to the speaker record."""
-    return get_speaker_image_url(speaker.id, speaker.name, speaker.image_url)
+    """URL to show for a speaker's photo: their image, or a generated initials avatar when there is none
+    or its /assets file doesn't exist yet. Computed at render time only — never stored on the record."""
+    return get_speaker_image_url(speaker.id, speaker.name, available(speaker.image_url))
