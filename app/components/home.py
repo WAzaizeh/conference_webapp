@@ -46,6 +46,7 @@ __TOKENS__
 .home-brand img { width: 40px; height: 40px; }
 
 .home-eyebrow {
+    font-family: var(--title-font);
     margin-top: 22px;
     font-weight: 600;
     font-size: 14px;
@@ -78,7 +79,8 @@ __TOKENS__
 .home-title .amp { font-size: .62em; margin: 0 -.04em .06em; }
 
 .home-tagline {
-    font-weight: 600;
+    font-family: var(--title-font);
+    font-weight: 700;
     font-size: clamp(15px, 4.2vw, 20px);
     letter-spacing: .06em;
     text-transform: uppercase;

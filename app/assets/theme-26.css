@@ -1,8 +1,9 @@
 /* 2026 "Him & Her" theme: parchment backgrounds, navy type, cream cards.
    Loaded after main.css (static files are included in sorted order), so these rules override it. */
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@600;700&family=Oswald:wght@400;500;600&display=swap');
 
 :root {
+    --title-font: 'Barlow', sans-serif;  /* flyer font: titles, speaker and sponsor names */
     --primary-color: #1c3765;
     --secondary-color: #b9a27a;
     --cs-navy: #1c3765;
@@ -45,7 +46,8 @@
 #page-content h2,
 #page-content h3,
 .top-nav-title {
-    font-family: 'Oswald', sans-serif;
+    font-family: var(--title-font);
+    font-weight: 700;
     color: var(--cs-navy);
 }
 .top-nav {
@@ -61,8 +63,8 @@
     color: var(--cs-navy);
 }
 .page-eyebrow {
-    font-family: 'Oswald', sans-serif;
-    font-weight: 600;
+    font-family: var(--title-font);
+    font-weight: 700;
     font-size: 13px;
     letter-spacing: .2em;
     text-transform: uppercase;
@@ -85,8 +87,8 @@
 .card .speaker-name,
 .card .sponsor-name {
     color: var(--cs-navy);
-    font-family: 'Oswald', sans-serif;
-    font-weight: 500;
+    font-family: var(--title-font);
+    font-weight: 700;
     letter-spacing: .02em;
 }
 .speaker-detail-view .speaker-detail-body,

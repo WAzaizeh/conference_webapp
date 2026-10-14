@@ -1,7 +1,7 @@
 """Shared look for the 2026 "Him & Her" pages: fonts, parchment colors, paper grain and entrance animations."""
 from fasthtml.common import Span
 
-FONTS_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=Anton&family=Oswald:wght@400;600&display=swap');"
+FONTS_IMPORT = "@import url('https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@600;700&family=Oswald:wght@400;600&display=swap');"
 
 # Parchment grain, generated in-browser so no extra image asset is needed
 NOISE = (
@@ -12,6 +12,7 @@ NOISE = (
 )
 
 TOKENS = """
+    --title-font: 'Barlow', sans-serif;  /* flyer font for titles and taglines */
     --cs-navy: #1c3765;
     --cs-navy-deep: #12264a;
     --cs-sand: #e8d6b1;

@@ -114,7 +114,8 @@ __TOKENS__    position: fixed;
 }
 
 .cs-eyebrow {
-    font-weight: 600;
+    font-family: var(--title-font);
+    font-weight: 700;
     font-size: clamp(14px, 2.4vw, 20px);
     letter-spacing: .22em;
     text-transform: uppercase;
@@ -148,7 +149,8 @@ __TOKENS__    position: fixed;
 }
 
 .cs-tagline {
-    font-weight: 600;
+    font-family: var(--title-font);
+    font-weight: 700;
     font-size: clamp(16px, 3.6vw, 34px);
     letter-spacing: .06em;
     text-transform: uppercase;
