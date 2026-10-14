@@ -85,12 +85,12 @@ SPONSORS = {
     'Orphans in Need USA': dict(
         description='Dublin, CA based nonprofit supporting orphans and vulnerable children.',
         website='https://oinusa.org/',
-        image_url=None),  # logo not public; get the HD file from Kamran at MAS
+        image_url='/assets/sponsor-oinus.jpg'),  # from oinusa.org social card (600x315); swap for HD file from Kamran if provided
     'Blue Fig International Market': dict(
         description='Muslim-owned halal international grocery, 4101 E Park Blvd Ste 135, Plano TX 75074.',
         website=None,
         facebook='https://www.facebook.com/BlueFigMarket/',
-        image_url=None),  # logo not public; get the HD file from Kamran at MAS
+        image_url='/assets/sponsor-blue-fig.jpg'),  # Facebook page profile picture (960x960)
 }
 
 
