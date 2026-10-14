@@ -4,6 +4,7 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from db.schemas import Event, Speaker
 from fasthtml.components import Ul, Li, Div, Hr, H3, H4, A, Img, Span, Button
+from utils.speaker_utils import speaker_photo
 from utils.tags import SHARED_TAG, TRACK_TAGS
 import json
 
@@ -19,7 +20,7 @@ def SpeakerCardBody(speakers_data: List[Speaker]) -> List:
                 Div(
                     *[
                         Div(
-                            Img(src=speaker.image_url, alt=speaker.name, cls='avatar circle'),
+                            Img(src=speaker_photo(speaker), alt=speaker.name, cls='avatar circle'),
                             cls='w-10 h-10 rounded-full'
                         ) for speaker in speakers_data
                     ],

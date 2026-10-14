@@ -3,6 +3,7 @@ from .icon import Icon, BrandIcon
 from db.schemas import Speaker, Event, PrayerTime, Sponsor
 from fasthtml.components import Div, Span, Figure, Img, H2, P, Button, A
 from datetime import datetime
+from utils.speaker_utils import speaker_photo
 
 def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool = False, **kwargs) -> A:
     custom_cls = kwargs.pop('cls', '')  # Remove 'cls' from kwargs if present
@@ -18,7 +19,7 @@ def homepage_card(icon_name : str, title: str, card_color: str, bold_style: bool
 def brief_speaker_card(speaker: Speaker) -> A:
     return A(
             Figure(
-                    Img(src=speaker.image_url, alt=speaker.name),
+                    Img(src=speaker_photo(speaker), alt=speaker.name),
                     cls='figure'
                 ),
             Div(
@@ -40,7 +41,7 @@ def speaker_page(speaker: Speaker) -> Div:
     return Div(
             Figure(
                 Img(
-                    src=speaker.image_url,
+                    src=speaker_photo(speaker),
                     alt=speaker.name,
                     cls='rounded-xl'
                 ),
@@ -82,53 +83,45 @@ def prayer_times_page(prayers: List[PrayerTime]) -> Div:
             *[prayer_time_card(prayer) for prayer in prayers],
         )
 
-def brief_sponsor_card(sponsor: Sponsor) -> Div:
+def SponsorLogo(sponsor: Sponsor, size: str = 'sm') -> Div:
+    """Sponsor logo in a fixed white box (any shape of logo fits without distortion)"""
+    return Div(
+        Img(src=sponsor.image_url, alt=f'{sponsor.name} logo', loading='lazy') if sponsor.image_url
+        else Span(sponsor.name, cls='sponsor-logo-fallback'),
+        cls=f'sponsor-logo sponsor-logo-{size}',
+    )
+
+
+def brief_sponsor_card(sponsor: Sponsor) -> A:
     return A(
-            Figure(
-                    Img(src=f'{sponsor.image_url}', alt=sponsor.name),
-                    cls='figure'
-                ),
-            Div(
-                H2(sponsor.name),
-                Button(Icon('chevron-circle-right sponsor-btn')),
-                cls='sponsor-name',
-                style={'display': 'flex',
-                    'justify-content': 'space-between',
-                    'align-items':'center',
-                    'width':'100%',
-                    'padding':'0 1rem'}
-            ),
-            cls='card sponsor-card card-side bg-base-100 shadow-xl',
+            SponsorLogo(sponsor),
+            H2(sponsor.name, cls='sponsor-name flex-1'),
+            Icon('chevron-circle-right sponsor-btn'),
+            cls='sponsor-card',
             href=f'/sponsors/{sponsor.id}',
         )
 
+
 def sponsor_page(sponsor: Sponsor) -> Div:
+    links = [(url, icon) for url, icon in (
+        (sponsor.website, Icon('link')),
+        (sponsor.facebook, BrandIcon('facebook-f')),
+        (sponsor.twitter, BrandIcon('twitter')),
+        (sponsor.instagram, BrandIcon('instagram')),
+    ) if url]
     return Div(
-            Figure(
-                Img(
-                        src=f'{sponsor.image_url}',
-                        alt=sponsor.name,
-                        cls='rounded'
-                    ),
-                cls='flex'
-            ),
+            SponsorLogo(sponsor, size='lg'),
             Div(
                     H2(sponsor.name, cls='text-base mb-2 font-medium'),
-                    P(sponsor.description, cls='text-sm'),
+                    P(sponsor.description, cls='text-sm') if sponsor.description else None,
                     Div(
                         P('Links and Socials', cls='text-sm mb-4 font-medium sponsor-social-title'),
-                        Div(
-                            A(Icon('link'), href=sponsor.website),
-                            A(BrandIcon('facebook-f'), href=sponsor.facebook),
-                            A(BrandIcon('twitter'), href=sponsor.twitter),
-                            A(BrandIcon('instagram'), href=sponsor.instagram),
-                            cls='sponsor-social-links flex items-center'
-                        ),
+                        Div(*[A(icon, href=url, target='_blank', rel='noopener') for url, icon in links],
+                            cls='sponsor-social-links flex items-center'),
                         cls='sponsor-social-container mt-10 text-left'
-                    ),
+                    ) if links else None,
                     cls='sponsor-detail-body'
                 ),
-            
             cls='sponsor-detail-view blue-background'
         )
 
@@ -145,7 +138,7 @@ def session_speaker_card(session: Event, speakers: List[Speaker]) -> Div:
                     *[
                         A(
                             Div(
-                                Img(src=speaker.image_url, alt=speaker.name),
+                                Img(src=speaker_photo(speaker), alt=speaker.name),
                                 cls='w-12 h-12 rounded-full'
                             ),
                             href=f'/speakers/{speaker.id}',

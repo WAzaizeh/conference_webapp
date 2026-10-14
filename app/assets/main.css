@@ -65,12 +65,6 @@
     border-radius: 50%;
 }
 
-.sponsor-card .figure {
-    max-width: 100px;
-    height: 100px;
-    background: var(--fallback-b1);
-}
-
 .speaker-detail-view figure {
     border-radius: 50%;
     width: 200px;
@@ -100,13 +94,6 @@
     padding: 116px 24px;
     text-align: center;
     color: rgba(57, 57, 60, 1);
-}
-
-.sponsor-detail-view figure {
-    width: 200px;
-    height: 200px;
-    margin: auto;
-    overflow: hidden;
 }
 
 .sponsor-social-links a {

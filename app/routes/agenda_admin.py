@@ -13,6 +13,7 @@ from db.models import Event, Speaker, event_speakers
 from db.schemas import EventCreate, EventUpdate, SpeakerCreate
 from utils.tags import SHARED_TAG, TAG_ORDER, normalize_tags
 from utils.auth import is_moderator, require_admin
+from utils.speaker_utils import speaker_photo
 
 DEFAULT_LOCATION = 'GEM Academy & Facility'
 DEFAULT_START = datetime(2026, 10, 24, 11, 0, tzinfo=timezone.utc)
@@ -150,7 +151,7 @@ def agenda_admin_card(event: Event, error: Optional[str] = None) -> Div:
             Icon('microphone', cls='mr-2 opacity-60 text-xs'),
             _editable(
                 Div(
-                    *[Span(Img(src=s.image_url, alt='', cls='w-5 h-5 rounded-full object-cover'), s.name, cls='flex items-center gap-1') for s in speakers]
+                    *[Span(Img(src=speaker_photo(s), alt='', cls='w-5 h-5 rounded-full object-cover'), s.name, cls='flex items-center gap-1') for s in speakers]
                     or [Span('Add speakers', cls='text-sm')],
                     cls='flex flex-wrap gap-x-3 gap-y-1 text-sm',
                 ),
@@ -246,7 +247,7 @@ def _field_editor(event: Event, field: str, all_speakers: List[Speaker], known_t
             Div(
                 *[Label(
                     Input(type='checkbox', name='speaker_ids', value=str(s.id), checked=s.id in selected, cls='checkbox checkbox-xs checkbox-primary'),
-                    Img(src=s.image_url, alt='', cls='w-6 h-6 rounded-full object-cover'),
+                    Img(src=speaker_photo(s), alt='', cls='w-6 h-6 rounded-full object-cover'),
                     Span(s.name, cls='text-sm'),
                     cls='flex items-center gap-2 cursor-pointer py-1',
                 ) for s in sorted(all_speakers, key=lambda s: s.name)],
@@ -304,7 +305,7 @@ def agenda_form(action: str, speakers: List[Speaker], known_tags: List[str], eve
             Div(
                 *[Label(
                     Input(type='checkbox', name='speaker_ids', value=str(s.id), checked=s.id in values['speaker_ids'], cls='checkbox checkbox-sm checkbox-primary'),
-                    Img(src=s.image_url, alt='', cls='w-8 h-8 rounded-full object-cover'),
+                    Img(src=speaker_photo(s), alt='', cls='w-8 h-8 rounded-full object-cover'),
                     Span(s.name, cls='text-sm'),
                     cls='flex items-center gap-3 cursor-pointer py-1',
                 ) for s in speakers] or [P('No speakers yet', cls='text-sm opacity-60')],
@@ -437,7 +438,6 @@ async def post(req, sess, event_id: int):
     form = await req.form()
     error = None
     async with db_manager.AsyncSessionLocal() as db:
-        # Plain get (no speaker image enrichment) so nothing but the edited fields is written
         event = await db.get(Event, event_id)
         if not event:
             return Response('Session not found', status_code=404)

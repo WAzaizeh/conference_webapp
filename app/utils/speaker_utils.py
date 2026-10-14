@@ -57,3 +57,9 @@ def get_speaker_image_url(speaker_id: int, name: str, image_url: str = None) -> 
     )
     
     return placeholder_url
+
+
+def speaker_photo(speaker) -> str:
+    """URL to show for a speaker's photo: their image, or a generated initials avatar.
+    Computed at render time only — never assigned back to the speaker record."""
+    return get_speaker_image_url(speaker.id, speaker.name, speaker.image_url)

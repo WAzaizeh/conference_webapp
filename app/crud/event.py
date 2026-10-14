@@ -6,17 +6,6 @@ from db.models import Event, Speaker
 from db.schemas import (
     EventCreate, EventUpdate,
 )
-from utils.speaker_utils import get_speaker_image_url
-
-def _enrich_event_speakers(event: Event) -> Event:
-    """
-    Enrich all speakers in an event with placeholder images if needed.
-    This modifies the event object in place.
-    """
-    if event.speakers:
-        for speaker in event.speakers:
-            speaker.image_url = get_speaker_image_url(speaker.id, speaker.name, speaker.image_url)
-    return event
 
 async def create_event(db: AsyncSession, event: EventCreate) -> Event:
     """Create a new event"""
@@ -38,7 +27,7 @@ async def get_event(db: AsyncSession, event_id: int) -> Optional[Event]:
         select(Event).options(selectinload(Event.speakers)).where(Event.id == event_id)
     )
     event = result.scalar_one_or_none()
-    return _enrich_event_speakers(event) if event else None
+    return event
 
 async def get_events(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[Event]:
     """Get all events with pagination"""
@@ -46,11 +35,10 @@ async def get_events(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[
         select(Event).options(selectinload(Event.speakers)).offset(skip).limit(limit)
     )
     events =  result.scalars().all()
-    return [_enrich_event_speakers(e) for e in events]
+    return events
 
 async def update_event(db: AsyncSession, event_id: int, event_update: EventUpdate) -> Optional[Event]:
     """Update an event"""
-    # Load without _enrich_event_speakers so placeholder image URLs aren't persisted on commit
     result = await db.execute(
         select(Event).options(selectinload(Event.speakers)).where(Event.id == event_id)
     )
@@ -82,7 +70,6 @@ async def delete_event(db: AsyncSession, event_id: int) -> bool:
 
 async def toggle_qa_active(db: AsyncSession, event_id: int) -> Optional[Event]:
     """Toggle Q&A active status for an event"""
-    # Plain get: get_event's placeholder speaker images must not be committed
     db_event = await db.get(Event, event_id)
     if not db_event:
         return None

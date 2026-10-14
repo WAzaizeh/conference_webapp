@@ -225,3 +225,54 @@
     color: var(--cs-navy);
     text-decoration: underline;
 }
+
+/* Sponsors: every logo sits in the same white box, scaled to fit without distortion */
+.sponsor-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 0 16px 12px;
+    padding: 12px;
+    color: inherit;
+}
+.sponsor-card:first-of-type {
+    margin-top: 16px;
+}
+.sponsor-card .sponsor-name {
+    font-size: 16px;
+}
+.sponsor-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #fff;
+    border: 1px solid var(--cs-card-border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+.sponsor-logo img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.sponsor-logo-sm {
+    width: 112px;
+    height: 72px;
+    padding: 8px;
+}
+.sponsor-logo-lg {
+    position: relative;
+    z-index: 1;
+    width: min(300px, calc(100% - 48px));
+    aspect-ratio: 3 / 2;
+    margin: 24px auto 0;
+    padding: 20px;
+    box-shadow: var(--cs-card-shadow);
+}
+.sponsor-logo-fallback {
+    font-family: 'Oswald', sans-serif;
+    color: var(--cs-navy);
+    text-align: center;
+}
+
