@@ -87,7 +87,7 @@ SPEAKERS = {
 # name -> logo file in assets and the other Sponsor columns
 SPONSORS = {
     'IDEA': dict(
-        logo='sponsor_idea.svg',
+        logo='sponsor_idea.png',
         description='Islamic Development & Empowerment in America (formerly Islamic Relief USA), a humanitarian and development nonprofit.',
         website='https://development.org/'),
     'Mercy Without Limits': dict(
