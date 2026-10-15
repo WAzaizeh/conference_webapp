@@ -44,8 +44,8 @@ def TagBadges(tags: List[str]):
 
 
 def TagFilter(tags: List[str]):
-    """Filter pills above the agenda: audience pills, a divider, then session-type pills; one of each
-    can be selected (behaviour in assets/agenda-filter.js)"""
+    """Filter pills above the agenda: audience pills, a divider, then session-type pills; one audience
+    and any number of session types can be selected (behaviour in assets/agenda-filter.js)"""
     if not tags:
         return None
 

@@ -1,8 +1,9 @@
 // Agenda tag filter (markup from TagFilter / agenda_timeline in components/timeline.py).
-// No filter by default (no pill selected). Pills form two single-select groups that combine:
-// one audience (data-track-tags, e.g. Masculinity) and one session type (Talk, Workshop, Prayer...).
-// Picking another pill in the same group replaces it; tapping a selected pill clears it. A session must
-// have every selected tag; sessions tagged "All" (for everyone) count as having the audience tags.
+// No filter by default (no pill selected). Pills form two groups that combine:
+// - audience (data-track-tags, e.g. Masculinity): single-select; picking another replaces it.
+// - session type (Talk, Workshop, Prayer...): multi-select; a session matching any selected type is shown.
+// Tapping a selected pill clears it. A session must match both groups (when used); sessions tagged
+// "All" (for everyone) count as having the audience tags.
 (function () {
     'use strict';
 
@@ -28,9 +29,13 @@
                 pill.setAttribute('aria-pressed', String(on));
             });
             clear.hidden = !filtering;
+            const audience = [...selected].filter((t) => tracks.has(t));
+            const types = [...selected].filter((t) => !tracks.has(t));
             sessions.forEach(({ li, tags }) => {
                 const shared = tags.includes(SHARED_TAG);
-                li.hidden = ![...selected].every((t) => tags.includes(t) || (shared && tracks.has(t)));
+                const audienceOk = audience.every((t) => tags.includes(t) || shared);
+                const typeOk = types.length === 0 || types.some((t) => tags.includes(t));
+                li.hidden = !(audienceOk && typeOk);
             });
             save([...selected]);
         }
@@ -44,8 +49,8 @@
                 if (selected.has(tag)) {
                     selected.delete(tag);
                 } else {
-                    const group = (t) => tracks.has(t);  // true: audience, false: session type
-                    [...selected].filter((t) => group(t) === group(tag)).forEach((t) => selected.delete(t));
+                    // Audience is single-select: replace any other audience pill
+                    if (tracks.has(tag)) [...selected].filter((t) => tracks.has(t)).forEach((t) => selected.delete(t));
                     selected.add(tag);
                 }
             }
