@@ -20,9 +20,17 @@ from utils.auth import is_moderator, require_conference_day, require_moderator
 NICKNAME_COOKIE = 'qa_nickname'
 
 
+# Sessions that keep their description on the agenda but take no questions (compared ignoring case and punctuation)
+NO_QA_TITLES = {"Qur'an Recitation"}
+
+
+def _title_key(title: str) -> str:
+    return ''.join(c for c in (title or '').lower() if c.isalnum())
+
+
 def has_qa(event) -> bool:
-    """Only sessions with a description take questions (skips breaks, prayers, recitation...)"""
-    return bool((event.description or '').strip())
+    """Only sessions with a description take questions (skips breaks and prayers), minus NO_QA_TITLES"""
+    return bool((event.description or '').strip()) and _title_key(event.title) not in {_title_key(t) for t in NO_QA_TITLES}
 
 
 def _sort(value: str) -> str:
