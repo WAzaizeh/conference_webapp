@@ -14,7 +14,6 @@ resizing to 200x200. Replacing a file under the same name needs no re-run; a new
 
 Image fields always follow the files here. Text fields (bio, description, links) are only filled when
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
-Known gap: Sr. Mervat Farag has no public bio.
 """
 import asyncio
 import sys
@@ -81,7 +80,12 @@ SPEAKERS = {
             "everyone has a duty to pass on even a little knowledge."),
     'Sr. Mervat Farag': dict(
         number=2607,
-        bio=None),  # no public bio yet
+        bio="Organizational Development Consultant who helps mission-driven organizations build strong governance, "
+            "people and performance systems. As an educator and business trainer, she has designed and facilitated "
+            "programs for executive leaders and mentors centered on faith-grounded service leadership. Through her "
+            "mentorship of young professionals, she helps young Muslims connect faith with personal growth, "
+            "relationships and leadership. She holds an MBA and is pursuing a Master of Divinity and Religious "
+            "Leadership at The Islamic Seminary of America (TISA)."),
 }
 
 # name -> logo file in assets and the other Sponsor columns
