@@ -117,7 +117,7 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Task | Command |
 |---|---|
 | Set up a new database (tables + 2026 program) | `python load_2026_program.py --apply` |
-| Link speaker photos (`assets/speaker_26NN.png`, 200×200) and sponsor logos (`assets/sponsor_<name>.*`), fill bios and sponsors; flags missing or unresized images | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` replaces existing text) |
+| Fill speaker bios and sponsor details, add missing sponsors (photos and logos are uploaded in the app) | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` replaces existing text) |
 | Convert an older database's categories to tags | `python migrate_event_tags.py --apply` |
 | Make prod's content (sessions, speakers, sponsors, prayer times) match dev; replaces prod's copies (prod Q&A questions go with them), keeps accounts and feedback, backs up to `app/backups/` | `DEV_DATABASE_URL=… PROD_DATABASE_URL=… python sync_prod_from_dev.py --apply` |
 | Create a moderator/admin account | `python create_admin.py` |
@@ -129,8 +129,8 @@ Day-to-day content is edited in the app (admin accounts):
 
 Uploaded images are stored in the database (`images` table) and served at `/media/<id>`, so changing a photo needs no
 code push. Speaker photos are cropped to a 400×400 square; logos keep their shape (SVG is kept as-is).
-`sync_prod_from_dev.py` copies them to prod with the rest of the content, and `load_2026_speakers_sponsors.py` never
-replaces an uploaded image.
+`sync_prod_from_dev.py` copies them to prod with the rest of the content. Speaker photos and sponsor logos are not
+kept in `app/assets/`.
 
 ## Deployment
 
