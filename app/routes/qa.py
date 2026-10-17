@@ -20,6 +20,11 @@ from utils.auth import is_moderator, require_conference_day, require_moderator
 NICKNAME_COOKIE = 'qa_nickname'
 
 
+def has_qa(event) -> bool:
+    """Only sessions with a description take questions (skips breaks, prayers, recitation...)"""
+    return bool((event.description or '').strip())
+
+
 def _sort(value: str) -> str:
     return value if value in SORTS else 'popular'
 
@@ -32,7 +37,8 @@ async def _questions_for(db, event_id: int, view: str, sort: str, request):
 
 
 def _sessions_page(events, view: str, sess, request):
-    cards = [SessionCard(e, is_moderator=view == MODERATOR) for e in sorted(events, key=lambda e: e.start_time)]
+    cards = [SessionCard(e, is_moderator=view == MODERATOR)
+             for e in sorted(events, key=lambda e: e.start_time) if has_qa(e)]
     return AppContainer(
         Div(
             TopNav('Q&A Sessions'),
@@ -58,6 +64,8 @@ async def _session_page(request, sess, event_id: int, view: str):
         event = await get_event(db, event_id)
         if not event:
             return Response("Event not found", status_code=404)
+        if not has_qa(event):
+            return RedirectResponse('/qa/moderator' if view == MODERATOR else '/qa', status_code=303)
         questions, likes = await _questions_for(db, event_id, view, 'popular', request)
 
     nickname = request.cookies.get(NICKNAME_COOKIE, '')
@@ -111,8 +119,8 @@ async def post(request, event_id: int, nickname: str = '', question_text: str = 
 
     async with db_manager.AsyncSessionLocal() as db:
         event = await get_event(db, event_id)
-        if not event:
-            return Div(P("Event not found", cls="text-error"), cls="alert alert-error")
+        if not event or not has_qa(event):
+            return Div(P("Q&A isn't available for this session", cls="text-error"), cls="alert alert-error")
         if not event.is_qa_active:
             return QuestionForm(event_id, nickname, is_active=False,
                                 error="Q&A is closed for this session, so your question was not sent.")
