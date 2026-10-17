@@ -65,11 +65,21 @@ async def align_schema(conn):
 
 
 async def read_all(conn, table):
-    return [dict(r._mapping) for r in await conn.execute(text(f'SELECT * FROM {table}'))]
+    # Named columns, not *: a pooled connection may hold a plan for "SELECT *" from before a column was added
+    columns = ', '.join(f'"{c}"' for c in await columns_of(conn, table))
+    return [dict(r._mapping) for r in await conn.execute(text(f'SELECT {columns} FROM {table}'))]
 
 
 async def main():
     dev, prod = engine_for('DEV_DATABASE_URL'), engine_for('PROD_DATABASE_URL')
+    try:
+        await sync(dev, prod)
+    finally:
+        await dev.dispose()
+        await prod.dispose()
+
+
+async def sync(dev, prod):
     print(f'from dev:  {dev.url.host}\nto prod:   {prod.url.host}')
     if dev.url.host == prod.url.host and dev.url.database == prod.url.database:
         sys.exit('DEV_DATABASE_URL and PROD_DATABASE_URL point at the same database')
@@ -113,9 +123,6 @@ async def main():
                 await conn.execute(text(
                     f"SELECT setval(pg_get_serial_sequence('{name}', 'id'), COALESCE(MAX(id), 1), MAX(id) IS NOT NULL) FROM {name}"))
         print('prod now matches dev')
-
-    await dev.dispose()
-    await prod.dispose()
 
 
 if __name__ == '__main__':
