@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Table, JSON
+from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, ForeignKey, Table, JSON, LargeBinary
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -64,6 +64,16 @@ class Sponsor(Base):
     facebook = Column(String(500))
     instagram = Column(String(500))
     twitter = Column(String(500))
+
+class Image(Base):
+    """Uploaded speaker photos and sponsor logos, served at /media/<id> (see routes/media.py).
+    Never changed once saved: a new upload is a new row, so its URL can be cached forever."""
+    __tablename__ = 'images'
+
+    id = Column(Integer, primary_key=True)
+    content_type = Column(String(50), nullable=False)
+    data = Column(LargeBinary, nullable=False)
+    created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
 
 # User and Session models for authentication
 class User(Base):

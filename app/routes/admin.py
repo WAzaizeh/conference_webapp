@@ -98,12 +98,21 @@ def get(req, sess):
         cls='btn btn-block btn-glass btn-primary'
     )
 
+    edit_people_btn = Button(
+        Icon('users'),
+        ' Edit Speakers & Sponsors',
+        onclick="window.location.href='/admin/speakers'",
+        id='edit-people-btn',
+        cls='btn btn-block btn-glass btn-primary'
+    )
+
     # Layout for the admin dashboard
     content = [
         H1('Admin Dashboard', cls='text-2xl font-bold mb-6 text-center'),
         moderate_qa_btn,
         moderate_feedback_btn,
         edit_events_btn if is_admin(sess) else None,
+        edit_people_btn if is_admin(sess) else None,
     ]
 
     return AppContainer(

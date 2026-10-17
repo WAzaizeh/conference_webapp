@@ -25,6 +25,8 @@ def get_static(fname:str, ext:str):
 import routes.main
 import routes.admin
 import routes.agenda_admin
+import routes.people_admin
+import routes.media
 import routes.session
 import routes.speaker
 import routes.sponsor

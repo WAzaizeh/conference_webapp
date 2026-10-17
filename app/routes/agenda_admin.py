@@ -7,10 +7,10 @@ from fasthtml.common import RedirectResponse, Response, Script, Style
 from fasthtml.components import A, Button, Dialog, Div, Form, H3, Img, Input, Label, P, Span, Textarea
 from core.app import rt
 from crud.event import create_event, delete_event, get_event, get_events, update_event
-from crud.speaker import create_speaker, get_speakers
+from crud.speaker import get_speakers
 from db.connection import db_manager
-from db.models import Event, Speaker, event_speakers
-from db.schemas import EventCreate, EventUpdate, SpeakerCreate
+from db.models import Event, Speaker
+from db.schemas import EventCreate, EventUpdate
 from utils.tags import SHARED_TAG, TAG_ORDER, normalize_tags
 from utils.auth import is_moderator, require_admin
 from utils.speaker_utils import speaker_photo
@@ -500,54 +500,3 @@ async def post(req, sess, event_id: int):
     async with db_manager.AsyncSessionLocal() as db:
         await delete_event(db, event_id)
     return RedirectResponse('/admin/agenda', status_code=303)
-
-
-def speaker_form(event: Optional[Event], values: dict, error: Optional[str] = None) -> Form:
-    def field(label, control):
-        return Label(Span(label, cls='label-text font-medium'), control, cls='form-control w-full gap-1')
-
-    return Form(
-        Div(Icon('exclamation-triangle', cls='mr-2'), Span(error), cls='alert alert-error') if error else None,
-        P('The speaker will be added to: ', Span(event.title, cls='font-semibold'), cls='text-sm') if event else None,
-        Input(type='hidden', name='event_id', value=str(event.id) if event else ''),
-        field('Name', Input(name='name', value=values.get('name', ''), required=True, autofocus=True,
-                            placeholder='e.g. Sh. Yaser Birjas', cls='input input-bordered w-full')),
-        field('Photo URL (optional)', Input(name='image_url', value=values.get('image_url', ''), placeholder='https://… or /assets/speaker.png',
-                                            cls='input input-bordered w-full')),
-        field('Bio', Textarea(values.get('bio', ''), name='bio', rows=6, cls='textarea textarea-bordered w-full')),
-        Div(
-            A('Cancel', href=f'/admin/agenda#event-{event.id}' if event else '/admin/agenda', cls='btn btn-ghost'),
-            Button(Icon('save', cls='mr-1'), 'Add speaker', type='submit', cls='btn btn-primary'),
-            cls='flex justify-end gap-2',
-        ),
-        method='post',
-        action='/admin/speakers/new',
-        cls='flex flex-col gap-4 p-6 white-background',
-    )
-
-
-@rt('/admin/speakers/new')
-@require_admin
-async def get(req, sess, event_id: int = None):
-    async with db_manager.AsyncSessionLocal() as db:
-        event = await db.get(Event, event_id) if event_id else None
-    return _page('Add Speaker', speaker_form(event, {}), sess)
-
-
-@rt('/admin/speakers/new')
-@require_admin
-async def post(req, sess):
-    """Create a speaker, optionally attaching them to the session they were added from"""
-    form = await req.form()
-    values = {k: (form.get(k) or '').strip() for k in ('name', 'image_url', 'bio')}
-    event_id = int(form['event_id']) if form.get('event_id') else None
-    async with db_manager.AsyncSessionLocal() as db:
-        if not values['name']:
-            event = await db.get(Event, event_id) if event_id else None
-            return _page('Add Speaker', speaker_form(event, values, 'Name is required.'), sess)
-
-        speaker = await create_speaker(db, SpeakerCreate(name=values['name'], image_url=values['image_url'] or None, bio=values['bio'] or None))
-        if event_id and await db.get(Event, event_id):
-            await db.execute(event_speakers.insert().values(event_id=event_id, speaker_id=speaker.id))
-            await db.commit()
-    return RedirectResponse(f'/admin/agenda#event-{event_id}' if event_id else '/admin/agenda', status_code=303)

@@ -12,7 +12,8 @@ Every speaker and sponsor listed here is pointed at its file, and the run flags 
 (the site shows the initials avatar / sponsor name until it's added) and any photo that still needs
 resizing to 200x200. Replacing a file under the same name needs no re-run; a new file name does.
 
-Image fields always follow the files here. Text fields (bio, description, links) are only filled when
+Image fields follow the files here, except images uploaded in the app (/admin/speakers, /admin/sponsors),
+which are kept. Text fields (bio, description, links) are only filled when
 empty, so hand edits are kept; pass --overwrite to replace them. Missing sponsors are added.
 """
 import asyncio
@@ -24,6 +25,7 @@ from urllib.parse import urlparse
 from PIL import Image
 
 from core.assets import ASSETS_DIR as ASSETS
+from utils.images import media_id
 
 PHOTO_SIZE = (200, 200)
 
@@ -152,7 +154,9 @@ async def apply():
             problem = image_problem(photo_file(info), PHOTO_SIZE)
             if problem:
                 problems.append(f'{photo_file(info).name}: {problem} — {name}')
-            if sp.image_url != photo:
+            if media_id(sp.image_url):
+                print(f'= photo {name}: uploaded in the app, kept')
+            elif sp.image_url != photo:
                 print(f'+ photo {name}: {photo}')
                 sp.image_url = photo
             if info['bio'] and (OVERWRITE or not sp.bio):
@@ -174,6 +178,8 @@ async def apply():
                 continue
             for field, value in fields.items():
                 current = getattr(sponsor, field)
+                if field == 'image_url' and media_id(current):
+                    continue  # uploaded in the app
                 replace = (field == 'image_url' and current != value) or (value and (OVERWRITE or not current))
                 if replace and current != value:
                     print(f'~ {name}.{field}')

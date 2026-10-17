@@ -31,7 +31,10 @@ def get(req, sess):
             homepage_card(icon_name='survey.svg', title='Feedback (Moderator)', card_color='pink', href='/feedback/moderator', cls='full-card', bold_style=True),
         ])
         if is_admin(sess):
-            cards.append(homepage_card(icon_name='edit-agenda.svg', title='Edit Agenda', card_color='blue', href='/admin/agenda', cls='full-card', bold_style=True))
+            cards.extend([
+                homepage_card(icon_name='edit-agenda.svg', title='Edit Agenda', card_color='blue', href='/admin/agenda', cls='full-card', bold_style=True),
+                homepage_card(icon_name='edit-agenda.svg', title='Edit Speakers & Sponsors', card_color='blue', href='/admin/speakers', cls='full-card', bold_style=True),
+            ])
     else:
         cards.extend([
             homepage_card(icon_name='chat.svg', title='Q&A', card_color='pink', href='/qa', cls='full-card'),

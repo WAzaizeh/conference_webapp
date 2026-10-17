@@ -53,7 +53,9 @@ app/
 ├── routes/                  # Pages and endpoints
 │   ├── main.py              # Home, about, prayer times, registration, coming soon
 │   ├── session.py           # Agenda + session details
-│   ├── agenda_admin.py      # Agenda editor, add speaker
+│   ├── agenda_admin.py      # Agenda editor
+│   ├── people_admin.py      # Speaker and sponsor editor, photo/logo uploads
+│   ├── media.py             # Serves uploaded images at /media/<id>
 │   ├── qa.py                # Q&A (guest + moderator) and live stream
 │   ├── feedback.py          # Feedback survey
 │   ├── speaker.py, sponsor.py
@@ -121,7 +123,14 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Create a moderator/admin account | `python create_admin.py` |
 | Reset a password | `python reset_admin_password.py` |
 
-Day-to-day content (sessions, speakers, tags, descriptions) is edited in the app at `/admin/agenda`.
+Day-to-day content is edited in the app (admin accounts):
+- sessions, tags, descriptions and who speaks: `/admin/agenda`
+- speakers and sponsors, including photo and logo uploads: `/admin/speakers`, `/admin/sponsors`
+
+Uploaded images are stored in the database (`images` table) and served at `/media/<id>`, so changing a photo needs no
+code push. Speaker photos are cropped to a 400×400 square; logos keep their shape (SVG is kept as-is).
+`sync_prod_from_dev.py` copies them to prod with the rest of the content, and `load_2026_speakers_sponsors.py` never
+replaces an uploaded image.
 
 ## Deployment
 

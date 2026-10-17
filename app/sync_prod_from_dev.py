@@ -1,4 +1,4 @@
-"""Copy the conference content (sessions, speakers, sponsors, prayer times) from the dev database to production.
+"""Copy the conference content (sessions, speakers, sponsors, prayer times, uploaded images) from the dev database to production.
 Dev is where the program is prepared and edited; this makes prod match it exactly, keeping the same ids.
 
 Production's content tables are replaced, so anything only on prod is removed — including Q&A questions
@@ -10,6 +10,7 @@ Usage (dry run without --apply):
     DEV_DATABASE_URL=... PROD_DATABASE_URL=... python sync_prod_from_dev.py [--apply]
 """
 import asyncio
+import base64
 import json
 import sys
 from datetime import datetime
@@ -27,9 +28,14 @@ APPLY = '--apply' in sys.argv
 BACKUP_DIR = Path(__file__).parent / 'backups'
 
 # Copied in this order (parents first) and cleared in reverse
-CONTENT_TABLES = ['speakers', 'sponsors', 'prayer_times', 'events', 'event_speakers']
+CONTENT_TABLES = ['images', 'speakers', 'sponsors', 'prayer_times', 'events', 'event_speakers']
 # Rows on prod that go away with its sessions; backed up, never copied
 CASCADED_TABLES = ['questions', 'question_likes']
+
+
+def _json_value(value):
+    """Backup encoding: image bytes as base64, everything else (dates, uuids) as text"""
+    return base64.b64encode(value).decode() if isinstance(value, (bytes, memoryview)) else str(value)
 
 
 def engine_for(var):
@@ -109,7 +115,7 @@ async def sync(dev, prod):
 
         BACKUP_DIR.mkdir(exist_ok=True)
         backup_file = BACKUP_DIR / f'prod_{datetime.now():%Y%m%d_%H%M%S}.json'
-        backup_file.write_text(json.dumps(backup, default=str, indent=1))
+        backup_file.write_text(json.dumps(backup, default=_json_value, indent=1))
         print(f'\nbacked up prod rows to {backup_file}')
 
         await align_schema(conn)
