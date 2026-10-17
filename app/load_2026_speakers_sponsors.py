@@ -64,7 +64,7 @@ SPEAKERS = {
             "featured on Al Jazeera. Her coaching combines cognitive behavioral exercises with "
             "Islamic principles across anxiety, depression, marriage and parenting. She holds an ijaza in Quran recitation."),
     'Ustadh Morad Awad': dict(
-        number=2605,
+        number=2608,
         bio="Youth Director at East Plano Islamic Center (EPIC) since 2019. Raised in New Jersey in a Palestinian family, "
             "he earned a B.S. in Civil Engineering from NJIT, where he began Islamic outreach and youth programs. He "
             "studied Islamic sciences in Riyadh and Madinah, taught English and Islamic Studies at King Saud University "
@@ -85,7 +85,7 @@ SPEAKERS = {
             "programs for executive leaders and mentors centered on faith-grounded service leadership. Through her "
             "mentorship of young professionals, she helps young Muslims connect faith with personal growth, "
             "relationships and leadership. She holds an MBA and is pursuing a Master of Divinity and Religious "
-            "Leadership at The Islamic Seminary of America (TISA)."),
+            "Leadership at TISA."),
 }
 
 # name -> logo file in assets and the other Sponsor columns
