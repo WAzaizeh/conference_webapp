@@ -35,11 +35,8 @@ favicon_link = Link(rel='icon', type='image/x-icon', href='/assets/favicon.ico')
 app = FastHTML(
     secret_key=os.getenv('SESSION_SECRET') or None,
     hdrs=[tlink, favicon_link, dlink, falink, fontLink, materialLink, htmxScript, *static_fils_hdrs],
-    # COMING_SOON=true (set in deploy-prod.yml) serves only the coming soon page; the gate runs first
-    middleware=[
-        *([Middleware(ComingSoonGate)] if os.getenv('COMING_SOON', 'false').lower() == 'true' else []),
-        Middleware(VisitorMiddleware),
-    ],
+    # The gate runs first; it only acts while conference.is_coming_soon()
+    middleware=[Middleware(ComingSoonGate), Middleware(VisitorMiddleware)],
 )
 
 rt = app.route

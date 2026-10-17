@@ -130,15 +130,15 @@ def _message_page(req, nav_title: str, title: str, message: str, icon: str):
 
 def _closed_page(req, title: str, message: str):
     """Shown when a date-limited page is accessed outside its window"""
-    heading = "See You Soon!" if conference.now() < conference.CONFERENCE_START else "Thank You!"
+    heading = "See You Soon!" if conference.now() < conference.INTERACTIVE_OPENS else "Thank You!"
     return _message_page(req, title, heading, message, 'fa-calendar-day')
 
 
 def _time_until_start() -> str:
-    hours = max(0, int((conference.CONFERENCE_START - conference.now()).total_seconds() // 3600))
+    hours = max(0, int((conference.INTERACTIVE_OPENS - conference.now()).total_seconds() // 3600))
     days, hours = divmod(hours, 24)
     parts = [f"{n} {unit}{'s' if n != 1 else ''}" for n, unit in ((days, 'day'), (hours, 'hour')) if n]
-    return f"That's {' and '.join(parts)} away." if parts else "The conference starts very soon!"
+    return f"That's {' and '.join(parts)} away." if parts else "Opening very soon!"
 
 
 def require_window(is_open, title: str, closed_message: str):
@@ -148,7 +148,7 @@ def require_window(is_open, title: str, closed_message: str):
         @wraps(f)
         async def wrapper(*args, **kwargs):
             if not is_open():
-                if conference.now() < conference.CONFERENCE_START:
+                if conference.now() < conference.INTERACTIVE_OPENS:
                     message = f"Available on conference day. {_time_until_start()}"
                 else:
                     message = closed_message

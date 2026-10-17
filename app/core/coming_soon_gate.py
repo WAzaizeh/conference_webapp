@@ -1,5 +1,7 @@
 from pathlib import PurePosixPath
 
+from core import conference
+
 COMING_SOON_PATH = '/coming-soon'
 
 # Static files must stay reachable so the coming soon page can load its assets
@@ -14,13 +16,14 @@ def _is_static(path: str) -> bool:
 
 
 class ComingSoonGate:
-    """Serve the coming soon page for every request except static assets."""
+    """Until the site opens (conference.is_coming_soon), serve the coming soon page for every request
+    except static assets."""
 
     def __init__(self, app):
         self.app = app
 
     async def __call__(self, scope, receive, send):
-        if scope['type'] not in ('http', 'websocket'):
+        if scope['type'] not in ('http', 'websocket') or not conference.is_coming_soon():
             return await self.app(scope, receive, send)
 
         path = scope['path']

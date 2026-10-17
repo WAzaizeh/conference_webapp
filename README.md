@@ -104,8 +104,8 @@ app/
 |---|---|
 | `DATABASE_URL_DIRECT` | Direct (non-pooler) Neon URL for live Q&A `LISTEN`. Defaults to `DATABASE_URL` with `-pooler` removed. |
 | `SESSION_SECRET` | Key that signs login cookies. Required on Cloud Run; locally a git-ignored `.sesskey` file is generated. |
-| `COMING_SOON` | `true` serves only the coming soon page (static assets stay reachable). Set in `deploy-prod.yml`; change it to `false` and push `production` to open the site. |
-| `RESTRICT_TO_CONFERENCE_DAY` | `true` limits Q&A to conference day and feedback to conference day + 7 days. On by default when `ENVIRONMENT=production`, off otherwise; set `false` to lift it on prod. Dates live in `core/conference.py`. |
+| `COMING_SOON` | `true` serves only the coming soon page (static assets stay reachable) until `SITE_OPENS` in `core/conference.py`, then the site opens by itself. Set in `deploy-prod.yml`; change it to `false` and push `production` to open the site early. |
+| `RESTRICT_TO_CONFERENCE_DAY` | `true` opens Q&A and feedback at `INTERACTIVE_OPENS` (Oct 24, 10 AM) and closes Q&A at the end of that day and feedback 7 days later. On by default when `ENVIRONMENT=production`, off otherwise; set `false` to lift it on prod. Dates live in `core/conference.py`. |
 
 ## Database
 
