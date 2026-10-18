@@ -10,11 +10,11 @@ Current edition: **4th Annual CYP Conference — Him & Her: Building Success at 
 
 | | Production | Development |
 |---|---|---|
-| URL | https://app.mascyp.org | dev.mascyp.org (mapping in progress) |
+| URL | https://mascyp.org (also https://app.mascyp.org; `www.mascyp.org` forwards here) | https://test.mascyp.org |
 | Branch | `production` | `dev_2026` |
-| Cloud Run service (us-west1) | `mas-cyp-con-2024` | `dev-mascyp-conference-webapp` |
-| Database (Neon) | production branch | development branch |
-| Currently serves | Coming Soon page only | Full 2026 app |
+| Cloud Run service (us-west1, project `mas-cyp-con-2024-435900`) | `mas-cyp-con-2024` | `dev-mascyp-conference-webapp` |
+| Database (Neon host) | `ep-rough-hill-…` (secret `DATABASE_URL_PROD`) | `ep-patient-tooth-…` (secret `DATABASE_URL_DEV`) |
+| Date limits | Q&A and feedback open Oct 24, 10 AM (see `core/conference.py`) | None: everything always open |
 
 The 2025 conference data is kept in the `archive_2025` Neon database. Workflow: changes are built and tested on
 `dev_2026` (auto-deploys to dev), then merged to `production` when ready.
@@ -22,16 +22,24 @@ The 2025 conference data is kept in the `archive_2025` Neon database. Workflow: 
 ## Features
 
 - **Home & theme** — "Him & Her" parchment/navy look shared by every page (`assets/theme-26.css`).
-- **Agenda** — timeline of sessions with **tag filter pills** (Masculinity, Womanhood, Talk, Workshop, Prayer…).
-  All pills start selected; the first click narrows to that tag, further clicks add or remove tags.
-  Sessions tagged **All** ("Everyone": keynotes, prayers, breaks) always stay visible.
-- **Agenda editor** (moderators, `/admin/agenda`) — click any field on a session card to edit it in place:
+- **Agenda** — timeline of sessions with **tag filter pills** in two rows; none are selected at first (everything
+  shows). Audience (Masculinity, Womanhood) is single-select; session type (Talk, Workshop, Discussion, Prayer,
+  Break) is multi-select, showing sessions of any chosen type. Sessions tagged **All** ("Everyone") count as
+  matching either audience.
+- **Agenda editor** (admins, `/admin/agenda`) — click any field on a session card to edit it in place:
   times, title, location, tags, speakers (with "Add new speaker"), description (pop-up editor).
-- **Live Q&A** — guests submit questions; moderators approve, hide, mark answered or delete. Updates appear
+- **Speaker and sponsor editor** (admins, `/admin/speakers`, `/admin/sponsors`) — edit text, upload photos and
+  logos, add and delete. Images are stored in the database (see [Database](#database)).
+- **Speakers** are listed in program order (by their first session); sponsors in the order they were added.
+- **Live Q&A** — only for sessions with a description, except titles in `NO_QA_TITLES` (`routes/qa.py`, currently
+  the Qur'an Recitation). Guests submit questions; moderators approve, hide, mark answered or delete. Updates appear
   instantly for everyone without reloading (only the changed card or count is sent). Likes are one per visitor.
 - **Feedback survey** — one submission per visitor, editable later.
-- **Speakers, sponsors, prayer times, about** pages.
-- **Coming Soon** page (`/coming-soon`) used by production until launch.
+- **Prayer times, about, registration** (`/registration` redirects to Ticket Tailor) pages.
+- **Date windows** (production): Q&A and feedback show a "See You Soon" countdown until Oct 24, 10 AM; Q&A closes
+  at the end of that day, feedback 7 days after the conference. Preview the closed page on dev at `/qa_soon`.
+- **Coming Soon** page (`/coming-soon`): with `COMING_SOON=true` (production) it replaced every page until
+  `SITE_OPENS` (Oct 17, 7 AM).
 
 ## Tech stack
 
@@ -47,7 +55,8 @@ app/
 ├── main.py                  # Entry point; static files + route registration
 ├── core/
 │   ├── app.py               # FastHTML app, headers, middleware, session key
-│   ├── conference.py        # Conference dates and date-window settings
+│   ├── conference.py        # Conference dates, site opening, Q&A/feedback windows
+│   ├── coming_soon_gate.py  # Serves only the coming soon page until the site opens
 │   ├── static.py            # Loads every assets/*.css|*.js on all pages (sorted)
 │   └── visitor.py           # Anonymous visitor cookie (likes, feedback)
 ├── routes/                  # Pages and endpoints
@@ -60,17 +69,19 @@ app/
 │   ├── feedback.py          # Feedback survey
 │   ├── speaker.py, sponsor.py
 │   └── admin.py             # Login/logout, admin dashboard
-├── components/              # UI components (home, theme, timeline, qa, cards, feedback…)
+├── components/              # UI components (home, theme, timeline, qa, cards, feedback message card…)
 ├── crud/                    # Database operations
 ├── db/                      # Models, schemas, connection
 ├── utils/
 │   ├── auth.py              # Passwords, @require_moderator, date-window decorators
 │   ├── live/                # Live Q&A: hub (local subscribers), bus (Postgres NOTIFY), render
+│   ├── images.py            # Resizes and stores uploaded photos/logos
 │   ├── tags.py              # Session tag rules
 │   └── speaker_utils.py     # Placeholder avatars
-├── assets/                  # CSS, JS (qa-live.js, agenda-filter.js), images
+├── assets/                  # CSS, JS (qa-live.js, agenda-filter.js), icons (speaker/sponsor images are in the DB)
 ├── load_2026_program.py     # Creates tables + loads the 2026 program
-├── sync_prod_from_dev.py    # Copies dev's content to prod
+├── load_2026_speakers_sponsors.py  # Fills speaker bios and sponsor details
+├── sync_prod_from_dev.py    # Copies dev's content (and images) to prod
 ├── migrate_event_tags.py    # Converts old event categories to tags
 ├── create_admin.py          # Create a moderator/admin account
 └── reset_admin_password.py  # Reset an account's password
@@ -119,9 +130,18 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Set up a new database (tables + 2026 program) | `python load_2026_program.py --apply` |
 | Fill speaker bios and sponsor details, add missing sponsors (photos and logos are uploaded in the app) | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` replaces existing text) |
 | Convert an older database's categories to tags | `python migrate_event_tags.py --apply` |
-| Make prod's content (sessions, speakers, sponsors, prayer times) match dev; replaces prod's copies (prod Q&A questions go with them), keeps accounts and feedback, backs up to `app/backups/` | `DEV_DATABASE_URL=… PROD_DATABASE_URL=… python sync_prod_from_dev.py --apply` |
+| Make prod's content (sessions, speakers, sponsors, prayer times, uploaded images) match dev; replaces prod's copies (prod Q&A questions go with them), keeps accounts and feedback, backs up to `app/backups/` | `DEV_DATABASE_URL=… PROD_DATABASE_URL=… python sync_prod_from_dev.py --apply` (see below) |
 | Create a moderator/admin account | `python create_admin.py` |
 | Reset a password | `python reset_admin_password.py` |
+
+**Syncing dev to prod.** Take `PROD_DATABASE_URL` from the live service, not from a local `.env`:
+```bash
+gcloud run services describe mas-cyp-con-2024 --project mas-cyp-con-2024-435900 --region us-west1 \
+  --format=json | python3 -c "import json,sys; print(next(e['value'] for e in json.load(sys.stdin)['spec']['template']['spec']['containers'][0]['env'] if e['name']=='DATABASE_URL'))"
+```
+Check that the dry run's "to prod" host is `ep-rough-hill-…` before adding `--apply`. When code adds a table or
+column, push `production` and run the sync straight away; the new code fails until prod's schema matches. From
+conference day on, don't sync: it would delete the day's real Q&A questions.
 
 Day-to-day content is edited in the app (admin accounts):
 - sessions, tags, descriptions and who speaks: `/admin/agenda`
@@ -150,8 +170,10 @@ Secret values are plain text (no quotes). Generate session secrets with:
 python3 -c "import secrets; print(secrets.token_hex(32))"
 ```
 
-Custom domains are Cloud Run domain mappings (Cloud Console → Cloud Run → Manage custom domains); DNS for
-`mascyp.org` is managed at Porkbun (`CNAME <subdomain> → ghs.googlehosted.com`).
+Custom domains are Cloud Run domain mappings (Cloud Console → Cloud Run → Manage custom domains): `mascyp.org`
+and `app.mascyp.org` → prod, `test.mascyp.org` → dev. DNS is managed at Porkbun (Google A/AAAA records). `www` is a
+Porkbun URL forward (301, include path) to `https://mascyp.org`; the `*` CNAME to `pixie.porkbun.com` is part of
+that forwarding, so keep it.
 
 ## How live Q&A works
 
@@ -172,8 +194,12 @@ Guests never receive unapproved questions; the moderator stream requires login.
 | `/qa` · `/qa/event/{id}` | Q&A sessions and a session's questions |
 | `/qa/event/{id}/stream` | Live updates (SSE) |
 | `/feedback` · `/feedback/edit` | Feedback survey |
+| `/registration` | Redirects to the Ticket Tailor event |
+| `/media/{id}` | Uploaded speaker photos and sponsor logos |
+| `/qa_soon` | Preview of the closed Q&A page (dev only; 404 on production) |
 | `/admin_login` · `/admin_dashboard` | Moderator login and dashboard |
-| `/admin/agenda` | Agenda editor (moderators) |
+| `/admin/agenda` | Agenda editor (admins) |
+| `/admin/speakers` · `/admin/sponsors` | Speaker and sponsor editor with image uploads (admins) |
 | `/qa/moderator` | Q&A moderation (moderators) |
 | `/feedback/moderator` | Feedback submission count (moderators) |
 
