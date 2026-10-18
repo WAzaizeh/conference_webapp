@@ -114,4 +114,4 @@ async def get(req, sess):
 
 @rt('/registration')
 def get():
-    return RedirectResponse('https://www.tickettailor.com/events/mascyp/1841794')
+    return RedirectResponse('https://www.tickettailor.com/events/mascyp/2390931')
