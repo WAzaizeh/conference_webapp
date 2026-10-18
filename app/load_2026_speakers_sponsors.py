@@ -69,7 +69,7 @@ SPEAKERS = {
 # name -> Sponsor columns
 SPONSORS = {
     'IDEA': dict(
-        description='Islamic Development & Empowerment in America (formerly Islamic Relief USA), a humanitarian and development nonprofit.',
+        description='Islamic Development & Empowerment in America (IDEA), formerly Islamic Relief USA, is a U.S. humanitarian and development nonprofit based in Alexandria, Virginia. Alongside emergency relief, it focuses on long-term development and empowerment, supporting communities across the United States and around the world.',
         website='https://development.org/',
         facebook='https://www.facebook.com/PoweredByIDEA/',
         instagram='https://www.instagram.com/developedbyidea/',
@@ -80,7 +80,7 @@ SPONSORS = {
         snapchat='https://www.snapchat.com/@poweredbyidea',
     ),
     'Mercy Without Limits': dict(
-        description='Kansas-based 501(c)(3), established 2012, supporting orphans and widows in the Middle East and South Asia.',
+        description='Mercy Without Limits is a nonprofit based in Overland Park, Kansas, that began in 2012 helping orphans and widows affected by the crisis in Syria. Today it runs orphan sponsorship, widow support, food, water, shelter, healthcare, education and emergency aid in 12 countries, including Palestine, Syria, Lebanon, Jordan, Pakistan, Bangladesh and the United States.',
         website='https://mwl.org/',
         facebook='https://www.facebook.com/mwlimits',
         youtube='https://www.youtube.com/@MWLimits',
@@ -89,14 +89,14 @@ SPONSORS = {
         linkedin='https://www.linkedin.com/company/mwlimits-org/',
     ),
     'Baitulmaal': dict(
-        description='US nonprofit delivering humanitarian aid worldwide regardless of faith or nationality.',
+        description='Baitulmaal is a 501(c)(3) humanitarian nonprofit headquartered in Irving, Texas, delivering life-saving, life-sustaining and life-enriching aid to underserved people worldwide, regardless of faith or nationality. Its work spans emergency relief, food and water, healthcare, orphan support, winter relief, education and economic development in 16 countries across Africa, Asia, the Middle East and the United States.',
         website='https://baitulmaal.org/',
         facebook='https://www.facebook.com/baitulmaal/',
         twitter='https://twitter.com/baitulmaal',
         instagram='https://www.instagram.com/baitulmaal_usa/',
     ),
     'Orphans in Need USA': dict(
-        description='Dublin, CA based nonprofit supporting orphans and vulnerable children.',
+        description="Orphans in Need USA is a nonprofit based in Dublin, California, that supports orphans and widows in some of the world's poorest and conflict-affected regions. Through monthly orphan sponsorship, food parcels, school funding, medical care and its Orphans Village project, it gives children and their families consistent, long-term support.",
         website='https://oinusa.org/',
         facebook='https://www.facebook.com/OrphansinNeedUSA/',
         instagram='https://www.instagram.com/orphansinneedusa/',
@@ -104,7 +104,7 @@ SPONSORS = {
         linkedin='https://www.linkedin.com/company/orphans-in-need-usa/',
     ),
     'TISA': dict(
-        description='The Islamic Seminary of America: a graduate-level Islamic seminary in Richardson, TX.',
+        description='The Islamic Seminary of America (TISA) is a graduate-level Islamic seminary in Richardson, Texas, whose mission is to cultivate generations of doers and thinkers who lead from an Islamic paradigm. It offers an MA in Islamic Studies, a Master of Divinity, an M.Div. in Interreligious Chaplaincy and an Islamic Leadership and Management Certificate, with intensive and hybrid courses open to students across North America.',
         website='https://islamicseminary.us/',
         facebook='https://www.facebook.com/IslamicSeminaryofAmerica',
         twitter='https://twitter.com/ISeminaryofA',
@@ -113,9 +113,11 @@ SPONSORS = {
         instagram='https://instagram.com/islamicseminary',
     ),
     'Blue Fig International Market': dict(
-        description='Muslim-owned halal international grocery, 4101 E Park Blvd Ste 135, Plano TX 75074.',
+        description='Blue Fig International Market is a family-owned, fully halal international grocery in East Plano with Muslim owners. It is known for its halal meat counter and deli, along with Mediterranean, Arabic, Indo-Pak and European groceries, fresh produce, breads and imported cheeses. Visit at 4101 E Park Blvd, Ste 135, Plano, TX 75074.',
         website=None,
-        facebook='https://www.facebook.com/BlueFigMarket/'),
+        facebook='https://www.facebook.com/BlueFigMarket/',
+        instagram='https://www.instagram.com/bluefigmarket/',
+        tiktok='https://www.tiktok.com/@blue_fig_market_plano'),
 }
 
 
