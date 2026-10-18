@@ -64,6 +64,12 @@ SPEAKERS = {
             "mentorship of young professionals, she helps young Muslims connect faith with personal growth, "
             "relationships and leadership. She holds an MBA and is pursuing a Master of Divinity and Religious "
             "Leadership at TISA."),
+    'Ustadh Ozair Hasan': dict(
+        bio="Head of Information Technology at Qalam Institute in Carrollton, Texas, and an Islamic scholar, educator and "
+            "tech professional. Raised in Dayton, Ohio, he graduated from the intensive ʾĀlimiyyah Program at the Qalam "
+            "Seminary, where he continues advanced specialization in Takhaṣṣuṣ & Iftāʾ (Islamic jurisprudence). He also "
+            "holds a degree in Computer Science from the University of Texas at Dallas and specializes in AI engineering "
+            "and cloud architecture."),
 }
 
 # name -> Sponsor columns
