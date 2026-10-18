@@ -64,6 +64,10 @@ class Sponsor(Base):
     facebook = Column(String(500))
     instagram = Column(String(500))
     twitter = Column(String(500))
+    youtube = Column(String(500))
+    linkedin = Column(String(500))
+    tiktok = Column(String(500))
+    snapchat = Column(String(500))
 
 class Image(Base):
     """Uploaded speaker photos and sponsor logos, served at /media/<id> (see routes/media.py).

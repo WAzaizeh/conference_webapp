@@ -19,7 +19,7 @@ from utils.auth import is_moderator, require_admin
 from utils.images import prepare_upload, replace_image, save_image
 from utils.speaker_utils import speaker_photo
 
-SPONSOR_FIELDS = ('name', 'description', 'website', 'facebook', 'instagram', 'twitter')
+SPONSOR_FIELDS = ('name', 'description', 'website', 'facebook', 'instagram', 'twitter', 'youtube', 'linkedin', 'tiktok', 'snapchat')
 
 # Show the chosen file in place of the current image before saving
 PREVIEW_JS = """
@@ -260,6 +260,10 @@ def sponsor_form(action: str, values: dict, sponsor: Optional[Sponsor] = None, e
         _field('Facebook', _text('facebook', values, type='url', placeholder='https://facebook.com/…')),
         _field('Instagram', _text('instagram', values, type='url', placeholder='https://instagram.com/…')),
         _field('X / Twitter', _text('twitter', values, type='url', placeholder='https://x.com/…')),
+        _field('YouTube', _text('youtube', values, type='url', placeholder='https://youtube.com/…')),
+        _field('LinkedIn', _text('linkedin', values, type='url', placeholder='https://linkedin.com/company/…')),
+        _field('TikTok', _text('tiktok', values, type='url', placeholder='https://tiktok.com/@…')),
+        _field('Snapchat', _text('snapchat', values, type='url', placeholder='https://snapchat.com/@…')),
         _buttons('/admin/sponsors', 'Save' if sponsor else 'Add sponsor',
                  f'/admin/sponsors/{sponsor.id}/delete' if sponsor else None, 'this sponsor'),
     )

@@ -108,8 +108,12 @@ def sponsor_page(sponsor: Sponsor) -> Div:
     links = [(url, icon) for url, icon in (
         (sponsor.website, Icon('link')),
         (sponsor.facebook, BrandIcon('facebook-f')),
-        (sponsor.twitter, BrandIcon('twitter')),
         (sponsor.instagram, BrandIcon('instagram')),
+        (sponsor.twitter, BrandIcon('x-twitter')),
+        (sponsor.youtube, BrandIcon('youtube')),
+        (sponsor.linkedin, BrandIcon('linkedin-in')),
+        (sponsor.tiktok, BrandIcon('tiktok')),
+        (sponsor.snapchat, BrandIcon('snapchat')),
     ) if url]
     return Div(
             SponsorLogo(sponsor, size='lg'),
@@ -119,7 +123,7 @@ def sponsor_page(sponsor: Sponsor) -> Div:
                     Div(
                         P('Links and Socials', cls='text-sm mb-4 font-medium sponsor-social-title'),
                         Div(*[A(icon, href=url, target='_blank', rel='noopener') for url, icon in links],
-                            cls='sponsor-social-links flex items-center'),
+                            cls='sponsor-social-links flex flex-wrap items-center gap-y-3'),
                         cls='sponsor-social-container mt-10 text-left'
                     ) if links else None,
                     cls='sponsor-detail-body'
