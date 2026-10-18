@@ -14,9 +14,9 @@ from utils.tags import tags_from_category
 APPLY = '--apply' in sys.argv
 LOCATION = 'GEM Academy & Facility'
 
-YASER, SUZY, MORAD, MERVAT, OMAR, HALEH, YOUSSRA = (
+YASER, SUZY, MORAD, MERVAT, OMAR, HALEH, YOUSSRA, OZAIR = (
     'Sh. Yaser Birjas', 'Dr. Suzy Ismail', 'Ustadh Morad Awad', 'Sr. Mervat Farag',
-    'Dr. Omar Husain', 'Sr. Haleh Banani', 'Sr. Youssra Kandil',
+    'Dr. Omar Husain', 'Sr. Haleh Banani', 'Sr. Youssra Kandil', 'Ustadh Ozair Hasan',
 )
 
 def t(hhmm):
@@ -40,10 +40,12 @@ AGENDA = [
     ('13:25', '14:10', 'Womanhood Track: Small-Group Reflection', 'ACTIVITY', [MERVAT],
      "Facilitated conversation on identity, nurturing, and balancing aspirations.\n\nThis is a guided, small-group conversation — not a lecture — where young Muslim women can speak honestly about who they are, who they care for, and what they're striving toward, without feeling like these three things have to compete with one another. Rather than presenting content, the facilitator poses open questions and creates a safe space for sisters to reflect, share, and learn from each other's real experiences. The goal is authentic dialogue, not answers handed down from the front of the room."),
     ('14:10', '15:40', 'Dhuhr Prayer & Lunch', 'PRAYER', [], "Congregational prayer followed by a shared meal (90 minutes)."),
-    ('15:40', '15:45', 'Dhikr Break', 'BREAK', [], "A brief moment of remembrance before the panel."),
-    ('15:45', '16:45', 'Marriage: Real Life not Reel Life', 'TALK', [OMAR, HALEH],
+    # Tagged All + Talk in the database (a talk for everyone); the loader's TALK category gives Talk only
+    ('15:40', '15:55', 'Spiritual Break: Walking the Way to Jannah Together', 'TALK', [OZAIR],
+     "Allah describes the righteous being led to Jannah in groups [Quran, Az-Zumar, 39:73]. This inspiring 15-minute talk reminds us that our journey to Jannah is not meant to be walked alone. Through righteous companionship, sincere brotherhood and sisterhood, and mutual encouragement, we can strengthen our faith, overcome life's challenges, and help one another stay steadfast on the path to Allah. Let us seek the company of those who bring us closer to Allah and walk together toward our ultimate destination: Jannah."),
+    ('15:55', '16:45', 'Marriage: Real Life not Reel Life', 'TALK', [OMAR, HALEH],
      "Social media, dating culture, and endless content have quietly rewritten what people expect from marriage — instant gratification, constant validation, comparison to curated \"highlight reels,\" and an addiction to novelty that leaves real, everyday marriage feeling disappointing by comparison. Dr. Omar Husain and Sr. Haleh Banani each bring 20 minutes addressing this from their own vantage point — confronting the illusion and offering grounded, faith-rooted tools to protect real marriages from a culture that was never designed to help them succeed. The session closes with a joint Q&A, giving attendees space to ask what's genuinely on their minds."),
-    ('15:45', '16:45', 'Emotional Intelligence & Healthy Relationships: Family, Friends, and Beyond', 'TALK', [YOUSSRA, MERVAT],
+    ('15:55', '16:45', 'Emotional Intelligence & Healthy Relationships: Family, Friends, and Beyond', 'TALK', [YOUSSRA, MERVAT],
      "Equipping every CYP — students, professionals, and business owners alike — with practical emotional intelligence and communication tools for the relationships they navigate daily, whether at school, work, or in business."),
     ('16:50', '17:30', 'Masculinity Track: Spiritual Leadership', 'WORKSHOP', [OMAR],
      "Becoming the husband, father, and community leader Islam calls men to be.\n\nEvery man wears multiple hats throughout his life — son, brother, husband, father, community leader — yet few are ever taught what Islam actually expects of him in each role. This workshop moves past vague ideals and into concrete spiritual leadership: how a man leads with taqwa (God-consciousness) at home, among his brothers, and in his community, long before he ever leads a family. Participants will walk away with a clearer sense of what it means to lead each relationship with faith, not just effort."),

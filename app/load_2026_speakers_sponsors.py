@@ -80,6 +80,9 @@ SPONSORS = {
     'Orphans in Need USA': dict(
         description='Dublin, CA based nonprofit supporting orphans and vulnerable children.',
         website='https://oinusa.org/'),
+    'TISA': dict(
+        description='The Islamic Seminary of America: a graduate-level Islamic seminary in Richardson, TX.',
+        website='https://islamicseminary.us/'),
     'Blue Fig International Market': dict(
         description='Muslim-owned halal international grocery, 4101 E Park Blvd Ste 135, Plano TX 75074.',
         website=None,
