@@ -1,7 +1,7 @@
 from fasthtml.common import *
 from components.page import AppContainer
 from components.feedback_form import FeedbackForm
-from components.feedback_message import FeedbackMessage
+from components.feedback_message import FeedbackMessage, MessageScreen
 from db.connection import db_manager
 from crud.feedback import get_feedback_count, get_user_feedback, save_feedback
 from utils.auth import is_moderator, require_moderator, require_feedback_window
@@ -19,7 +19,7 @@ async def get(request, sess):
 
     if already_submitted:
         return AppContainer(
-            Div(
+            MessageScreen(
                 TopNav('Feedback'),
                 FeedbackMessage(
                     title="Already Submitted",
@@ -117,7 +117,7 @@ async def post(request, sess):
     
     # Show success message
     return AppContainer(
-        Div(
+        MessageScreen(
             TopNav('Feedback'),
             FeedbackMessage(
                 icon_class="fas fa-check-circle text-success",

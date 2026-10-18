@@ -8,26 +8,20 @@ def FeedbackMessage(
     icon_class: str = None,
     icon_color: str = "text-primary"
 ):
-    """Reusable feedback message component"""
-    btnclass = "btn btn-primary px-6 py-2"
-    btnstyle = "background-color: var(--primary-color); border-color: var(--primary-color); color: white;"
+    """Reusable message card (closed pages, thank-you notes), centred in the space below the top nav.
+    Place it inside MessageScreen so it fills the page. Styles: .message-* in assets/theme-26.css"""
     return Div(
         Div(
-            Div(
-                I(cls=f"{icon_class} text-6xl {icon_color} mb-4") if icon_class else None,
-                H2(title, cls="text-3xl font-bold mb-4 text-primary"),
-                P(message, cls="text-lg mb-6 text-center text-black"),
-                Div(
-                    A(
-                        button_text,
-                        href=button_href,
-                        cls=btnclass,
-                        style=btnstyle
-                    ),
-                    cls="flex justify-center"
-                ),
-                cls="text-center"
-            ),
+            I(cls=f"{icon_class} {icon_color} message-icon") if icon_class else None,
+            H2(title, cls="message-title"),
+            P(message, cls="message-text"),
+            A(button_text, href=button_href, cls="btn btn-glass btn-primary"),
+            cls="message-card"
         ),
-        cls="container min-h-screen flex items-center"
+        cls="message-page"
     )
+
+
+def MessageScreen(*children):
+    """Page body for a FeedbackMessage: the app background, with the card centred under the top nav"""
+    return Div(*children, id='page-content', cls='message-screen')

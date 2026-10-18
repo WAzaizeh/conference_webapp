@@ -121,6 +121,46 @@
     color: var(--cs-cream);
 }
 
+/* Message pages ("See You Soon", thank-you notes): a card centred below the top nav */
+#page-content.message-screen {
+    display: flex;
+    flex-direction: column;
+}
+.message-page {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px 56px;
+}
+.message-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 24px 28px;
+    text-align: center;
+    background: var(--cs-card);
+    border: 1px solid var(--cs-card-border);
+    box-shadow: var(--cs-card-shadow);
+    border-radius: 12px;
+}
+.message-icon {
+    display: block;
+    font-size: 44px;
+    margin-bottom: 16px;
+}
+.message-icon.text-primary { color: var(--cs-navy); }
+#page-content .message-title {
+    font-size: 26px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+}
+.message-text {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #1f2a3d;
+    margin-bottom: 24px;
+}
+
 /* Bottom navigation */
 .btm-nav {
     background: #f6ecd8;

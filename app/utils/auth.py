@@ -108,11 +108,11 @@ def _message_page(req, nav_title: str, title: str, message: str, icon: str):
     """Full page with a short message and a link home (closed windows, missing permissions)"""
     from fasthtml.components import Div
     from components.page import AppContainer
-    from components.feedback_message import FeedbackMessage
+    from components.feedback_message import FeedbackMessage, MessageScreen
     from components.navigation import TopNav
 
     return AppContainer(
-        Div(
+        MessageScreen(
             TopNav(nav_title),
             FeedbackMessage(
                 icon_class=f"fas {icon} text-primary",
