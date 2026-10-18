@@ -141,6 +141,18 @@ def _time_until_start() -> str:
     return f"That's {' and '.join(parts)} away." if parts else "Opening very soon!"
 
 
+def closed_page(req, title: str, closed_message: str):
+    """What a date-limited page shows while closed: a countdown before it opens, closed_message after"""
+    if conference.now() < conference.INTERACTIVE_OPENS:
+        message = f"Available on conference day. {_time_until_start()}"
+    else:
+        message = closed_message
+    return _closed_page(req, title, message)
+
+
+QA_TITLE, QA_CLOSED = 'Coming Soon', 'Q&A has closed for this year.'
+
+
 def require_window(is_open, title: str, closed_message: str):
     """Decorator factory: serve the route only while `is_open()` is true.
     Arguments are passed through untouched; FastHTML supplies the request first."""
@@ -148,11 +160,7 @@ def require_window(is_open, title: str, closed_message: str):
         @wraps(f)
         async def wrapper(*args, **kwargs):
             if not is_open():
-                if conference.now() < conference.INTERACTIVE_OPENS:
-                    message = f"Available on conference day. {_time_until_start()}"
-                else:
-                    message = closed_message
-                return _closed_page(args[0] if args else None, title, message)
+                return closed_page(args[0] if args else None, title, closed_message)
             result = f(*args, **kwargs)
             return await result if asyncio.iscoroutine(result) else result
         return wrapper
@@ -161,5 +169,5 @@ def require_window(is_open, title: str, closed_message: str):
 
 # Kept for existing call sites; both are unrestricted off production (see conference.RESTRICT_DATES)
 is_conference_day = conference.is_conference_day
-require_conference_day = require_window(conference.is_conference_day, 'Coming Soon', 'Q&A has closed for this year.')
+require_conference_day = require_window(conference.is_conference_day, QA_TITLE, QA_CLOSED)
 require_feedback_window = require_window(conference.is_feedback_open, 'Feedback', 'The feedback survey has closed.')

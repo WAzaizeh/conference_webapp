@@ -15,7 +15,8 @@ from crud.question import (
 from db.connection import db_manager
 from db.schemas import QuestionCreate, QuestionUpdate
 from utils import live
-from utils.auth import is_moderator, require_conference_day, require_moderator
+from core import conference
+from utils.auth import QA_CLOSED, QA_TITLE, closed_page, is_moderator, require_conference_day, require_moderator
 
 NICKNAME_COOKIE = 'qa_nickname'
 
@@ -97,6 +98,14 @@ async def _list_fragment(request, event_id: int, sort: str, view: str):
 
 
 # Guest routes
+
+@rt('/qa_soon')
+def get(request):
+    """Preview of what /qa shows on production while Q&A is closed (dev and testing only)"""
+    if conference.IS_PRODUCTION:
+        return Response('Not found', status_code=404)
+    return closed_page(request, QA_TITLE, QA_CLOSED)
+
 
 @rt('/qa')
 @require_conference_day
