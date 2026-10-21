@@ -14,9 +14,9 @@ from utils.tags import tags_from_category
 APPLY = '--apply' in sys.argv
 LOCATION = 'GEM Academy & Facility'
 
-YASER, SUZY, MORAD, MERVAT, OMAR, HALEH, YOUSSRA, OZAIR = (
+YASER, SUZY, MORAD, MERVAT, OMAR, HALEH, YOUSSRA, OZAIR, HASSAAN = (
     'Sh. Yaser Birjas', 'Dr. Suzy Ismail', 'Ustadh Morad Awad', 'Sr. Mervat Farag',
-    'Dr. Omar Husain', 'Sr. Haleh Banani', 'Sr. Youssra Kandil', 'Ustadh Ozair Hasan',
+    'Dr. Omar Husain', 'Sr. Haleh Banani', 'Sr. Youssra Kandil', 'Ustadh Ozair Hasan', 'Hassaan Haq',
 )
 
 def t(hhmm):
@@ -25,7 +25,7 @@ def t(hhmm):
     return datetime(2026, 10, 24, h, m, tzinfo=timezone.utc)
 
 AGENDA = [
-    ('11:00', '11:05', "Qur'an Recitation", 'MAIN', [], "Opening the day with the words of Allah."),
+    ('11:00', '11:05', "Qur'an Recitation", 'MAIN', [HASSAAN], "Opening the day with the words of Allah, recited by Qari Hassaan Haq of Qalam Seminary."),
     ('11:05', '11:15', 'Welcome & Opening Remarks', 'MAIN', [], "MAS Dallas CYP leadership frames the day and the theme."),
     ('11:15', '12:15', 'Opening Keynote — Him & Her: Building Success at Every Stage', 'TALK', [YASER, SUZY],
      "A joint session introducing Allah's complementary vision for men and women. Empowering young Muslim men and women to build success at every stage — from college and career to marriage and parenthood — through faith-rooted guidance, practical tools, and dedicated tracks that turn individual growth into resilient families and a thriving community."),

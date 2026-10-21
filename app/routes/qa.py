@@ -22,7 +22,7 @@ NICKNAME_COOKIE = 'qa_nickname'
 
 
 # Sessions that keep their description on the agenda but take no questions (compared ignoring case and punctuation)
-NO_QA_TITLES = {"Qur'an Recitation"}
+NO_QA_TITLES = {"Qur'an Recitation", "Welcome & Opening Remarks"}
 
 
 def _title_key(title: str) -> str:
