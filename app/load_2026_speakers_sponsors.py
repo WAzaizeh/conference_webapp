@@ -70,6 +70,12 @@ SPEAKERS = {
             "Seminary, where he continues advanced specialization in Takhaṣṣuṣ & Iftāʾ (Islamic jurisprudence). He also "
             "holds a degree in Computer Science from the University of Texas at Dallas and specializes in AI engineering "
             "and cloud architecture."),
+    'Hassaan Haq': dict(
+        bio="Operations professional and entrepreneur based in the San Francisco Bay Area. He serves on the Core Team at "
+            "Alif and is the founder of Chai Guy, a popular local catering and event initiative. He holds a degree in "
+            "Computational and Applied Mathematics from San Jose State University and previously worked in Business "
+            "Operations at tech companies like Cisco and ServiceNow. Alongside his corporate and entrepreneurial "
+            "ventures, he completed studies in Classical Arabic and Islamic sciences at the Qalam Seminary."),
 }
 
 # name -> Sponsor columns
