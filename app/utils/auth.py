@@ -4,7 +4,9 @@ from functools import wraps
 import asyncio
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
+from datetime import datetime, timezone
 from typing import Optional
+from sqlalchemy import or_
 from db.models import User
 from core import conference
 
@@ -37,16 +39,24 @@ def log_in(sess, user):
     sess['admin_auth'] = True
     sess['user_id'] = str(user.id)
     sess['role'] = user.role
+    # Kept in the (signed) session so an account's expiry also ends sessions that are already logged in
+    sess['expires_at'] = user.expires_at.isoformat() if user.expires_at else None
 
 
 def log_out(sess):
-    for key in ('admin_auth', 'user_id', 'role'):
+    for key in ('admin_auth', 'user_id', 'role', 'expires_at'):
         sess.pop(key, None)
 
 
 def is_moderator(sess):
-    """Logged in with any staff account"""
-    return sess.get('admin_auth', False)
+    """Logged in with any staff account whose access hasn't expired (expired sessions are logged out)"""
+    if not sess.get('admin_auth', False):
+        return False
+    expires_at = sess.get('expires_at')
+    if expires_at and datetime.now(timezone.utc) >= datetime.fromisoformat(expires_at):
+        log_out(sess)
+        return False
+    return True
 
 
 def is_admin(sess):
@@ -90,11 +100,12 @@ async def get_user_by_email(db: AsyncSession, email: str, require_admin: bool = 
         require_admin: If True, only return admin users
 
     Returns:
-        User object if found and active, None otherwise
+        User object if found, active and not expired, None otherwise
     """
     result = select(User).where(
             User.email == email,
-            User.is_active == True
+            User.is_active == True,
+            or_(User.expires_at.is_(None), User.expires_at > datetime.now(timezone.utc)),
         )
 
     # Add role filter only if require_admin is True

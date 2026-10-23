@@ -131,7 +131,8 @@ Every script prints the target database and does a dry run unless `--apply` is g
 | Fill speaker bios and sponsor details, add missing sponsors (photos and logos are uploaded in the app) | `python load_2026_speakers_sponsors.py --apply` (`--overwrite` replaces existing text) |
 | Convert an older database's categories to tags | `python migrate_event_tags.py --apply` |
 | Make prod's content (sessions, speakers, sponsors, prayer times, uploaded images) match dev; replaces prod's copies (prod Q&A questions go with them), keeps accounts and feedback, backs up to `app/backups/` | `DEV_DATABASE_URL=… PROD_DATABASE_URL=… python sync_prod_from_dev.py --apply` (see below) |
-| Create a moderator/admin account | `python create_admin.py` |
+| Create a moderator/admin account (password from standard input, optional expiry in Dallas time) | `op read "op://<vault>/<item>/password" \| python create_account.py <username> --role moderator --expires 2026-10-25T02:00 --apply` |
+| Create a moderator/admin account (interactive, older) | `python create_admin.py` |
 | Reset a password | `python reset_admin_password.py` |
 
 **Syncing dev to prod.** Take `PROD_DATABASE_URL` from the live service, not from a local `.env`:
@@ -197,7 +198,7 @@ Guests never receive unapproved questions; the moderator stream requires login.
 | `/registration` | Redirects to the Ticket Tailor event |
 | `/media/{id}` | Uploaded speaker photos and sponsor logos |
 | `/qa_soon` | Preview of the closed Q&A page (dev only; 404 on production) |
-| `/admin_login` · `/admin_dashboard` | Moderator login and dashboard |
+| `/admin_login` · `/admin_dashboard` | Moderator login and dashboard (accounts with `expires_at` lose access, and are logged out, at that time) |
 | `/admin/agenda` | Agenda editor (admins) |
 | `/admin/speakers` · `/admin/sponsors` | Speaker and sponsor editor with image uploads (admins) |
 | `/qa/moderator` | Q&A moderation (moderators) |

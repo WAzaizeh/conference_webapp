@@ -90,6 +90,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login_at = Column(DateTime(timezone=True))
+    expires_at = Column(DateTime(timezone=True))  # access ends at this time; NULL = never (e.g. admins)
 
 class Session(Base):
     __tablename__ = 'sessions'
